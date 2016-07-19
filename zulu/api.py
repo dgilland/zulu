@@ -2,9 +2,7 @@
 """The api module.
 """
 
-from datetime import datetime
-
-from .datetime import DateTime
+from .utc import DateTime
 
 
 def parse(text):

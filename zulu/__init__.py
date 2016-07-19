@@ -13,5 +13,5 @@ from .__pkg__ import (
 
 
 from .api import parse
-from .datetime import DateTime
+from .utc import DateTime
 from .parser import ParseError
