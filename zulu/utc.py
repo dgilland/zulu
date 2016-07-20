@@ -33,17 +33,16 @@ class DateTime(object):
         if tzinfo and isinstance(tzinfo, str):
             tzinfo = make_timezone(tzinfo)
 
-        dt = datetime(
-            year, month, day, hour, minute, second, microsecond, tzinfo)
+        naive = datetime(year, month, day, hour, minute, second, microsecond)
 
-        if dt.tzinfo is None:
-            dt = pytz.utc.localize(dt)
+        if hasattr(tzinfo, 'localize'):
+            dt = tzinfo.localize(naive, is_dst=None)
+        elif tzinfo:
+            dt = naive.replace(tzinfo=tzinfo)
         else:
-            if hasattr(dt.tzinfo, 'normalize'):
-                dt = dt.tzinfo.normalize(dt)
-            dt = dt.astimezone(pytz.utc)
+            dt = pytz.UTC.localize(naive, is_dst=None)
 
-        self.__dt = dt
+        self.__dt = dt.astimezone(pytz.UTC)
 
     def __repr__(self):
         return '<DateTime [{0}]>'.format(self.isoformat())
