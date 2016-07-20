@@ -44,7 +44,7 @@ class DateTime(object):
 
         self.__dt = dt.astimezone(pytz.UTC)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '<DateTime [{0}]>'.format(self.isoformat())
 
     def __iter__(self):

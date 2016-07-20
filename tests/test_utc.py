@@ -4,6 +4,7 @@ from datetime import datetime
 
 import pytest
 import pytz
+from tzlocal import get_localzone
 
 from zulu import DateTime, ParseError
 
@@ -11,22 +12,25 @@ from zulu import DateTime, ParseError
 from .fixtures import parametrize
 
 
+eastern = pytz.timezone('US/Eastern')
+
+
 @parametrize('text,expected', [
-    ('2000', datetime(2000, 1, 1, tzinfo=pytz.utc)),
-    ('2000-01', datetime(2000, 1, 1, tzinfo=pytz.utc)),
-    ('2000-01-01', datetime(2000, 1, 1, tzinfo=pytz.utc)),
-    ('2000-03-05', datetime(2000, 3, 5, tzinfo=pytz.utc)),
-    ('2000-01-01T12:30', datetime(2000, 1, 1, 12, 30, tzinfo=pytz.utc)),
-    ('2000-01-01 12:30', datetime(2000, 1, 1, 12, 30, tzinfo=pytz.utc)),
-    ('2000-01-01T12:30:30', datetime(2000, 1, 1, 12, 30, 30, tzinfo=pytz.utc)),
+    ('2000', datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+    ('2000-01', datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+    ('2000-01-01', datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+    ('2000-03-05', datetime(2000, 3, 5, tzinfo=pytz.UTC)),
+    ('2000-01-01T12:30', datetime(2000, 1, 1, 12, 30, tzinfo=pytz.UTC)),
+    ('2000-01-01 12:30', datetime(2000, 1, 1, 12, 30, tzinfo=pytz.UTC)),
+    ('2000-01-01T12:30:30', datetime(2000, 1, 1, 12, 30, 30, tzinfo=pytz.UTC)),
     ('2000-01-01T12:30:30-0400',
-     datetime(2000, 1, 1, 16, 30, 30, tzinfo=pytz.utc)),
+     datetime(2000, 1, 1, 16, 30, 30, tzinfo=pytz.UTC)),
     ('2000-01-01T12:00:00-2359',
-     datetime(2000, 1, 2, 11, 59, tzinfo=pytz.utc)),
+     datetime(2000, 1, 2, 11, 59, tzinfo=pytz.UTC)),
     ('2000-01-01T12:00:00+2359',
-     datetime(1999, 12, 31, 12, 1, tzinfo=pytz.utc)),
-    (datetime(2000, 1, 1, tzinfo=pytz.utc),
-     datetime(2000, 1, 1, tzinfo=pytz.utc))
+     datetime(1999, 12, 31, 12, 1, tzinfo=pytz.UTC)),
+    (datetime(2000, 1, 1, tzinfo=pytz.UTC),
+     datetime(2000, 1, 1, tzinfo=pytz.UTC))
 ])
 def test_parse(text, expected):
     assert DateTime.parse(text).datetime == expected
@@ -55,7 +59,8 @@ def test_parse_invalid(text):
                                 'hour': 3,
                                 'minute': 4,
                                 'second': 5,
-                                'microsecond': 6}),
+                                'microsecond': 6,
+                                'naive': datetime(2000, 1, 2, 3, 4, 5, 6)}),
 ])
 def test_basic_properties(args, properties):
     dt = DateTime(*args)
@@ -80,8 +85,8 @@ def test_offset(struct, offset, expected):
     assert dt.offset(**offset) == DateTime(*expected)
 
 
-@parametrize('dt,replace,expected', [
-    (DateTime(2000, 1, 1),
+@parametrize('struct,replace,expected', [
+    ((2000, 1, 1),
      {'year': 1999,
       'month': 12,
       'day': 31,
@@ -90,15 +95,60 @@ def test_offset(struct, offset, expected):
       'second': 15,
       'microsecond': 10,
       'tzinfo': 'utc'},
-     DateTime(1999, 12, 31, 12, 30, 15, 10, 'utc')),
+     (1999, 12, 31, 12, 30, 15, 10, 'utc')),
 ])
-def test_replace(dt, replace, expected):
-    assert dt.replace(**replace) == expected
+def test_replace(struct, replace, expected):
+    dt = DateTime(*struct)
+    assert dt.replace(**replace) == DateTime(*expected)
 
 
 def test_iter():
     dt = DateTime(2000, 1, 1)
-    expected = (2000, 1, 1, 0, 0, 0, 0, pytz.utc)
+    expected = (2000, 1, 1, 0, 0, 0, 0, pytz.UTC)
 
     assert tuple(dt) == expected
     assert list(dt) == list(expected)
+
+
+@parametrize('struct,expected', [
+    ((2000, 1, 1, 12, 30, 45, 15), '2000-01-01T12:30:45.000015+00:00'),
+    ((2000, 1, 1, 12, 30, 45), '2000-01-01T12:30:45+00:00'),
+    ((2000, 1, 1, 12), '2000-01-01T12:00:00+00:00'),
+    ((2000, 1, 1), '2000-01-01T00:00:00+00:00'),
+])
+def test_isoformat(struct, expected):
+    dt = DateTime(*struct)
+    assert dt.isoformat() == expected
+
+
+@parametrize('struct,args,expected', [
+    ((2000, 1, 1, 12, 30, 45, 15),
+     {},
+     '2000-01-01T12:30:45.000015+00:00'),
+    ((2000, 1, 1, 12, 30),
+     {'tzinfo': 'US/Eastern'},
+     '2000-01-01T07:30:00-05:00'),
+])
+def test_format(struct, args, expected):
+    dt = DateTime(*struct)
+    assert dt.format(**args) == expected
+
+
+@parametrize('struct,tzinfo,expected', [
+    ((2000, 1, 1, 10), None,
+     datetime(2000, 1, 1, 10, tzinfo=pytz.UTC).astimezone(get_localzone())),
+    ((2000, 1, 1, 10), 'US/Eastern',
+     eastern.localize(datetime(2000, 1, 1, 5, 0)))
+])
+def test_localize(struct, tzinfo, expected):
+    dt = DateTime(*struct)
+    dt = dt.localize(tzinfo)
+
+    assert dt.year == expected.year
+    assert dt.month == expected.month
+    assert dt.day == expected.day
+    assert dt.hour == expected.hour
+    assert dt.minute == expected.minute
+    assert dt.second == expected.second
+    assert dt.microsecond == expected.microsecond
+    assert dt.tzinfo == expected.tzinfo
