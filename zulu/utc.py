@@ -130,7 +130,7 @@ class DateTime(object):
         elif isinstance(tzinfo, str):
             tz = pytz.timezone(tzinfo)
 
-        return self.datetime.replace(tzinfo=pytz.utc).astimezone(tz=tz)
+        return self.datetime.astimezone(tz=tz)
 
     def isoformat(self):
         return self.datetime.isoformat()
