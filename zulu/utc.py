@@ -135,7 +135,11 @@ class DateTime(object):
     def isoformat(self):
         return self.datetime.isoformat()
 
-    def format(self, format, tzinfo=None, locale=None):
+    def format(self, format=None, tzinfo=None, locale=None):
+        if format is None:
+            micro_fmt = '.SSSSSS' if self.microsecond > 0 else ''
+            format = 'YYYY-MM-DDTHH:mm:ss{0}xxx'.format(micro_fmt)
+
         args = {}
 
         if tzinfo:
