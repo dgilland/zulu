@@ -124,8 +124,8 @@ class DateTime(object):
     def naive(self):
         return self.datetime.replace(tzinfo=None)
 
-    def localize(self, tzinfo=Missing):
-        if tzinfo is Missing:
+    def localize(self, tzinfo=None):
+        if tzinfo is None:
             tz = tzlocal.get_localzone()
         elif isinstance(tzinfo, str):
             tz = pytz.timezone(tzinfo)
