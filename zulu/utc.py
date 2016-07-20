@@ -44,19 +44,6 @@ class DateTime(object):
 
         self.__dt = dt.astimezone(pytz.UTC)
 
-    def __repr__(self):  # pragma: no cover
-        return '<DateTime [{0}]>'.format(self.isoformat())
-
-    def __iter__(self):
-        return iter((self.year,
-                     self.month,
-                     self.day,
-                     self.hour,
-                     self.minute,
-                     self.second,
-                     self.microsecond,
-                     self.tzinfo))
-
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             other = other.datetime
@@ -207,6 +194,21 @@ class DateTime(object):
 
         return self.from_datetime(self.datetime.replace(**args))
 
+    def __repr__(self):  # pragma: no cover
+        return '<DateTime [{0}]>'.format(self.isoformat())
+
+    def __str__(self):
+        return self.isoformat()
+
+    def __iter__(self):
+        return iter((self.year,
+                     self.month,
+                     self.day,
+                     self.hour,
+                     self.minute,
+                     self.second,
+                     self.microsecond,
+                     self.tzinfo))
 
 def is_valid_datetime(obj):
     if isinstance(obj, datetime):
