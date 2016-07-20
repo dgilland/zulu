@@ -72,11 +72,12 @@ def test_copy():
     assert copy.datetime == dt.datetime
 
 
-@parametrize('dt,delta,expected', [
-    (DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
+@parametrize('struct,offset,expected', [
+    ((2000, 1, 1), {'days': 1}, (2000, 1, 2)),
 ])
-def test_delta(dt, delta, expected):
-    assert dt.delta(**delta) == expected
+def test_offset(struct, offset, expected):
+    dt = DateTime(*struct)
+    assert dt.offset(**offset) == DateTime(*expected)
 
 
 @parametrize('dt,replace,expected', [

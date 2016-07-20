@@ -153,14 +153,14 @@ class DateTime(object):
     def copy(self):
         return self.from_datetime(self.datetime)
 
-    def delta(self,
-              days=0,
-              seconds=0,
-              microseconds=0,
-              milliseconds=0,
-              minutes=0,
-              hours=0,
-              weeks=0):
+    def offset(self,
+               days=0,
+               seconds=0,
+               microseconds=0,
+               milliseconds=0,
+               minutes=0,
+               hours=0,
+               weeks=0):
         dt = self.datetime + timedelta(days,
                                        seconds,
                                        microseconds,
