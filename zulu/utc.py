@@ -132,8 +132,8 @@ class DateTime(object):
 
         return self.datetime.astimezone(tz=tz)
 
-    def isoformat(self):
-        return self.datetime.isoformat()
+    def isoformat(self, sep='T'):
+        return self.datetime.isoformat(sep)
 
     def format(self, format=None, tzinfo=None, locale=None):
         if format is None:
