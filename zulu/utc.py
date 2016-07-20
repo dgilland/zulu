@@ -44,11 +44,6 @@ class DateTime(object):
 
         self.__dt = dt.astimezone(pytz.UTC)
 
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            other = other.datetime
-        return self.datetime == other
-
     @classmethod
     def parse(cls, text):
         if isinstance(text, cls):
@@ -210,6 +205,33 @@ class DateTime(object):
                      self.microsecond,
                      self.tzinfo))
 
+    def __eq__(self, other):
+        return self.datetime == get_comparison(other)
+
+    def __le__(self, other):
+        return self.datetime <= get_comparison(other)
+
+    def __lt__(self, other):
+        return self.datetime < get_comparison(other)
+
+    def __ge__(self, other):
+        return self.datetime >= get_comparison(other)
+
+    def __gt__(self, other):
+        return self.datetime > get_comparison(other)
+
+    def __add__(self, other):
+        return self.from_datetime(self.datetime + other)
+
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        return self.from_datetime(self.datetime - other)
+
+    def __hash__(self):
+        return self.datetime.__hash__()
+
+
 def is_valid_datetime(obj):
     if isinstance(obj, datetime):
         return True
@@ -233,3 +255,9 @@ def make_timezone(obj):
         tz = obj
 
     return tz
+
+
+def get_comparison(other):
+    if isinstance(other, DateTime):
+        other = other.datetime
+    return other
