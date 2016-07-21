@@ -46,9 +46,7 @@ class DateTime(object):
 
     @classmethod
     def parse(cls, text):
-        if isinstance(text, cls):
-            dt = text.datetime
-        elif is_valid_datetime(text):
+        if is_valid_datetime(text):
             dt = text
         else:
             dt = parse(text)
