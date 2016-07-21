@@ -51,10 +51,10 @@ class DateTime(object):
         else:
             dt = parse(text)
 
-        return cls.from_datetime(dt)
+        return cls.fromdatetime(dt)
 
     @classmethod
-    def from_datetime(cls, dt):
+    def fromdatetime(cls, dt):
         return cls(dt.year,
                    dt.month,
                    dt.day,
@@ -131,7 +131,7 @@ class DateTime(object):
         return format_datetime(self.datetime, format, **args)
 
     def copy(self):
-        return self.from_datetime(self.datetime)
+        return self.fromdatetime(self.datetime)
 
     def offset(self,
                days=0,
@@ -148,7 +148,7 @@ class DateTime(object):
                                        minutes,
                                        hours,
                                        weeks)
-        return self.from_datetime(dt)
+        return self.fromdatetime(dt)
 
     def replace(self,
                 year=Missing,
@@ -185,7 +185,7 @@ class DateTime(object):
         if tzinfo is not Missing:
             args['tzinfo'] = make_timezone(tzinfo)
 
-        return self.from_datetime(self.datetime.replace(**args))
+        return self.fromdatetime(self.datetime.replace(**args))
 
     def __repr__(self):  # pragma: no cover
         return '<DateTime [{0}]>'.format(self.isoformat())

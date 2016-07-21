@@ -52,6 +52,16 @@ def test_parse_invalid(text):
         DateTime.parse(text)
 
 
+@parametrize('dt,expected', [
+    (eastern.localize(datetime(2000, 1, 1)),
+     datetime(2000, 1, 1, 5, tzinfo=pytz.UTC)),
+    (DateTime(2000, 1, 1, tzinfo='UTC'),
+     datetime(2000, 1, 1, tzinfo=pytz.UTC))
+])
+def test_fromdatetime(dt, expected):
+    assert DateTime.fromdatetime(dt).datetime == expected
+
+
 @parametrize('dt,properties', [
     (DateTime(2000, 1, 2, 3, 4, 5, 6),
      {'year': 2000,
