@@ -31,7 +31,7 @@ class DateTime(object):
                  microsecond=0,
                  tzinfo=None):
         if tzinfo and isinstance(tzinfo, str):
-            tzinfo = make_timezone(tzinfo)
+            tzinfo = pytz.timezone(tzinfo)
 
         naive = datetime(year, month, day, hour, minute, second, microsecond)
 
