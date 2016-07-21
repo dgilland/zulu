@@ -206,6 +206,9 @@ class DateTime(object):
     def __eq__(self, other):
         return self.datetime == get_comparison(other)
 
+    def __ne__(self, other):
+        return self.datetime != get_comparison(other)
+
     def __le__(self, other):
         return self.datetime <= get_comparison(other)
 

@@ -224,6 +224,24 @@ def test_compare_equal(dt, other, expected):
 
 
 @parametrize('dt,other,expected', [
+    (DateTime(2000, 1, 1),
+     DateTime(2000, 1, 1),
+     False),
+    (DateTime(2000, 1, 1),
+     datetime(2000, 1, 1, tzinfo=UTC),
+     False),
+    (DateTime(2000, 1, 2),
+     DateTime(2000, 1, 1),
+     True),
+    (DateTime(2000, 1, 2),
+     datetime(2000, 1, 1, tzinfo=UTC),
+     True),
+])
+def test_compare_not_equal(dt, other, expected):
+    assert (dt != other) is expected
+
+
+@parametrize('dt,other,expected', [
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
      DateTime(2000, 1, 1, 12, 30),
      False),
