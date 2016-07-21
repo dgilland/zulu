@@ -230,7 +230,7 @@ class DateTime(object):
         return self.from_datetime(self.datetime - other)
 
     def __hash__(self):
-        return self.datetime.__hash__()
+        return hash(self.datetime)
 
 
 def is_valid_datetime(obj):
