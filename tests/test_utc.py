@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
+from iso8601 import UTC
 import pytest
 import pytz
 from tzlocal import get_localzone
@@ -226,7 +227,7 @@ def test_subtract(dt, offset, expected):
 
 def test_hash():
     dt = DateTime(2000, 1, 1)
-    assert hash(dt) == hash(datetime(2000, 1, 1, tzinfo=timezone.utc))
+    assert hash(dt) == hash(datetime(2000, 1, 1, tzinfo=UTC))
 
 
 @parametrize('dt,other,expected', [
@@ -234,19 +235,13 @@ def test_hash():
      DateTime(2000, 1, 1),
      True),
     (DateTime(2000, 1, 1),
-     datetime(2000, 1, 1, tzinfo=timezone.utc),
-     True),
-    (datetime(2000, 1, 1, tzinfo=timezone.utc),
-     DateTime(2000, 1, 1),
+     datetime(2000, 1, 1, tzinfo=UTC),
      True),
     (DateTime(2000, 1, 2),
      DateTime(2000, 1, 1),
      False),
     (DateTime(2000, 1, 2),
-     datetime(2000, 1, 1, tzinfo=timezone.utc),
-     False),
-    (datetime(2000, 1, 2, tzinfo=timezone.utc),
-     DateTime(2000, 1, 1),
+     datetime(2000, 1, 1, tzinfo=UTC),
      False),
 ])
 def test_compare_equal(dt, other, expected):
@@ -276,13 +271,13 @@ def test_compare_not_equal(dt, other, expected):
      DateTime(2000, 1, 1, 12, 30),
      False),
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     datetime(2000, 1, 1, 12, 30, tzinfo=timezone.utc),
+     datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      False),
     (DateTime(2000, 1, 1, 12, 30),
      DateTime(2000, 1, 1, 12, 30, 45, 15),
      True),
     (DateTime(2000, 1, 1, 12, 30),
-     datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=timezone.utc),
+     datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      True),
 ])
 def test_compare_less_than(dt, other, expected):
@@ -294,19 +289,19 @@ def test_compare_less_than(dt, other, expected):
      DateTime(2000, 1, 1, 12, 30),
      False),
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     datetime(2000, 1, 1, 12, 30, tzinfo=timezone.utc),
+     datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      False),
     (DateTime(2000, 1, 1, 12, 30),
      DateTime(2000, 1, 1, 12, 30, 45, 15),
      True),
     (DateTime(2000, 1, 1, 12, 30),
-     datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=timezone.utc),
+     datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      True),
     (DateTime(2000, 1, 1, 12, 30),
      DateTime(2000, 1, 1, 12, 30),
      True),
     (DateTime(2000, 1, 1, 12, 30),
-     datetime(2000, 1, 1, 12, 30, tzinfo=timezone.utc),
+     datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
 ])
 def test_compare_less_than_equal(dt, other, expected):
@@ -318,13 +313,13 @@ def test_compare_less_than_equal(dt, other, expected):
      DateTime(2000, 1, 1, 12, 30),
      True),
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     datetime(2000, 1, 1, 12, 30, tzinfo=timezone.utc),
+     datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
     (DateTime(2000, 1, 1, 12, 30),
      DateTime(2000, 1, 1, 12, 30, 45, 15),
      False),
     (DateTime(2000, 1, 1, 12, 30),
-     datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=timezone.utc),
+     datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      False),
 ])
 def test_compare_greater_than(dt, other, expected):
@@ -336,19 +331,19 @@ def test_compare_greater_than(dt, other, expected):
      DateTime(2000, 1, 1, 12, 30),
      True),
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     datetime(2000, 1, 1, 12, 30, tzinfo=timezone.utc),
+     datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
     (DateTime(2000, 1, 1, 12, 30),
      DateTime(2000, 1, 1, 12, 30, 45, 15),
      False),
     (DateTime(2000, 1, 1, 12, 30),
-     datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=timezone.utc),
+     datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      False),
     (DateTime(2000, 1, 1, 12, 30),
      DateTime(2000, 1, 1, 12, 30),
      True),
     (DateTime(2000, 1, 1, 12, 30),
-     datetime(2000, 1, 1, 12, 30, tzinfo=timezone.utc),
+     datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
 ])
 def test_compare_greater_than_equal(dt, other, expected):
