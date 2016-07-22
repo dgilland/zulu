@@ -45,11 +45,11 @@ class DateTime(object):
         self.__dt = dt.astimezone(pytz.UTC)
 
     @classmethod
-    def parse(cls, text):
-        if is_valid_datetime(text):
-            dt = text
+    def parse(cls, obj):
+        if is_valid_datetime(obj):
+            dt = obj
         else:
-            dt = parse(text)
+            dt = parse(obj)
 
         return cls.fromdatetime(dt)
 
