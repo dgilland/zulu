@@ -159,33 +159,33 @@ class DateTime(object):
                 second=Missing,
                 microsecond=Missing,
                 tzinfo=Missing):
-        args = {}
+        args = list(self)
 
         if year is not Missing:
-            args['year'] = year
+            args[0] = year
 
         if month is not Missing:
-            args['month'] = month
+            args[1] = month
 
         if day is not Missing:
-            args['day'] = day
+            args[2] = day
 
         if hour is not Missing:
-            args['hour'] = hour
+            args[3] = hour
 
         if minute is not Missing:
-            args['minute'] = minute
+            args[4] = minute
 
         if second is not Missing:
-            args['second'] = second
+            args[5] = second
 
         if microsecond is not Missing:
-            args['microsecond'] = microsecond
+            args[6] = microsecond
 
         if tzinfo is not Missing:
-            args['tzinfo'] = make_timezone(tzinfo)
+            args[7] = tzinfo
 
-        return self.fromdatetime(self.datetime.replace(**args))
+        return DateTime(*args)
 
     def __repr__(self):  # pragma: no cover
         return '<DateTime [{0}]>'.format(self.isoformat())
@@ -237,6 +237,8 @@ class DateTime(object):
     def __hash__(self):
         return hash(self.datetime)
 
+    # TODO: Pickle support?
+
 
 def is_valid_datetime(obj):
     if isinstance(obj, datetime):
@@ -251,16 +253,6 @@ def is_valid_datetime(obj):
                  'microsecond',
                  'tzinfo')
         return all(hasattr(obj, attr) for attr in attrs)
-
-
-def make_timezone(obj):
-    # TODO: Improve default handling of non-strings?
-    if isinstance(obj, str):
-        tz = pytz.timezone(obj)
-    else:
-        tz = obj
-
-    return tz
 
 
 def get_comparison(other):

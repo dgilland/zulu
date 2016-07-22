@@ -110,12 +110,21 @@ def test_offset(dt, offset, expected):
       'hour': 12,
       'minute': 30,
       'second': 15,
+      'microsecond': 10},
+     DateTime(1999, 12, 31, 12, 30, 15, 10)),
+    (DateTime(2000, 1, 1),
+     {'year': 1999,
+      'month': 12,
+      'day': 31,
+      'hour': 12,
+      'minute': 30,
+      'second': 15,
       'microsecond': 10,
-      'tzinfo': 'utc'},
-     DateTime(1999, 12, 31, 12, 30, 15, 10, 'utc')),
+      'tzinfo': 'US/Eastern'},
+     DateTime(1999, 12, 31, 17, 30, 15, 10)),
 ])
 def test_replace(dt, replace, expected):
-    assert dt.replace(**replace) == DateTime(*expected)
+    assert dt.replace(**replace) == expected
 
 
 def test_iter():
