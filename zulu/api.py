@@ -5,5 +5,4 @@
 from .utc import DateTime
 
 
-def parse(text):
-    return DateTime.parse(text)
+parse = DateTime.parse
