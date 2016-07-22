@@ -39,7 +39,8 @@ eastern = pytz.timezone('US/Eastern')
      datetime(1999, 12, 31, 12, 1, tzinfo=pytz.UTC)),
     (datetime(2000, 1, 1, tzinfo=pytz.UTC),
      datetime(2000, 1, 1, tzinfo=pytz.UTC)),
-    (DateTime(2000, 1, 1), DateTime(2000, 1, 1)),
+    (DateTime(2000, 1, 1),
+     datetime(2000, 1, 1, tzinfo=pytz.UTC)),
 ])
 def test_parse(text, expected):
     assert DateTime.parse(text).datetime == expected
