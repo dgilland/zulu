@@ -17,13 +17,20 @@ eastern = pytz.timezone('US/Eastern')
 
 
 @parametrize('text,expected', [
-    ('2000', datetime(2000, 1, 1, tzinfo=pytz.UTC)),
-    ('2000-01', datetime(2000, 1, 1, tzinfo=pytz.UTC)),
-    ('2000-01-01', datetime(2000, 1, 1, tzinfo=pytz.UTC)),
-    ('2000-03-05', datetime(2000, 3, 5, tzinfo=pytz.UTC)),
-    ('2000-01-01T12:30', datetime(2000, 1, 1, 12, 30, tzinfo=pytz.UTC)),
-    ('2000-01-01 12:30', datetime(2000, 1, 1, 12, 30, tzinfo=pytz.UTC)),
-    ('2000-01-01T12:30:30', datetime(2000, 1, 1, 12, 30, 30, tzinfo=pytz.UTC)),
+    ('2000',
+     datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+    ('2000-01',
+     datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+    ('2000-01-01',
+     datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+    ('2000-03-05',
+     datetime(2000, 3, 5, tzinfo=pytz.UTC)),
+    ('2000-01-01T12:30',
+     datetime(2000, 1, 1, 12, 30, tzinfo=pytz.UTC)),
+    ('2000-01-01 12:30',
+     datetime(2000, 1, 1, 12, 30, tzinfo=pytz.UTC)),
+    ('2000-01-01T12:30:30',
+     datetime(2000, 1, 1, 12, 30, 30, tzinfo=pytz.UTC)),
     ('2000-01-01T12:30:30-0400',
      datetime(2000, 1, 1, 16, 30, 30, tzinfo=pytz.UTC)),
     ('2000-01-01T12:00:00-2359',
@@ -31,7 +38,8 @@ eastern = pytz.timezone('US/Eastern')
     ('2000-01-01T12:00:00+2359',
      datetime(1999, 12, 31, 12, 1, tzinfo=pytz.UTC)),
     (datetime(2000, 1, 1, tzinfo=pytz.UTC),
-     datetime(2000, 1, 1, tzinfo=pytz.UTC))
+     datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+    (DateTime(2000, 1, 1), DateTime(2000, 1, 1)),
 ])
 def test_parse(text, expected):
     assert DateTime.parse(text).datetime == expected
@@ -128,6 +136,11 @@ def test_isoformat(dt, expected):
     assert dt.isoformat() == expected
 
 
+def test_str():
+    dt = DateTime(2000, 1, 1)
+    assert str(dt) == dt.isoformat()
+
+
 @parametrize('dt,args,expected', [
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
      {},
@@ -135,6 +148,12 @@ def test_isoformat(dt, expected):
     (DateTime(2000, 1, 1, 12, 30),
      {'tzinfo': 'US/Eastern'},
      '2000-01-01T07:30:00-05:00'),
+    (DateTime(2000, 1, 1, 12, 30),
+     {'format': 'E MMM dd', 'locale': 'en'},
+     'Sat Jan 01'),
+    (DateTime(2000, 1, 1, 12, 30),
+     {'format': 'E MMM dd', 'locale': 'de'},
+     'Sa. Jan. 01'),
 ])
 def test_format(dt, args, expected):
     assert dt.format(**args) == expected
