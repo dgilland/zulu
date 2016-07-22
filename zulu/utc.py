@@ -227,7 +227,12 @@ class DateTime(object):
     __radd__ = __add__
 
     def __sub__(self, other):
-        return self.from_datetime(self.datetime - other)
+        if isinstance(other, DateTime):
+            other = other.datetime
+        elif isinstance(other, datetime):
+            other = self.fromdatetime(other).datetime
+
+        return self.datetime - other
 
     def __hash__(self):
         return hash(self.datetime)

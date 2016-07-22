@@ -176,7 +176,7 @@ def test_add(dt, delta, expected):
     assert dt == expected
 
 
-@parametrize('dt,delta,expected', [
+@parametrize('dt,offset,expected', [
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
      timedelta(days=1,
                hours=1,
@@ -186,12 +186,42 @@ def test_add(dt, delta, expected):
                microseconds=1),
      DateTime(1999, 12, 31, 11, 29, 43, 999014)),
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
+     DateTime(1999, 12, 31, 11, 29, 43, 999014),
+     timedelta(days=1,
+               hours=1,
+               minutes=1,
+               seconds=1,
+               milliseconds=1,
+               microseconds=1)),
+    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+     datetime(1999, 12, 31, 11, 29, 43, 999014),
+     timedelta(days=1,
+               hours=1,
+               minutes=1,
+               seconds=1,
+               milliseconds=1,
+               microseconds=1)),
+    (DateTime(1999, 12, 31, 11, 29, 43, 999014),
+     DateTime(2000, 1, 1, 12, 30, 45, 15),
+     timedelta(days=-1,
+               hours=-1,
+               minutes=-1,
+               seconds=-1,
+               milliseconds=-1,
+               microseconds=-1)),
+    (DateTime(2000, 1, 1, 12, 30, 45, 15),
      timedelta(weeks=1),
      DateTime(1999, 12, 25, 12, 30, 45, 15)),
+    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+     DateTime(1999, 12, 25, 12, 30, 45, 15),
+     timedelta(weeks=1)),
+    (DateTime(1999, 12, 25, 12, 30, 45, 15),
+     DateTime(2000, 1, 1, 12, 30, 45, 15),
+     timedelta(weeks=-1)),
 ])
-def test_subtract(dt, delta, expected):
-    dt -= delta
-    assert dt == expected
+def test_subtract(dt, offset, expected):
+    result = dt - offset
+    assert result == expected
 
 
 def test_hash():
