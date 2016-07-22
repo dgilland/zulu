@@ -222,7 +222,7 @@ class DateTime(object):
         return self.datetime > get_comparison(other)
 
     def __add__(self, other):
-        return self.from_datetime(self.datetime + other)
+        return self.fromdatetime(self.datetime + get_comparison(other))
 
     __radd__ = __add__
 
