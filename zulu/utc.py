@@ -232,7 +232,12 @@ class DateTime(object):
         elif isinstance(other, datetime):
             other = self.fromdatetime(other).datetime
 
-        return self.datetime - other
+        result = self.datetime - other
+
+        if isinstance(result, datetime):
+            return self.fromdatetime(result)
+        else:
+            return result
 
     def __hash__(self):
         return hash(self.datetime)
