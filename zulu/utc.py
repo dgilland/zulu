@@ -10,6 +10,7 @@ import pytz
 import tzlocal
 
 from .parser import parse
+from ._compat import string_types
 
 
 class _Missing(object):
@@ -30,7 +31,7 @@ class DateTime(object):
                  second=0,
                  microsecond=0,
                  tzinfo=None):
-        if tzinfo and isinstance(tzinfo, str):
+        if tzinfo and isinstance(tzinfo, string_types):
             tzinfo = pytz.timezone(tzinfo)
 
         naive = datetime(year, month, day, hour, minute, second, microsecond)
