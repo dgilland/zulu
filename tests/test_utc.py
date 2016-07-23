@@ -159,11 +159,8 @@ def test_str():
      {'tzinfo': 'US/Eastern'},
      '2000-01-01T07:30:00-05:00'),
     (DateTime(2000, 1, 1, 12, 30),
-     {'format': 'E MMM dd', 'locale': 'en'},
-     'Sat Jan 01'),
-    (DateTime(2000, 1, 1, 12, 30),
-     {'format': 'E MMM dd', 'locale': 'de'},
-     'Sa. Jan. 01'),
+     {'format': '%a %b %d'},
+     'Sat Jan 01')
 ])
 def test_format(dt, args, expected):
     assert dt.format(**args) == expected

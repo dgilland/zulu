@@ -5,7 +5,6 @@
 from datetime import datetime, timedelta
 from functools import wraps
 
-from babel.dates import format_datetime
 import pytz
 import tzlocal
 
@@ -116,20 +115,16 @@ class DateTime(object):
     def isoformat(self, sep='T'):
         return self.datetime.isoformat(sep)
 
-    def format(self, format=None, tzinfo=None, locale=None):
+    def format(self, format=None, tzinfo=None):
+        if tzinfo is not None:
+            dt = self.localize(tzinfo)
+        else:
+            dt = self.datetime
+
         if format is None:
-            micro_fmt = '.SSSSSS' if self.microsecond > 0 else ''
-            format = 'YYYY-MM-DDTHH:mm:ss{0}xxx'.format(micro_fmt)
-
-        args = {}
-
-        if tzinfo:
-            args['tzinfo'] = tzinfo
-
-        if locale:
-            args['locale'] = locale
-
-        return format_datetime(self.datetime, format, **args)
+            return dt.isoformat()
+        else:
+            return dt.strftime(format)
 
     def copy(self):
         return self.fromdatetime(self.datetime)
