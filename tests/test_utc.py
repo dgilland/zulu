@@ -46,16 +46,19 @@ def test_parse(string, expected):
     assert DateTime.parse(string).datetime == expected
 
 
-@parametrize('string,formats,expected', [
+@parametrize('string,kargs,expected', [
     ('2000',
-     '%Y',
+     {'formats': '%Y'},
      datetime(2000, 1, 1, tzinfo=UTC)),
     ('1-5-2000 12:30 AM',
-     '%m-%d-%Y %I:%M %p',
+     {'formats': '%m-%d-%Y %I:%M %p'},
      datetime(2000, 1, 5, 0, 30, tzinfo=UTC)),
+    ('1-5-2000 12:30 AM',
+     {'formats': '%m-%d-%Y %I:%M %p', 'default_tzinfo': eastern},
+     datetime(2000, 1, 5, 5, 30, tzinfo=UTC)),
 ])
-def test_parse_formats(string, formats, expected):
-    assert DateTime.parse(string, formats).datetime == expected
+def test_parse_formats(string, kargs, expected):
+    assert DateTime.parse(string, **kargs).datetime == expected
 
 
 @parametrize('string', [

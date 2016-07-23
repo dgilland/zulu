@@ -45,8 +45,8 @@ class DateTime(object):
         self.__dt = dt.astimezone(pytz.UTC)
 
     @classmethod
-    def parse(cls, obj, formats=None):
-        dt = parse(obj, formats=formats)
+    def parse(cls, obj, formats=None, default_tzinfo=None):
+        dt = parse(obj, formats=formats, default_tzinfo=default_tzinfo)
         return cls.fromdatetime(dt)
 
     @classmethod

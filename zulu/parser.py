@@ -18,16 +18,19 @@ class ParseError(Exception):
     pass
 
 
-def parse(obj, formats=None):
+def parse(obj, formats=None, default_tzinfo=None):
     if is_valid_datetime(obj):
         return obj
 
     if formats is None:
-        formats = ['iso8601']
+        formats = ['iso8601', 'timestamp']
     elif not isinstance(formats, (list, tuple)):
         formats = [formats]
 
     dt = parse_formats(obj, formats)
+
+    if dt.tzinfo is None and default_tzinfo is not None:
+        dt = dt.replace(tzinfo=get_timezone(default_tzinfo))
 
     if not is_valid_timezone(dt.tzinfo):
         raise ParseError('Time zone offset must be strictly between -24/+24 '
@@ -62,7 +65,7 @@ def parse_format(string, format):
 
 
 def get_timezone(tzinfo):
-    if tzinfo == 'local' or tzinfo is None:
+    if tzinfo == 'local':
         tz = tzlocal.get_localzone()
     elif isinstance(tzinfo, string_types):
         tz = pytz.timezone(tzinfo)
@@ -88,5 +91,15 @@ def is_valid_datetime(obj):
 
 
 def is_valid_timezone(tzinfo):
-    return (tzinfo is None or
-            abs(tzinfo.utcoffset(tzinfo)) < MAX_TIMEZONE_OFFSET)
+    if tzinfo is None:
+        return True
+
+    if not callable(getattr(tzinfo, 'utcoffset', None)):  # pragma: no cover
+        return False
+
+    if hasattr(tzinfo, '_utcoffset'):
+        utcoffset = tzinfo._utcoffset
+    else:
+        utcoffset = tzinfo.utcoffset(tzinfo)
+
+    return abs(utcoffset) < MAX_TIMEZONE_OFFSET
