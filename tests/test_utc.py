@@ -16,6 +16,20 @@ from .fixtures import parametrize
 eastern = pytz.timezone('US/Eastern')
 
 
+def test_now():
+    dt = DateTime.now()
+    expected = datetime.utcnow()
+
+    # NOTE: Intentionally skip comparison to microsecond since they will almost
+    # always be different.
+    assert dt.year == expected.year
+    assert dt.month == expected.month
+    assert dt.day == expected.day
+    assert dt.hour == expected.hour
+    assert dt.minute == expected.minute
+    assert dt.second == expected.second
+
+
 @parametrize('string,expected', [
     ('2000',
      datetime(2000, 1, 1, tzinfo=UTC)),
