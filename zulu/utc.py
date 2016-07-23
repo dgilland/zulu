@@ -60,6 +60,10 @@ class DateTime(object):
                    dt.microsecond,
                    dt.tzinfo)
 
+    @classmethod
+    def fromtimestamp(cls, timestamp, tzinfo=pytz.UTC):
+        return cls.fromdatetime(datetime.fromtimestamp(timestamp, tzinfo))
+
     @property
     def datetime(self):
         return self.__dt

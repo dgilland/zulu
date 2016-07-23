@@ -84,6 +84,13 @@ def test_fromdatetime(dt, expected):
     assert DateTime.fromdatetime(dt).datetime == expected
 
 
+@parametrize('timestamp,expected', [
+    (0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
+])
+def test_fromtimestamp(timestamp, expected):
+    assert DateTime.fromtimestamp(timestamp).datetime == expected
+
+
 @parametrize('dt,properties', [
     (DateTime(2000, 1, 2, 3, 4, 5, 6),
      {'year': 2000,
