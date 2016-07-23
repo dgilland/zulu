@@ -101,6 +101,8 @@ class DateTime(object):
         return self.datetime.replace(tzinfo=None)
 
     def localize(self, tzinfo='local'):
+        if tzinfo is None:
+            tzinfo = 'local'
         tz = get_timezone(tzinfo)
         return self.datetime.astimezone(tz=tz)
 
@@ -231,6 +233,7 @@ class DateTime(object):
         return hash(self.datetime)
 
     # TODO: Pickle support?
+
 
 def get_comparison(other):
     if isinstance(other, DateTime):
