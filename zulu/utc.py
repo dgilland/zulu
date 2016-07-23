@@ -45,12 +45,8 @@ class DateTime(object):
         self.__dt = dt.astimezone(pytz.UTC)
 
     @classmethod
-    def parse(cls, obj):
-        if is_valid_datetime(obj):
-            dt = obj
-        else:
-            dt = parse(obj)
-
+    def parse(cls, obj, formats=None):
+        dt = parse(obj, formats=formats)
         return cls.fromdatetime(dt)
 
     @classmethod
@@ -239,22 +235,6 @@ class DateTime(object):
         return hash(self.datetime)
 
     # TODO: Pickle support?
-
-
-def is_valid_datetime(obj):
-    if isinstance(obj, datetime):
-        return True
-    else:
-        attrs = ('year',
-                 'month',
-                 'day',
-                 'hour',
-                 'minute',
-                 'second',
-                 'microsecond',
-                 'tzinfo')
-        return all(hasattr(obj, attr) for attr in attrs)
-
 
 def get_comparison(other):
     if isinstance(other, DateTime):

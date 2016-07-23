@@ -16,37 +16,49 @@ from .fixtures import parametrize
 eastern = pytz.timezone('US/Eastern')
 
 
-@parametrize('text,expected', [
+@parametrize('string,expected', [
     ('2000',
-     datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+     datetime(2000, 1, 1, tzinfo=UTC)),
     ('2000-01',
-     datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+     datetime(2000, 1, 1, tzinfo=UTC)),
     ('2000-01-01',
-     datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+     datetime(2000, 1, 1, tzinfo=UTC)),
     ('2000-03-05',
-     datetime(2000, 3, 5, tzinfo=pytz.UTC)),
+     datetime(2000, 3, 5, tzinfo=UTC)),
     ('2000-01-01T12:30',
-     datetime(2000, 1, 1, 12, 30, tzinfo=pytz.UTC)),
+     datetime(2000, 1, 1, 12, 30, tzinfo=UTC)),
     ('2000-01-01 12:30',
-     datetime(2000, 1, 1, 12, 30, tzinfo=pytz.UTC)),
+     datetime(2000, 1, 1, 12, 30, tzinfo=UTC)),
     ('2000-01-01T12:30:30',
-     datetime(2000, 1, 1, 12, 30, 30, tzinfo=pytz.UTC)),
+     datetime(2000, 1, 1, 12, 30, 30, tzinfo=UTC)),
     ('2000-01-01T12:30:30-0400',
-     datetime(2000, 1, 1, 16, 30, 30, tzinfo=pytz.UTC)),
+     datetime(2000, 1, 1, 16, 30, 30, tzinfo=UTC)),
     ('2000-01-01T12:00:00-2359',
-     datetime(2000, 1, 2, 11, 59, tzinfo=pytz.UTC)),
+     datetime(2000, 1, 2, 11, 59, tzinfo=UTC)),
     ('2000-01-01T12:00:00+2359',
-     datetime(1999, 12, 31, 12, 1, tzinfo=pytz.UTC)),
-    (datetime(2000, 1, 1, tzinfo=pytz.UTC),
-     datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+     datetime(1999, 12, 31, 12, 1, tzinfo=UTC)),
+    (datetime(2000, 1, 1, tzinfo=UTC),
+     datetime(2000, 1, 1, tzinfo=UTC)),
     (DateTime(2000, 1, 1),
-     datetime(2000, 1, 1, tzinfo=pytz.UTC)),
+     datetime(2000, 1, 1, tzinfo=UTC)),
 ])
-def test_parse(text, expected):
-    assert DateTime.parse(text).datetime == expected
+def test_parse(string, expected):
+    assert DateTime.parse(string).datetime == expected
 
 
-@parametrize('text', [
+@parametrize('string,formats,expected', [
+    ('2000',
+     '%Y',
+     datetime(2000, 1, 1, tzinfo=UTC)),
+    ('1-5-2000 12:30 AM',
+     '%m-%d-%Y %I:%M %p',
+     datetime(2000, 1, 5, 0, 30, tzinfo=UTC)),
+])
+def test_parse_formats(string, formats, expected):
+    assert DateTime.parse(string, formats).datetime == expected
+
+
+@parametrize('string', [
     '2000/01/01',
     '01/01/2000',
     '01-01-2000',
@@ -57,9 +69,9 @@ def test_parse(text, expected):
     '2000-01-01T00:00:00+2500',
     '2000-01-01T00:00:00-2500',
 ])
-def test_parse_invalid(text):
+def test_parse_invalid(string):
     with pytest.raises(ParseError):
-        DateTime.parse(text)
+        DateTime.parse(string)
 
 
 @parametrize('dt,expected', [
