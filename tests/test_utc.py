@@ -179,9 +179,14 @@ def test_format(dt, args, expected):
 
 
 @parametrize('dt,tzinfo,expected', [
-    (DateTime(2000, 1, 1, 10), None,
+    (DateTime(2000, 1, 1, 10),
+     None,
      datetime(2000, 1, 1, 10, tzinfo=pytz.UTC).astimezone(get_localzone())),
-    (DateTime(2000, 1, 1, 10), 'US/Eastern',
+    (DateTime(2000, 1, 1, 10),
+     'US/Eastern',
+     eastern.localize(datetime(2000, 1, 1, 5, 0))),
+    (DateTime(2000, 1, 1, 10),
+     pytz.timezone('US/Eastern'),
      eastern.localize(datetime(2000, 1, 1, 5, 0)))
 ])
 def test_localize(dt, tzinfo, expected):

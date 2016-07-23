@@ -61,6 +61,17 @@ def parse_format(string, format):
         return datetime.strptime(string, format)
 
 
+def get_timezone(tzinfo):
+    if tzinfo == 'local' or tzinfo is None:
+        tz = tzlocal.get_localzone()
+    elif isinstance(tzinfo, string_types):
+        tz = pytz.timezone(tzinfo)
+    else:
+        tz = tzinfo
+
+    return tz
+
+
 def is_valid_datetime(obj):
     if isinstance(obj, datetime):
         return True

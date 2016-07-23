@@ -8,7 +8,7 @@ from functools import wraps
 import pytz
 import tzlocal
 
-from .parser import parse
+from .parser import get_timezone, parse
 from ._compat import string_types
 
 
@@ -100,12 +100,8 @@ class DateTime(object):
     def naive(self):
         return self.datetime.replace(tzinfo=None)
 
-    def localize(self, tzinfo=None):
-        if tzinfo is None:
-            tz = tzlocal.get_localzone()
-        elif isinstance(tzinfo, str):
-            tz = pytz.timezone(tzinfo)
-
+    def localize(self, tzinfo='local'):
+        tz = get_timezone(tzinfo)
         return self.datetime.astimezone(tz=tz)
 
     def isoformat(self, sep='T'):
