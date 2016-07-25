@@ -3,9 +3,13 @@
 API Reference
 =============
 
-.. testsetup::
 
-    from zulu import *
+.. autofunction:: zulu.now
 
+.. autofunction:: zulu.parse
 
-.. automodule:: zulu
+.. autoclass:: zulu.DateTime
+    :members:
+    :inherited-members:
+
+.. autoclass:: zulu.ParseError

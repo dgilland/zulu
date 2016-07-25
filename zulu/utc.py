@@ -76,19 +76,19 @@ class DateTime(datetime):
 
     @classmethod
     def now(cls):
-        """Return the current UTC date and time as :class:`DateTime` object.
+        """Return the current UTC date and time as :class:`.DateTime` object.
 
         Returns:
-            DateTime
+            :class:`.DateTime`
         """
         return cls.utcnow()
 
     @classmethod
     def parse(cls, obj, formats=None, default_tz=None):
-        """Return :class:`DateTime` object parsed from `obj`.
+        """Return :class:`.DateTime` object parsed from `obj`.
 
         Args:
-            obj (mixed): Object to parse into a :class:`DateTime` object.
+            obj (mixed): Object to parse into a :class:`.DateTime` object.
             formats (list, optional): List of string formats to use when
                 parsing. Defaults to ``['ISO8601', 'timestamp']``.
             default_tz (None|str|tzinfo, optional): Default timezone to use
@@ -96,18 +96,18 @@ class DateTime(datetime):
                 Defaults to ``UTC``.
 
         Returns:
-            DateTime
+            :class:`.DateTime`
         """
         dt = parse(obj, formats=formats, default_tz=default_tz)
         return cls.fromdatetime(dt)
 
     @classmethod
     def fromdatetime(cls, dt):
-        """Return :class:`DateTime` object from a native datetime
+        """Return :class:`.DateTime` object from a native datetime
         object.
 
         Returns:
-            DateTime
+            :class:`.DateTime`
         """
         return cls(dt.year,
                    dt.month,
@@ -120,7 +120,7 @@ class DateTime(datetime):
 
     @classmethod
     def fromtimestamp(cls, timestamp, tz=pytz.UTC):
-        """Return :class:`DateTime` object from a POSIX timestamp.
+        """Return :class:`.DateTime` object from a POSIX timestamp.
 
         Args:
             timestamp (int): POSIX timestamp such as is returned by
@@ -129,50 +129,50 @@ class DateTime(datetime):
                 present only for datetime class compatibility.
 
         Returns:
-            DateTime
+            :class:`.DateTime`
         """
         tz = pytz.UTC
         return super(DateTime, cls).fromtimestamp(timestamp, tz)
 
     @classmethod
     def utcfromtimestamp(cls, timestamp):
-        """Return :class:`DateTime` object from a POSIX timestamp.
+        """Return :class:`.DateTime` object from a POSIX timestamp.
 
         Args:
             timestamp (int): POSIX timestamp such as is returned by
                 ``time.time()``.
 
         Returns:
-            DateTime
+            :class:`.DateTime`
         """
         return cls.fromtimestamp(timestamp)
 
     @classmethod
     def fromordinal(cls, ordinal):
-        """Return :class:`DateTime` object from a proleptic Gregorian ordinal,
+        """Return :class:`.DateTime` object from a proleptic Gregorian ordinal,
         where January 1 of year 1 has ordinal 1.
 
         Args:
             ordinal (int): A proleptic Gregorian ordinal.
 
         Returns:
-            DateTime
+            :class:`.DateTime`
         """
         return cls.fromdatetime(datetime.fromordinal(ordinal))
 
     @classmethod
     def combine(cls, date, time):
-        """Return :class:`DateTime` object by combining the date part from
+        """Return :class:`.DateTime` object by combining the date part from
         `date` and the time part from `time`.
 
         Args:
-            date (mixed): Either a :class:`DateTime`, ``datetime.date``,
+            date (mixed): Either a :class:`.DateTime`, ``datetime.date``,
                 or ``datetime.datetime`` object to use as the date part.
-            date (mixed): Either a :class:`DateTime` or ``datetime.time``
+            date (mixed): Either a :class:`.DateTime` or ``datetime.time``
                 object to use as the time part.
 
         Returns:
-            DateTime
+            :class:`.DateTime`
         """
         if callable(getattr(date, 'date', None)):
             date = date.date()
@@ -184,14 +184,20 @@ class DateTime(datetime):
 
     @property
     def naive(self):
-        """The datetime object as a naive datetime (tzinfo=None)."""
+        """The datetime object as a naive datetime (tzinfo=None).
+
+        .. note:: This returns a native datetime object.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return super(DateTime, self).replace(tzinfo=None)
 
     def timestamp(self):
         """Return the POSIX timestamp.
 
         Returns:
-            int
+            :class:`float`
         """
         return (self - self.epoch).total_seconds()
 
@@ -199,7 +205,7 @@ class DateTime(datetime):
         """Return a new :class`DateTime` instance with the same datetime value.
 
         Returns:
-            DateTime
+            :class:`.DateTime`
         """
         return DateTime(*tuple(self))
 
@@ -214,7 +220,7 @@ class DateTime(datetime):
                 formatting. Defaults to ``None``.
 
         Returns:
-            str
+            :class:`str`
         """
         if tz is not None:
             dt = self.astimezone(tz)
@@ -235,7 +241,7 @@ class DateTime(datetime):
             tz (None|str|tzinfo, optional): Timezone to shift to.
 
         Returns:
-            datetime
+            :class:`.DateTime`
         """
         if tz is None:
             tz = 'local'
@@ -251,10 +257,10 @@ class DateTime(datetime):
               hours=0,
               weeks=0):
         """Shift datetime using a timedelta created from the supplied
-        arguments and return a new :class:`DateTime` instance.
+        arguments and return a new :class:`.DateTime` instance.
 
         Returns:
-            DateTime
+            :class:`.DateTime`
         """
         dt = self + timedelta(days,
                               seconds,
@@ -275,10 +281,10 @@ class DateTime(datetime):
                 microsecond=None,
                 tzinfo=None):
         """Replace datetime attributes and return a new
-        :class:`DateTime` instance.
+        :class:`.DateTime` instance.
 
         Returns:
-            DateTime
+            :class:`.DateTime`
         """
         args = list(self)
 
@@ -309,15 +315,15 @@ class DateTime(datetime):
         return DateTime(*args)
 
     def __repr__(self):  # pragma: no cover
-        """Return representation of :class:`DateTime`."""
+        """Return representation of :class:`.DateTime`."""
         return '<DateTime [{0}]>'.format(self.isoformat())
 
     def __str__(self):
-        """Return :class:`DateTime` instance as an ISO 8601 string."""
+        """Return :class:`.DateTime` instance as an ISO 8601 string."""
         return self.isoformat()
 
     def __iter__(self):
-        """Return :class:`DateTime` instance as an iterator that yields a tuple
+        """Return :class:`.DateTime` instance as an iterator that yields a tuple
         corresponding to
         ``(year, month, day, hour, minute, second, microsecond, tzinfo)``.
         """
@@ -331,12 +337,13 @@ class DateTime(datetime):
                      self.tzinfo))
 
     def __sub__(self, other):
-        """Subtract a ``timedelta``, ``datetime``, or :class:`DateTime` and
+        """Subtract a ``timedelta``, ``datetime``, or :class:`.DateTime` and
         return the result.
 
         Returns:
-            DateTime: if subtracting a ``timedelta``
-            timedelta: if subtracting a ``datetime`` or :class:`DateTime`
+            :class:`.DateTime`: if subtracting a :class:`timedelta`
+            :class:`timedelta`: if subtracting a :class:`datetime` or
+                :class:`.DateTime`
         """
         if not isinstance(other, DateTime) and isinstance(other, datetime):
             other = self.fromdatetime(other)
@@ -349,6 +356,11 @@ class DateTime(datetime):
             return result
 
 
+#: Minimum DateTime value.
 DateTime.min = DateTime(1, 1, 1)
+
+#: Maximum DateTime value.
 DateTime.max = DateTime(9999, 12, 31, 23, 59, 59, 999999)
+
+#: DateTime value of EPOCH.
 DateTime.epoch = DateTime(1970, 1, 1)
