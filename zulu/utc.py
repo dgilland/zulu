@@ -114,7 +114,7 @@ class DateTime(object):
 
     @property
     def timestamp(self):
-        return self.datetime.timestamp()
+        return (self - _EPOCH).total_seconds()
 
     @property
     def naive(self):
@@ -293,6 +293,9 @@ class DateTime(object):
         return hash(self.datetime)
 
     # TODO: Pickle support?
+
+
+_EPOCH = DateTime(1970, 1, 1)
 
 
 def get_comparison(other):
