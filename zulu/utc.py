@@ -106,12 +106,11 @@ class DateTime(object):
         return self.datetime.tzinfo
 
     @property
-    def timestamp(self):
-        return (self - _EPOCH).total_seconds()
-
-    @property
     def naive(self):
         return self.datetime.replace(tzinfo=None)
+
+    def timestamp(self):
+        return (self - _EPOCH).total_seconds()
 
     def utcoffset(self):
         return self.datetime.utcoffset()

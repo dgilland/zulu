@@ -118,8 +118,7 @@ def test_fromtimestamp(timestamp, expected):
       'minute': 4,
       'second': 5,
       'microsecond': 6,
-      'naive': datetime(2000, 1, 2, 3, 4, 5, 6),
-      'timestamp': 946782245.000006}),
+      'naive': datetime(2000, 1, 2, 3, 4, 5, 6)}),
 ])
 def test_basic_properties(dt, properties):
     for prop, val in properties.items():
@@ -138,7 +137,8 @@ def test_basic_properties(dt, properties):
       'isocalendar': (1999, 52, 7),
       'ctime': 'Sun Jan  2 03:04:05 2000',
       'toordinal': 730121,
-      'timetuple': struct_time((2000, 1, 2, 3, 4, 5, 6, 2, 0))}),
+      'timetuple': struct_time((2000, 1, 2, 3, 4, 5, 6, 2, 0)),
+      'timestamp': 946782245.000006}),
 ])
 def test_basic_property_methods(dt, methods):
     for meth, val in methods.items():
