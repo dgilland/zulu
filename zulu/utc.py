@@ -68,13 +68,17 @@ class DateTime(object):
     def fromtimestamp(cls, timestamp, tzinfo=pytz.UTC):
         return cls.fromdatetime(datetime.fromtimestamp(timestamp, tzinfo))
 
+    @classmethod
+    def fromordinal(cls, ordinal):
+        return cls.fromdatetime(datetime.fromordinal(ordinal))
+
+    @classmethod
+    def combine(cls, date, time):
+        return cls.fromdatetime(datetime.combine(date, time))
+
     @property
     def datetime(self):
         return self.__dt
-
-    @property
-    def tzinfo(self):
-        return self.datetime.tzinfo
 
     @property
     def year(self):
@@ -105,17 +109,55 @@ class DateTime(object):
         return self.datetime.microsecond
 
     @property
+    def tzinfo(self):
+        return self.datetime.tzinfo
+
+    @property
+    def timestamp(self):
+        return self.datetime.timestamp()
+
+    @property
     def naive(self):
         return self.datetime.replace(tzinfo=None)
 
-    def localize(self, tzinfo='local'):
-        if tzinfo is None:
-            tzinfo = 'local'
-        tz = get_timezone(tzinfo)
-        return self.datetime.astimezone(tz=tz)
+    def utcoffset(self):
+        return self.datetime.utcoffset()
+
+    def tzname(self):
+        return self.datetime.tzname()
+
+    def date(self):
+        return self.datetime.date()
+
+    def time(self):
+        return self.datetime.time()
+
+    def timetz(self):
+        return self.datetime.timetz()
+
+    def weekday(self):
+        return self.datetime.weekday()
+
+    def isoweekday(self):
+        return self.datetime.isoweekday()
+
+    def isocalendar(self):
+        return self.datetime.isocalendar()
+
+    def ctime(self):
+        return self.datetime.ctime()
+
+    def toordinal(self):
+        return self.datetime.toordinal()
+
+    def timetuple(self):
+        return self.datetime.timetuple()
 
     def isoformat(self, sep='T'):
         return self.datetime.isoformat(sep)
+
+    def copy(self):
+        return self.fromdatetime(self.datetime)
 
     def format(self, format=None, tzinfo=None):
         if tzinfo is not None:
@@ -128,8 +170,11 @@ class DateTime(object):
         else:
             return dt.strftime(format)
 
-    def copy(self):
-        return self.fromdatetime(self.datetime)
+    def localize(self, tzinfo='local'):
+        if tzinfo is None:
+            tzinfo = 'local'
+        tz = get_timezone(tzinfo)
+        return self.datetime.astimezone(tz=tz)
 
     def offset(self,
                days=0,
@@ -190,6 +235,13 @@ class DateTime(object):
 
     def __str__(self):
         return self.isoformat()
+
+    def __format__(self, fmt):
+        if not isinstance(fmt, str):  # pragma: no cover
+            raise TypeError('must be str, not %s' % type(fmt).__name__)
+        if len(fmt) != 0:
+            return self.format(fmt)
+        return str(self)
 
     def __iter__(self):
         return iter((self.year,

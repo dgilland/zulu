@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime, timedelta
+from datetime import date, datetime, time, timedelta
+from time import struct_time
 
 from iso8601 import UTC
 import pytest
@@ -117,11 +118,40 @@ def test_fromtimestamp(timestamp, expected):
       'minute': 4,
       'second': 5,
       'microsecond': 6,
-      'naive': datetime(2000, 1, 2, 3, 4, 5, 6)}),
+      'naive': datetime(2000, 1, 2, 3, 4, 5, 6),
+      'timestamp': 946782245.000006}),
 ])
 def test_basic_properties(dt, properties):
     for prop, val in properties.items():
         assert getattr(dt, prop) == val
+
+
+@parametrize('dt,methods', [
+    (DateTime(2000, 1, 2, 3, 4, 5, 6),
+     {'utcoffset': timedelta(0),
+      'tzname': 'UTC',
+      'date': date(2000, 1, 2),
+      'time': time(3, 4, 5, 6),
+      'timetz': time(3, 4, 5, 6, tzinfo=UTC),
+      'weekday': 6,
+      'isoweekday': 7,
+      'isocalendar': (1999, 52, 7),
+      'ctime': 'Sun Jan  2 03:04:05 2000',
+      'toordinal': 730121,
+      'timetuple': struct_time((2000, 1, 2, 3, 4, 5, 6, 2, 0))}),
+])
+def test_basic_property_methods(dt, methods):
+    for meth, val in methods.items():
+        assert getattr(dt, meth)() == val
+
+
+def test_fromordinal():
+    assert DateTime.fromordinal(730120) == DateTime(2000, 1, 1)
+
+
+def test_combine():
+    dt = DateTime.combine(datetime(2000, 1, 1), time(12, 30))
+    assert dt == DateTime(2000, 1, 1, 12, 30)
 
 
 def test_copy():
@@ -185,6 +215,12 @@ def test_isoformat(dt, expected):
 def test_str():
     dt = DateTime(2000, 1, 1)
     assert str(dt) == dt.isoformat()
+
+
+def test_str_format():
+    dt = DateTime(2000, 1, 1)
+    assert '{0}'.format(dt) == dt.isoformat()
+    assert '{0:%Y-%m-%dT%H:%M:%S}'.format(dt) == dt.format('%Y-%m-%dT%H:%M:%S')
 
 
 @parametrize('dt,args,expected', [
