@@ -9,7 +9,6 @@ import pytz
 import tzlocal
 
 from .parser import get_timezone, parse
-from .utils import Missing
 from ._compat import string_types
 
 
@@ -267,14 +266,14 @@ class DateTime(datetime):
         return self.fromdatetime(dt)
 
     def replace(self,
-                year=Missing,
-                month=Missing,
-                day=Missing,
-                hour=Missing,
-                minute=Missing,
-                second=Missing,
-                microsecond=Missing,
-                tzinfo=Missing):
+                year=None,
+                month=None,
+                day=None,
+                hour=None,
+                minute=None,
+                second=None,
+                microsecond=None,
+                tzinfo=None):
         """Replace datetime attributes and return a new
         :class:`DateTime` instance.
 
@@ -283,28 +282,28 @@ class DateTime(datetime):
         """
         args = list(self)
 
-        if year is not Missing:
+        if year is not None:
             args[0] = year
 
-        if month is not Missing:
+        if month is not None:
             args[1] = month
 
-        if day is not Missing:
+        if day is not None:
             args[2] = day
 
-        if hour is not Missing:
+        if hour is not None:
             args[3] = hour
 
-        if minute is not Missing:
+        if minute is not None:
             args[4] = minute
 
-        if second is not Missing:
+        if second is not None:
             args[5] = second
 
-        if microsecond is not Missing:
+        if microsecond is not None:
             args[6] = microsecond
 
-        if tzinfo is not Missing:
+        if tzinfo is not None:
             args[7] = tzinfo
 
         return DateTime(*args)
