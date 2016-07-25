@@ -9,15 +9,8 @@ import pytz
 import tzlocal
 
 from .parser import get_timezone, parse
+from .utils import Missing
 from ._compat import string_types
-
-
-class _Missing(object):
-    """Represents an unset value."""
-    pass
-
-
-Missing = _Missing()
 
 
 class DateTime(object):
