@@ -386,16 +386,16 @@ class DateTime(object):
         tz = get_timezone(tz)
         return self.datetime.astimezone(tz)
 
-    def offset(self,
-               days=0,
-               seconds=0,
-               microseconds=0,
-               milliseconds=0,
-               minutes=0,
-               hours=0,
-               weeks=0):
-        """Apply an offset to :attr:`datetime` and return a new
-        :class:`DateTime` instance.
+    def shift(self,
+              days=0,
+              seconds=0,
+              microseconds=0,
+              milliseconds=0,
+              minutes=0,
+              hours=0,
+              weeks=0):
+        """Shift :attr:`datetime` using a timedelta created from the supplied
+        arguments and return a new :class:`DateTime` instance.
 
         Returns:
             DateTime

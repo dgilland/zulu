@@ -173,11 +173,11 @@ def test_copy():
     assert copy.datetime == dt.datetime
 
 
-@parametrize('dt,offset,expected', [
+@parametrize('dt,delta,expected', [
     (DateTime(2000, 1, 1), {'days': 1}, (2000, 1, 2)),
 ])
-def test_offset(dt, offset, expected):
-    assert dt.offset(**offset) == DateTime(*expected)
+def test_shift(dt, delta, expected):
+    assert dt.shift(**delta) == DateTime(*expected)
 
 
 @parametrize('dt,replace,expected', [
