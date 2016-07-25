@@ -247,25 +247,25 @@ class DateTime(object):
                      self.tzinfo))
 
     def __eq__(self, other):
-        return self.datetime == get_comparison(other)
+        return self.datetime == _get_comparison_value(other)
 
     def __ne__(self, other):
-        return self.datetime != get_comparison(other)
+        return self.datetime != _get_comparison_value(other)
 
     def __le__(self, other):
-        return self.datetime <= get_comparison(other)
+        return self.datetime <= _get_comparison_value(other)
 
     def __lt__(self, other):
-        return self.datetime < get_comparison(other)
+        return self.datetime < _get_comparison_value(other)
 
     def __ge__(self, other):
-        return self.datetime >= get_comparison(other)
+        return self.datetime >= _get_comparison_value(other)
 
     def __gt__(self, other):
-        return self.datetime > get_comparison(other)
+        return self.datetime > _get_comparison_value(other)
 
     def __add__(self, other):
-        return self.fromdatetime(self.datetime + get_comparison(other))
+        return self.fromdatetime(self.datetime + _get_comparison_value(other))
 
     __radd__ = __add__
 
@@ -291,7 +291,7 @@ class DateTime(object):
 _EPOCH = DateTime(1970, 1, 1)
 
 
-def get_comparison(other):
+def _get_comparison_value(other):
     if isinstance(other, DateTime):
         other = other.datetime
     return other
