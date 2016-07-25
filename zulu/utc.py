@@ -277,7 +277,7 @@ class DateTime(object):
         return self.datetime > _get_comparison_value(other)
 
     def __add__(self, other):
-        return self.fromdatetime(self.datetime + _get_comparison_value(other))
+        return self.fromdatetime(self.datetime + other)
 
     __radd__ = __add__
 
