@@ -115,6 +115,9 @@ class DateTime(object):
     def utcoffset(self):
         return self.datetime.utcoffset()
 
+    def dst(self):
+        return self.datetime.dst()
+
     def tzname(self):
         return self.datetime.tzname()
 
@@ -151,6 +154,9 @@ class DateTime(object):
     def copy(self):
         return self.fromdatetime(self.datetime)
 
+    def strftime(self, format):
+        return self.datetime.strftime(format)
+
     def format(self, format=None, tz=None):
         if tz is not None:
             dt = self.localize(tz)
@@ -161,6 +167,10 @@ class DateTime(object):
             return dt.isoformat()
         else:
             return dt.strftime(format)
+
+    def astimezone(self, tz=pytz.UTC):
+        tz = get_timezone(tz)
+        return self.datetime.astimezone(tz)
 
     def localize(self, tz='local'):
         if tz is None:

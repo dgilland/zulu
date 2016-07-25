@@ -129,6 +129,7 @@ def test_basic_properties(dt, properties):
     (DateTime(2000, 1, 2, 3, 4, 5, 6),
      {'utcoffset': timedelta(0),
       'tzname': 'UTC',
+      'dst': timedelta(0),
       'date': date(2000, 1, 2),
       'time': time(3, 4, 5, 6),
       'timetz': time(3, 4, 5, 6, tzinfo=UTC),
@@ -223,6 +224,18 @@ def test_str_format():
     assert '{0:%Y-%m-%dT%H:%M:%S}'.format(dt) == dt.format('%Y-%m-%dT%H:%M:%S')
 
 
+@parametrize('dt,fmt,expected', [
+    (DateTime(2000, 1, 1, 12, 30),
+     '%Y-%m-%dT%H:%M:%S%z',
+     '2000-01-01T12:30:00+0000'),
+    (DateTime(2000, 1, 1, 12, 30),
+     '%a %b %d',
+     'Sat Jan 01')
+])
+def test_strftime(dt, fmt, expected):
+    assert dt.strftime(fmt) == expected
+
+
 @parametrize('dt,args,expected', [
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
      {},
@@ -236,6 +249,13 @@ def test_str_format():
 ])
 def test_format(dt, args, expected):
     assert dt.format(**args) == expected
+
+
+def test_astimezone():
+    dt = DateTime(2000, 1, 1)
+    assert dt.astimezone() == dt.datetime
+    assert dt.astimezone(pytz.UTC) == dt.datetime
+    assert dt.astimezone(eastern) == dt.datetime
 
 
 @parametrize('dt,tzinfo,expected', [
