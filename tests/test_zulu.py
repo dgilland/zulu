@@ -228,7 +228,7 @@ def test_str_format():
      {},
      '2000-01-01T12:30:45.000015+00:00'),
     (DateTime(2000, 1, 1, 12, 30),
-     {'tzinfo': 'US/Eastern'},
+     {'tz': 'US/Eastern'},
      '2000-01-01T07:30:00-05:00'),
     (DateTime(2000, 1, 1, 12, 30),
      {'format': '%a %b %d'},

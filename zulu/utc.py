@@ -151,9 +151,9 @@ class DateTime(object):
     def copy(self):
         return self.fromdatetime(self.datetime)
 
-    def format(self, format=None, tzinfo=None):
-        if tzinfo is not None:
-            dt = self.localize(tzinfo)
+    def format(self, format=None, tz=None):
+        if tz is not None:
+            dt = self.localize(tz)
         else:
             dt = self.datetime
 
@@ -162,11 +162,11 @@ class DateTime(object):
         else:
             return dt.strftime(format)
 
-    def localize(self, tzinfo='local'):
-        if tzinfo is None:
-            tzinfo = 'local'
-        tz = get_timezone(tzinfo)
-        return self.datetime.astimezone(tz=tz)
+    def localize(self, tz='local'):
+        if tz is None:
+            tz = 'local'
+        tz = get_timezone(tz)
+        return self.datetime.astimezone(tz)
 
     def offset(self,
                days=0,
