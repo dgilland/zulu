@@ -23,7 +23,7 @@ def parse(obj, formats=None, default_tzinfo=None):
         return obj
 
     if formats is None:
-        formats = ['iso8601', 'timestamp']
+        formats = ['ISO8601', 'timestamp']
     elif not isinstance(formats, (list, tuple)):
         formats = [formats]
 
@@ -39,12 +39,12 @@ def parse(obj, formats=None, default_tzinfo=None):
     return dt
 
 
-def parse_formats(string, formats):
+def parse_formats(obj, formats):
     dt = None
 
     for format in formats:
         try:
-            dt = parse_format(string, format)
+            dt = parse_format(obj, format)
         except Exception:
             dt = None
         else:
@@ -52,16 +52,18 @@ def parse_formats(string, formats):
 
     if dt is None:
         raise ParseError('Value "{0}" does not match any format in {1}'
-                         .format(string, formats))
+                         .format(obj, formats))
 
     return dt
 
 
-def parse_format(string, format):
-    if format == 'iso8601':
-        return iso8601.parse_date(string, default_timezone=None)
+def parse_format(obj, format):
+    if format.upper() == 'ISO8601':
+        return iso8601.parse_date(obj, default_timezone=None)
+    elif format == 'timestamp':
+        return datetime.fromtimestamp(obj, pytz.UTC)
     else:
-        return datetime.strptime(string, format)
+        return datetime.strptime(obj, format)
 
 
 def get_timezone(tzinfo):

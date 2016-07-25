@@ -52,6 +52,8 @@ def test_now():
      datetime(2000, 1, 2, 11, 59, tzinfo=UTC)),
     ('2000-01-01T12:00:00+2359',
      datetime(1999, 12, 31, 12, 1, tzinfo=UTC)),
+    (0,
+     datetime(1970, 1, 1, tzinfo=UTC)),
     (datetime(2000, 1, 1, tzinfo=UTC),
      datetime(2000, 1, 1, tzinfo=UTC)),
     (DateTime(2000, 1, 1),
