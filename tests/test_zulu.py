@@ -71,7 +71,7 @@ def test_parse(string, expected):
      {'formats': '%m-%d-%Y %I:%M %p'},
      datetime(2000, 1, 5, 0, 30, tzinfo=UTC)),
     ('1-5-2000 12:30 AM',
-     {'formats': '%m-%d-%Y %I:%M %p', 'default_tzinfo': eastern},
+     {'formats': '%m-%d-%Y %I:%M %p', 'default_tz': eastern},
      datetime(2000, 1, 5, 5, 30, tzinfo=UTC)),
 ])
 def test_parse_formats(string, kargs, expected):

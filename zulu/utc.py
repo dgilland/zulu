@@ -42,8 +42,8 @@ class DateTime(object):
         return cls.fromdatetime(datetime.utcnow())
 
     @classmethod
-    def parse(cls, obj, formats=None, default_tzinfo=None):
-        dt = parse(obj, formats=formats, default_tzinfo=default_tzinfo)
+    def parse(cls, obj, formats=None, default_tz=None):
+        dt = parse(obj, formats=formats, default_tz=default_tz)
         return cls.fromdatetime(dt)
 
     @classmethod

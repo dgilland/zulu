@@ -18,7 +18,7 @@ class ParseError(Exception):
     pass
 
 
-def parse(obj, formats=None, default_tzinfo=None):
+def parse(obj, formats=None, default_tz=None):
     if is_valid_datetime(obj):
         return obj
 
@@ -29,8 +29,8 @@ def parse(obj, formats=None, default_tzinfo=None):
 
     dt = parse_formats(obj, formats)
 
-    if dt.tzinfo is None and default_tzinfo is not None:
-        dt = dt.replace(tzinfo=get_timezone(default_tzinfo))
+    if dt.tzinfo is None and default_tz is not None:
+        dt = dt.replace(tzinfo=get_timezone(default_tz))
 
     if not is_valid_timezone(dt.tzinfo):
         raise ParseError('Time zone offset must be strictly between -24/+24 '
@@ -66,13 +66,10 @@ def parse_format(obj, format):
         return datetime.strptime(obj, format)
 
 
-def get_timezone(tzinfo):
-    if tzinfo == 'local':
+    if tz == 'local':
         tz = tzlocal.get_localzone()
-    elif isinstance(tzinfo, string_types):
-        tz = pytz.timezone(tzinfo)
-    else:
-        tz = tzinfo
+    elif isinstance(tz, string_types):
+        tz = pytz.timezone(tz)
 
     return tz
 
