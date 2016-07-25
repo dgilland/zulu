@@ -165,7 +165,7 @@ class DateTime(object):
 
     def format(self, format=None, tz=None):
         if tz is not None:
-            dt = self.localize(tz)
+            dt = self.astimezone(tz)
         else:
             dt = self.datetime
 
@@ -174,11 +174,8 @@ class DateTime(object):
         else:
             return dt.strftime(format)
 
-    def astimezone(self, tz=pytz.UTC):
-        tz = get_timezone(tz)
-        return self.datetime.astimezone(tz)
+    def astimezone(self, tz='local'):
 
-    def localize(self, tz='local'):
         if tz is None:
             tz = 'local'
         tz = get_timezone(tz)

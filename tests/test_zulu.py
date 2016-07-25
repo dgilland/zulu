@@ -261,13 +261,6 @@ def test_format(dt, args, expected):
     assert dt.format(**args) == expected
 
 
-def test_astimezone():
-    dt = DateTime(2000, 1, 1)
-    assert dt.astimezone() == dt.datetime
-    assert dt.astimezone(pytz.UTC) == dt.datetime
-    assert dt.astimezone(eastern) == dt.datetime
-
-
 @parametrize('dt,tzinfo,expected', [
     (DateTime(2000, 1, 1, 10),
      None,
@@ -282,8 +275,8 @@ def test_astimezone():
      pytz.timezone('US/Eastern'),
      eastern.localize(datetime(2000, 1, 1, 5, 0)))
 ])
-def test_localize(dt, tzinfo, expected):
-    ldt = dt.localize(tzinfo)
+def test_astimezone(dt, tzinfo, expected):
+    ldt = dt.astimezone(tzinfo)
 
     assert ldt.year == expected.year
     assert ldt.month == expected.month
