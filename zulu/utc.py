@@ -58,8 +58,8 @@ class DateTime(object):
                    dt.tzinfo)
 
     @classmethod
-    def fromtimestamp(cls, timestamp, tzinfo=pytz.UTC):
-        return cls.fromdatetime(datetime.fromtimestamp(timestamp, tzinfo))
+    def fromtimestamp(cls, timestamp):
+        return cls.fromdatetime(datetime.fromtimestamp(timestamp, pytz.UTC))
 
     @classmethod
     def fromordinal(cls, ordinal):
