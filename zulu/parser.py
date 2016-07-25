@@ -55,18 +55,22 @@ def parse(obj, formats=None, default_tz=None):
 def _parse_formats(obj, formats):
     """Parse `obj` as datetime using list of `formats`."""
     dt = None
+    errors = {}
 
     for format in formats:
         try:
             dt = _parse_format(obj, format)
-        except Exception:
+        except Exception as exc:
+            errors[format] = str(exc)
             dt = None
         else:
             break
 
     if dt is None:
+        err = ', '.join('{0} ({1})'.format(fmt, errors[fmt])
+                        for fmt in formats)
         raise ParseError('Value "{0}" does not match any format in {1}'
-                         .format(obj, formats))
+                         .format(obj, err))
 
     return dt
 
