@@ -67,6 +67,12 @@ class DateTime(object):
 
     @classmethod
     def combine(cls, date, time):
+        if callable(getattr(date, 'date', None)):
+            date = date.date()
+
+        if callable(getattr(time, 'time', None)):
+            time = time.time()
+
         return cls.fromdatetime(datetime.combine(date, time))
 
     @property

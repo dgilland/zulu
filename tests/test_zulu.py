@@ -152,9 +152,17 @@ def test_fromordinal():
     assert DateTime.fromordinal(730120) == DateTime(2000, 1, 1)
 
 
-def test_combine():
-    dt = DateTime.combine(datetime(2000, 1, 1), time(12, 30))
-    assert dt == DateTime(2000, 1, 1, 12, 30)
+@parametrize('date,time,expected', [
+    (datetime(2000, 1, 1), time(12, 30),
+     DateTime(2000, 1, 1, 12, 30)),
+    (date(2000, 1, 1), time(12, 30),
+     DateTime(2000, 1, 1, 12, 30)),
+    (DateTime(2000, 1, 1), DateTime(1990, 12, 3, 12, 30),
+     DateTime(2000, 1, 1, 12, 30))
+])
+def test_combine(date, time, expected):
+    dt = DateTime.combine(date, time)
+    assert dt == expected
 
 
 def test_copy():
