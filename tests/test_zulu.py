@@ -17,9 +17,13 @@ from .fixtures import parametrize
 eastern = pytz.timezone('US/Eastern')
 
 
-def test_now():
+@parametrize('factory', [
+    DateTime.utcnow,
+    datetime.utcnow
+])
+def test_now_is_utcnow(factory):
     dt = DateTime.now()
-    expected = datetime.utcnow()
+    expected = factory()
 
     # NOTE: Intentionally skip comparison to microsecond since they will almost
     # always be different.
@@ -60,7 +64,7 @@ def test_now():
      datetime(2000, 1, 1, tzinfo=UTC)),
 ])
 def test_parse(string, expected):
-    assert DateTime.parse(string).datetime == expected
+    assert DateTime.parse(string) == expected
 
 
 @parametrize('string,kargs,expected', [
@@ -75,7 +79,7 @@ def test_parse(string, expected):
      datetime(2000, 1, 5, 5, 30, tzinfo=UTC)),
 ])
 def test_parse_formats(string, kargs, expected):
-    assert DateTime.parse(string, **kargs).datetime == expected
+    assert DateTime.parse(string, **kargs) == expected
 
 
 @parametrize('string', [
@@ -101,14 +105,15 @@ def test_parse_invalid(string):
      datetime(2000, 1, 1, tzinfo=pytz.UTC))
 ])
 def test_fromdatetime(dt, expected):
-    assert DateTime.fromdatetime(dt).datetime == expected
+    assert DateTime.fromdatetime(dt) == expected
 
 
-@parametrize('timestamp,expected', [
-    (0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
+@parametrize('factory,timestamp,expected', [
+    (DateTime.fromtimestamp, 0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
+    (DateTime.utcfromtimestamp, 0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
 ])
-def test_fromtimestamp(timestamp, expected):
-    assert DateTime.fromtimestamp(timestamp).datetime == expected
+def test_fromtimestamp(factory, timestamp, expected):
+    assert factory(timestamp) == expected
 
 
 @parametrize('dt,properties', [
@@ -120,6 +125,10 @@ def test_fromtimestamp(timestamp, expected):
       'minute': 4,
       'second': 5,
       'microsecond': 6,
+      'min': DateTime(1, 1, 1),
+      'max': DateTime(9999, 12, 31, 23, 59, 59, 999999),
+      'epoch': DateTime(1970, 1, 1),
+      'resolution': timedelta(microseconds=1),
       'naive': datetime(2000, 1, 2, 3, 4, 5, 6)}),
 ])
 def test_basic_properties(dt, properties):
@@ -141,6 +150,7 @@ def test_basic_properties(dt, properties):
       'ctime': 'Sun Jan  2 03:04:05 2000',
       'toordinal': 730121,
       'timetuple': struct_time((2000, 1, 2, 3, 4, 5, 6, 2, 0)),
+      'utctimetuple': struct_time((2000, 1, 2, 3, 4, 5, 6, 2, 0)),
       'timestamp': 946782245.000006}),
 ])
 def test_basic_property_methods(dt, methods):
@@ -170,7 +180,7 @@ def test_copy():
     copy = dt.copy()
 
     assert copy is not dt
-    assert copy.datetime == dt.datetime
+    assert copy == dt
 
 
 @parametrize('dt,delta,expected', [
@@ -244,6 +254,15 @@ def test_str_format():
 ])
 def test_strftime(dt, fmt, expected):
     assert dt.strftime(fmt) == expected
+
+
+@parametrize('string,fmt,expected', [
+    ('2000-01-01T12:30:00',
+     '%Y-%m-%dT%H:%M:%S',
+     DateTime(2000, 1, 1, 12, 30)),
+])
+def test_strptime(string, fmt, expected):
+    assert DateTime.strptime(string, fmt) == expected
 
 
 @parametrize('dt,args,expected', [

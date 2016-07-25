@@ -13,7 +13,7 @@ from .utils import Missing
 from ._compat import string_types
 
 
-class DateTime(object):
+class DateTime(datetime):
     """The DateTime class represents an immutable UTC datetime object. Any
     timezone information given to it during instantiation results in the
     datetime object being converted from that timezone to UTC. If timezone
@@ -22,9 +22,8 @@ class DateTime(object):
     has no concept of timezone shifting in this regard. Instead, localization
     occurs only when formatting a DateTime object as a string.
 
-    The DateTime class has a drop-in replacement API for a datetime instance
-    from the Standard Library, but does not represent itself in any timezone
-    other than UTC.
+    The DateTime class is a drop-in replacement for a native datetime object,
+    but does not represent itself in any time zone other than UTC.
 
     Args:
         year (int): Date year ``1 <= year <= 9999``.
@@ -43,15 +42,15 @@ class DateTime(object):
             converted to a ``pytz.timezone``. If value is ``None``, the
             datetime values given are assumed to in UTC. Defaults to ``None``.
     """
-    def __init__(self,
-                 year,
-                 month,
-                 day,
-                 hour=0,
-                 minute=0,
-                 second=0,
-                 microsecond=0,
-                 tzinfo=None):
+    def __new__(cls,
+                year,
+                month,
+                day,
+                hour=0,
+                minute=0,
+                second=0,
+                microsecond=0,
+                tzinfo=None):
         if tzinfo and isinstance(tzinfo, string_types):
             tzinfo = pytz.timezone(tzinfo)
 
@@ -64,7 +63,17 @@ class DateTime(object):
         else:
             dt = pytz.UTC.localize(naive, is_dst=None)
 
-        self.__dt = dt.astimezone(pytz.UTC)
+        dt = dt.astimezone(pytz.UTC)
+
+        return datetime.__new__(cls,
+                                dt.year,
+                                dt.month,
+                                dt.day,
+                                dt.hour,
+                                dt.minute,
+                                dt.second,
+                                dt.microsecond,
+                                dt.tzinfo)
 
     @classmethod
     def now(cls):
@@ -73,7 +82,7 @@ class DateTime(object):
         Returns:
             DateTime
         """
-        return cls.fromdatetime(datetime.utcnow())
+        return cls.utcnow()
 
     @classmethod
     def parse(cls, obj, formats=None, default_tz=None):
@@ -95,7 +104,7 @@ class DateTime(object):
 
     @classmethod
     def fromdatetime(cls, dt):
-        """Return :class:`DateTime` object from a Standard Library datetime
+        """Return :class:`DateTime` object from a native datetime
         object.
 
         Returns:
@@ -111,7 +120,23 @@ class DateTime(object):
                    dt.tzinfo)
 
     @classmethod
-    def fromtimestamp(cls, timestamp):
+    def fromtimestamp(cls, timestamp, tz=pytz.UTC):
+        """Return :class:`DateTime` object from a POSIX timestamp.
+
+        Args:
+            timestamp (int): POSIX timestamp such as is returned by
+                ``time.time()``.
+            tz (UTC): This argument is ignored and always set to UTC. It is
+                present only for datetime class compatibility.
+
+        Returns:
+            DateTime
+        """
+        tz = pytz.UTC
+        return super(DateTime, cls).fromtimestamp(timestamp, tz)
+
+    @classmethod
+    def utcfromtimestamp(cls, timestamp):
         """Return :class:`DateTime` object from a POSIX timestamp.
 
         Args:
@@ -121,7 +146,7 @@ class DateTime(object):
         Returns:
             DateTime
         """
-        return cls.fromdatetime(datetime.fromtimestamp(timestamp, pytz.UTC))
+        return cls.fromtimestamp(timestamp)
 
     @classmethod
     def fromordinal(cls, ordinal):
@@ -159,197 +184,29 @@ class DateTime(object):
         return cls.fromdatetime(datetime.combine(date, time))
 
     @property
-    def datetime(self):
-        """The underlying Standard Library datetime object."""
-        return self.__dt
-
-    @property
-    def year(self):
-        """The datetime year."""
-        return self.datetime.year
-
-    @property
-    def month(self):
-        """The datetime month."""
-        return self.datetime.month
-
-    @property
-    def day(self):
-        """The datetime day."""
-        return self.datetime.day
-
-    @property
-    def hour(self):
-        """The datetime hour."""
-        return self.datetime.hour
-
-    @property
-    def minute(self):
-        """The datetime minute."""
-        return self.datetime.minute
-
-    @property
-    def second(self):
-        """The datetime second."""
-        return self.datetime.second
-
-    @property
-    def microsecond(self):
-        """The datetime microsecond."""
-        return self.datetime.microsecond
-
-    @property
-    def tzinfo(self):
-        """The datetime tzinfo."""
-        return self.datetime.tzinfo
-
-    @property
     def naive(self):
         """The datetime object as a naive datetime (tzinfo=None)."""
-        return self.datetime.replace(tzinfo=None)
+        return super(DateTime, self).replace(tzinfo=None)
 
     def timestamp(self):
-        """Return the POSIX timestamp of :attr:`datetime`.
+        """Return the POSIX timestamp.
 
         Returns:
             int
         """
-        return (self - _EPOCH).total_seconds()
-
-    def utcoffset(self):
-        """Return the UTC offset of :attr:`datetime`.
-
-        Returns:
-            timedelta
-        """
-        return self.datetime.utcoffset()
-
-    def dst(self):
-        """Return the DST of :attr:`datetime`.
-
-        Returns:
-            timedelta
-        """
-        return self.datetime.dst()
-
-    def tzname(self):
-        """Return the timezone name of :attr:`datetime`.
-
-        Returns:
-            str
-        """
-        return self.datetime.tzname()
-
-    def date(self):
-        """Return the date part of :attr:`datetime`.
-
-        Returns:
-            date
-        """
-        return self.datetime.date()
-
-    def time(self):
-        """Return the time part of :attr:`datetime` with tzinfo unset
-        (``None``).
-
-        Returns:
-            time
-        """
-        return self.datetime.time()
-
-    def timetz(self):
-        """Return the time part of :attr:`datetime` with tzinfo set.
-
-        Returns:
-            time
-        """
-        return self.datetime.timetz()
-
-    def weekday(self):
-        """Return the weekday of :attr:`datetime` where Monday is 0 and Sunday
-        is 6.
-
-        Returns:
-            int
-        """
-        return self.datetime.weekday()
-
-    def isoweekday(self):
-        """Return the isoweekday of :attr:`datetime` where Monday is 1 and
-        Sunday is 7.
-
-        Returns:
-            int
-        """
-        return self.datetime.isoweekday()
-
-    def isocalendar(self):
-        """Return a 3-tuple (ISO year, ISO week number, ISO weekday) of
-        :attr:`datetime`.
-
-        Returns:
-            tuple
-        """
-        return self.datetime.isocalendar()
-
-    def ctime(self):
-        """Return the date and time string of :attr:`datetime` that conforms to
-        the C standard format.
-
-        Returns:
-            str
-        """
-        return self.datetime.ctime()
-
-    def toordinal(self):
-        """Return the proleptic Gregorian ordinal of the date of
-        :attr:`datetime`.
-        """
-        return self.datetime.toordinal()
-
-    def timetuple(self):
-        """Return a ``time.struct_time`` object of :attr:`datetime`.
-
-        Returns:
-            time.struct_time
-        """
-        return self.datetime.timetuple()
-
-    def isoformat(self, sep='T'):
-        """Return :attr:`datetime` in ISO 8601 format,
-        ``YYYY-MM-DDTHH:MM:SS.mmmmmm`` or, if :attr:`microsecond` is 0,
-        ``YYYY-MM-DDTHH:MM:SS``.
-
-        Arg:
-            sep (str, optional): Separator to use between date and time parts.
-                Defaults to ``'T'``.
-
-        Returns:
-            str
-        """
-        return self.datetime.isoformat(sep)
+        return (self - self.epoch).total_seconds()
 
     def copy(self):
-        """Return a new :class`DateTime` instance with the same
-        :attr:`datetime` value.
+        """Return a new :class`DateTime` instance with the same datetime value.
 
         Returns:
             DateTime
         """
-        return self.fromdatetime(self.datetime)
-
-    def strftime(self, format):
-        """Return :attr:`datetime` as a string using the format string
-        `format`.
-
-        Returns:
-            str
-        """
-        return self.datetime.strftime(format)
+        return DateTime(*tuple(self))
 
     def format(self, format=None, tz=None):
-        """Return :attr:`datetime` as a string using the format string `format`
-        while optionally converting to timezone `tz` first.
+        """Return datetime as a string using the format string `format` while
+        optionally converting to timezone `tz` first.
 
         Args:
             format (str): Format to return string in. If ``None``, ISO 8601
@@ -363,7 +220,7 @@ class DateTime(object):
         if tz is not None:
             dt = self.astimezone(tz)
         else:
-            dt = self.datetime
+            dt = self
 
         if format is None:
             return dt.isoformat()
@@ -371,9 +228,9 @@ class DateTime(object):
             return dt.strftime(format)
 
     def astimezone(self, tz='local'):
-        """Return :attr:`datetime` shifted to timezone `tz`.
+        """Return datetime shifted to timezone `tz`.
 
-        .. note:: This returns a Standard Library datetime object.
+        .. note:: This returns a native datetime object.
 
         Args:
             tz (None|str|tzinfo, optional): Timezone to shift to.
@@ -384,7 +241,7 @@ class DateTime(object):
         if tz is None:
             tz = 'local'
         tz = get_timezone(tz)
-        return self.datetime.astimezone(tz)
+        return super(DateTime, self).astimezone(tz)
 
     def shift(self,
               days=0,
@@ -394,19 +251,19 @@ class DateTime(object):
               minutes=0,
               hours=0,
               weeks=0):
-        """Shift :attr:`datetime` using a timedelta created from the supplied
+        """Shift datetime using a timedelta created from the supplied
         arguments and return a new :class:`DateTime` instance.
 
         Returns:
             DateTime
         """
-        dt = self.datetime + timedelta(days,
-                                       seconds,
-                                       microseconds,
-                                       milliseconds,
-                                       minutes,
-                                       hours,
-                                       weeks)
+        dt = self + timedelta(days,
+                              seconds,
+                              microseconds,
+                              milliseconds,
+                              minutes,
+                              hours,
+                              weeks)
         return self.fromdatetime(dt)
 
     def replace(self,
@@ -418,7 +275,7 @@ class DateTime(object):
                 second=Missing,
                 microsecond=Missing,
                 tzinfo=Missing):
-        """Replace :attr:`datetime` attributes and return a new
+        """Replace datetime attributes and return a new
         :class:`DateTime` instance.
 
         Returns:
@@ -460,16 +317,6 @@ class DateTime(object):
         """Return :class:`DateTime` instance as an ISO 8601 string."""
         return self.isoformat()
 
-    def __format__(self, fmt):
-        """Same as :meth:`strftime`. This makes it possible to specify a format
-        string for a datetime object when using ``str.format()``.
-        """
-        if not isinstance(fmt, str):  # pragma: no cover
-            raise TypeError('must be str, not %s' % type(fmt).__name__)
-        if len(fmt) != 0:
-            return self.format(fmt)
-        return str(self)
-
     def __iter__(self):
         """Return :class:`DateTime` instance as an iterator that yields a tuple
         corresponding to
@@ -484,42 +331,6 @@ class DateTime(object):
                      self.microsecond,
                      self.tzinfo))
 
-    def __eq__(self, other):
-        """Return whether :attr:`datetime` is equal to `other`."""
-        return self.datetime == _get_comparison_value(other)
-
-    def __ne__(self, other):
-        """Return whether :attr:`datetime` is not equal to `other`."""
-        return self.datetime != _get_comparison_value(other)
-
-    def __le__(self, other):
-        """Return whether :attr:`datetime` is less than or equal to `other`."""
-        return self.datetime <= _get_comparison_value(other)
-
-    def __lt__(self, other):
-        """Return whether :attr:`datetime` is less than `other`."""
-        return self.datetime < _get_comparison_value(other)
-
-    def __ge__(self, other):
-        """Return whether :attr:`datetime` is greater than or equal to
-        `other`."""
-        return self.datetime >= _get_comparison_value(other)
-
-    def __gt__(self, other):
-        """Return whether :attr:`datetime` is greater than `other`."""
-        return self.datetime > _get_comparison_value(other)
-
-    def __add__(self, other):
-        """Add a ``timedelta`` to :attr:`datetime` and return a new
-        :class:`DateTime` instance.
-
-        Returns:
-            DateTime
-        """
-        return self.fromdatetime(self.datetime + other)
-
-    __radd__ = __add__
-
     def __sub__(self, other):
         """Subtract a ``timedelta``, ``datetime``, or :class:`DateTime` and
         return the result.
@@ -528,29 +339,17 @@ class DateTime(object):
             DateTime: if subtracting a ``timedelta``
             timedelta: if subtracting a ``datetime`` or :class:`DateTime`
         """
-        if isinstance(other, DateTime):
-            other = other.datetime
-        elif isinstance(other, datetime):
-            other = self.fromdatetime(other).datetime
+        if not isinstance(other, DateTime) and isinstance(other, datetime):
+            other = self.fromdatetime(other)
 
-        result = self.datetime - other
+        result = super(DateTime, self).__sub__(other)
 
         if isinstance(result, datetime):
             return self.fromdatetime(result)
         else:
             return result
 
-    def __hash__(self):
-        """Return hash() of :attr:`datetime`."""
-        return hash(self.datetime)
 
-    # TODO: Pickle support?
-
-
-_EPOCH = DateTime(1970, 1, 1)
-
-
-def _get_comparison_value(other):
-    if isinstance(other, DateTime):
-        other = other.datetime
-    return other
+DateTime.min = DateTime(1, 1, 1)
+DateTime.max = DateTime(9999, 12, 31, 23, 59, 59, 999999)
+DateTime.epoch = DateTime(1970, 1, 1)
