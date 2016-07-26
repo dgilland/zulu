@@ -193,7 +193,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return super(DateTime, self).replace(tzinfo=None)
+        return datetime(*tuple(self)[:-1])
 
     def timestamp(self):
         """Return the POSIX timestamp.

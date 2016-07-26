@@ -135,6 +135,8 @@ def test_basic_properties(dt, properties):
     for prop, val in properties.items():
         assert getattr(dt, prop) == val
 
+    assert type(dt.naive) is datetime
+
 
 @parametrize('dt,methods', [
     (DateTime(2000, 1, 2, 3, 4, 5, 6),
@@ -297,6 +299,7 @@ def test_format(dt, args, expected):
 def test_astimezone(dt, tzinfo, expected):
     ldt = dt.astimezone(tzinfo)
 
+    assert type(ldt) is datetime
     assert ldt.year == expected.year
     assert ldt.month == expected.month
     assert ldt.day == expected.day
