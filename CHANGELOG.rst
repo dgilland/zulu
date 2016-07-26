@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+- Don't pin install requirements to a specific version; use ``>=`` instead.
+
+
 v0.1.1 (2016-07-26)
 -------------------
 
