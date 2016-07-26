@@ -2,7 +2,7 @@
 """The api module.
 """
 
-from .utc import DateTime
+from .datetime import DateTime
 
 
 now = DateTime.now

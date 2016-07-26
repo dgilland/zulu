@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-"""The UTC module.
+"""The datetime module.
 """
+
+from __future__ import absolute_import
 
 from datetime import datetime, timedelta
 from functools import wraps

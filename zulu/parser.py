@@ -2,6 +2,8 @@
 """The parser module.
 """
 
+from __future__ import absolute_import
+
 from datetime import datetime, timedelta
 
 import iso8601
