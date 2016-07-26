@@ -269,8 +269,8 @@ class DateTime(datetime):
               minutes=0,
               hours=0,
               weeks=0):
-        """Shift datetime using a timedelta created from the supplied
-        arguments and return a new :class:`.DateTime` instance.
+        """Shift datetime forward or backward using a timedelta created from
+        the supplied arguments and return a new :class:`.DateTime` instance.
 
         Returns:
             :class:`.DateTime`
@@ -283,6 +283,50 @@ class DateTime(datetime):
                               hours,
                               weeks)
         return self.fromdatetime(dt)
+
+    def add(self,
+            days=0,
+            seconds=0,
+            microseconds=0,
+            milliseconds=0,
+            minutes=0,
+            hours=0,
+            weeks=0):
+        """Add time using a timedelta created from the supplied arguments and
+        return a new :class:`.DateTime` instance.
+
+        Returns:
+            :class:`.DateTime`
+        """
+        return self.shift(days,
+                          seconds,
+                          microseconds,
+                          milliseconds,
+                          minutes,
+                          hours,
+                          weeks)
+
+    def sub(self,
+            days=0,
+            seconds=0,
+            microseconds=0,
+            milliseconds=0,
+            minutes=0,
+            hours=0,
+            weeks=0):
+        """Subtract time using a timedelta created from the supplied arguments
+        and return a new :class:`.DateTime` instance.
+
+        Returns:
+            :class:`.DateTime`
+        """
+        return self.shift(-days,
+                          -seconds,
+                          -microseconds,
+                          -milliseconds,
+                          -minutes,
+                          -hours,
+                          -weeks)
 
     def replace(self,
                 year=None,

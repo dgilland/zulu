@@ -187,11 +187,16 @@ def test_copy():
     assert copy == dt
 
 
-@parametrize('dt,delta,expected', [
-    (DateTime(2000, 1, 1), {'days': 1}, (2000, 1, 2)),
+@parametrize('method,dt,delta,expected', [
+    ('shift', DateTime(2000, 1, 1), {'days': 1}, (2000, 1, 2)),
+    ('add', DateTime(2000, 1, 1), {'days': 1}, (2000, 1, 2)),
+    ('sub', DateTime(2000, 1, 1), {'days': 1}, (1999, 12, 31)),
+    ('shift', DateTime(2000, 1, 1), {'days': -1}, (1999, 12, 31)),
+    ('add', DateTime(2000, 1, 1), {'days': -1}, (1999, 12, 31)),
+    ('sub', DateTime(2000, 1, 1), {'days': -1}, (2000, 1, 2)),
 ])
-def test_shift(dt, delta, expected):
-    assert dt.shift(**delta) == DateTime(*expected)
+def test_shift(method, dt, delta, expected):
+    assert getattr(dt, method)(**delta) == DateTime(*expected)
 
 
 @parametrize('dt,replace,expected', [

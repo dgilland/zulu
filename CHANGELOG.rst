@@ -3,6 +3,7 @@ Changelog
 
 
 - Add ``DateTime.datetime`` property that returns a native datetime.
+- Add ``DateTime.add`` and ``DateTime.sub`` methods.
 
 
 v0.1.2 (2016-07-26)
