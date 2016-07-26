@@ -5,7 +5,7 @@ zulu
 |version| |travis| |coveralls| |license|
 
 
-All your time are belong to UTC
+A drop-in replacement for native datetimes that embraces UTC
 
 
 Links

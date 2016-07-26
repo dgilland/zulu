@@ -3,7 +3,8 @@
 """
 
 __package_name__ = 'zulu'
-__description__ = 'All your time are belong to UTC'
+__description__ = ('A drop-in replacement for native datetimes '
+                   'that embraces UTC')
 __url__ = 'https://github.com/dgilland/zulu'
 __version__ = '0.0.0'
 __author__ = 'Derrick Gilland'
