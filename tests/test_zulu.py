@@ -129,13 +129,15 @@ def test_fromtimestamp(factory, timestamp, expected):
       'max': DateTime(9999, 12, 31, 23, 59, 59, 999999),
       'epoch': DateTime(1970, 1, 1),
       'resolution': timedelta(microseconds=1),
-      'naive': datetime(2000, 1, 2, 3, 4, 5, 6)}),
+      'naive': datetime(2000, 1, 2, 3, 4, 5, 6),
+      'datetime': datetime(2000, 1, 2, 3, 4, 5, 6, pytz.UTC)}),
 ])
 def test_basic_properties(dt, properties):
     for prop, val in properties.items():
         assert getattr(dt, prop) == val
 
     assert type(dt.naive) is datetime
+    assert type(dt.datetime) is datetime
 
 
 @parametrize('dt,methods', [

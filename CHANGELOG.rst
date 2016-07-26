@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+- Add ``DateTime.datetime`` property that returns a native datetime.
+
+
 v0.1.2 (2016-07-26)
 -------------------
 

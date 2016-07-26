@@ -193,7 +193,18 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return datetime(*tuple(self)[:-1])
+        return self.datetime.replace(tzinfo=None)
+
+    @property
+    def datetime(self):
+        """The DateTime object as a native datetime.
+
+        .. note:: This returns a native datetime object.
+
+        Returns:
+            :class:`datetime`
+        """
+        return datetime(*tuple(self))
 
     def timestamp(self):
         """Return the POSIX timestamp.
