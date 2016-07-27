@@ -7,6 +7,7 @@ from __future__ import absolute_import
 from datetime import datetime, timedelta
 from functools import wraps
 
+from dateutil.relativedelta import relativedelta
 import pytz
 import tzlocal
 
@@ -262,71 +263,78 @@ class DateTime(datetime):
         return super(DateTime, self).astimezone(tz)
 
     def shift(self,
+              years=0,
+              months=0,
+              weeks=0,
               days=0,
-              seconds=0,
-              microseconds=0,
-              milliseconds=0,
-              minutes=0,
               hours=0,
-              weeks=0):
+              minutes=0,
+              seconds=0,
+              microseconds=0):
         """Shift datetime forward or backward using a timedelta created from
         the supplied arguments and return a new :class:`.DateTime` instance.
 
         Returns:
             :class:`.DateTime`
         """
-        dt = self + timedelta(days,
-                              seconds,
-                              microseconds,
-                              milliseconds,
-                              minutes,
-                              hours,
-                              weeks)
+        dt = self + relativedelta(years=years,
+                                  months=months,
+                                  weeks=weeks,
+                                  days=days,
+                                  hours=hours,
+                                  minutes=minutes,
+                                  seconds=seconds,
+                                  microseconds=microseconds)
+
         return self.fromdatetime(dt)
 
     def add(self,
+            years=0,
+            months=0,
+            weeks=0,
             days=0,
-            seconds=0,
-            microseconds=0,
-            milliseconds=0,
-            minutes=0,
             hours=0,
-            weeks=0):
+            minutes=0,
+            seconds=0,
+            microseconds=0):
         """Add time using a timedelta created from the supplied arguments and
         return a new :class:`.DateTime` instance.
 
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(days,
-                          seconds,
-                          microseconds,
-                          milliseconds,
-                          minutes,
+        return self.shift(years,
+                          months,
+                          weeks,
+                          days,
                           hours,
-                          weeks)
+                          minutes,
+                          seconds,
+                          microseconds)
 
     def sub(self,
+            years=0,
+            months=0,
+            weeks=0,
             days=0,
-            seconds=0,
-            microseconds=0,
-            milliseconds=0,
-            minutes=0,
             hours=0,
-            weeks=0):
+            minutes=0,
+            seconds=0,
+            microseconds=0):
         """Subtract time using a timedelta created from the supplied arguments
         and return a new :class:`.DateTime` instance.
 
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(-days,
-                          -seconds,
-                          -microseconds,
-                          -milliseconds,
-                          -minutes,
+        return self.shift(-years,
+                          -months,
+                          -weeks,
+                          -days,
                           -hours,
-                          -weeks)
+                          -minutes,
+                          -seconds,
+                          -microseconds)
 
     def replace(self,
                 year=None,

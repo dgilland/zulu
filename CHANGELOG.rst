@@ -4,6 +4,8 @@ Changelog
 
 - Add ``DateTime.datetime`` property that returns a native datetime.
 - Add ``DateTime.add`` and ``DateTime.sub`` methods.
+- Make ``DateTime.shift/add/sub`` use ``dateutil.relativedelta.relativedelta`` under the hood which brings new shiftable arguments: years and months
+- Drop support for milliseconds from ``DateTime.shift/add/sub``. **breaking change**
 
 
 v0.1.2 (2016-07-26)

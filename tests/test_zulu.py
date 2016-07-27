@@ -188,15 +188,24 @@ def test_copy():
 
 
 @parametrize('method,dt,delta,expected', [
-    ('shift', DateTime(2000, 1, 1), {'days': 1}, (2000, 1, 2)),
-    ('add', DateTime(2000, 1, 1), {'days': 1}, (2000, 1, 2)),
-    ('sub', DateTime(2000, 1, 1), {'days': 1}, (1999, 12, 31)),
-    ('shift', DateTime(2000, 1, 1), {'days': -1}, (1999, 12, 31)),
-    ('add', DateTime(2000, 1, 1), {'days': -1}, (1999, 12, 31)),
-    ('sub', DateTime(2000, 1, 1), {'days': -1}, (2000, 1, 2)),
+    ('shift', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
+    ('add', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
+    ('sub', DateTime(2000, 1, 1), {'days': 1}, DateTime(1999, 12, 31)),
+    ('shift', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
+    ('add', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
+    ('sub', DateTime(2000, 1, 1), {'days': -1}, DateTime(2000, 1, 2)),
+    ('shift', DateTime(2000, 1, 1), {'years': 1}, DateTime(2001, 1, 1)),
+    ('shift', DateTime(2000, 1, 1), {'years': -1}, DateTime(1999, 1, 1)),
+    ('shift', DateTime(2000, 1, 1), {'weeks': 1}, DateTime(2000, 1, 8)),
+    ('shift', DateTime(2000, 1, 1), {'weeks': -1}, DateTime(1999, 12, 25)),
+    ('shift', DateTime(2000, 1, 1), {'months': 1}, DateTime(2000, 2, 1)),
+    ('shift', DateTime(2000, 1, 1), {'months': -1}, DateTime(1999, 12, 1)),
+    ('shift', DateTime(2000, 1, 1),
+     {'years': 2, 'months': 7, 'weeks': 13, 'days': 400},
+     DateTime(2003, 12, 5)),
 ])
 def test_shift(method, dt, delta, expected):
-    assert getattr(dt, method)(**delta) == DateTime(*expected)
+    assert getattr(dt, method)(**delta) == expected
 
 
 @parametrize('dt,replace,expected', [
