@@ -379,6 +379,191 @@ class DateTime(datetime):
 
         return DateTime(*args)
 
+    def start_of_century(self):
+        """This method helps in shifting the values to start of the century."""
+        return self.shift(years=-(self.year % 100),
+                          months=-self.month + 1,
+                          days=-self.day + 1,
+                          hours=-self.hour,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-self.microsecond)
+
+    def start_of_decade(self):
+        """This method helps in shifting the values to start of the decade."""
+        return self.shift(years=-(self.year % 10),
+                          months=-self.month + 1,
+                          days=-self.day + 1,
+                          hours=-self.hour,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-self.microsecond)
+
+    def start_of_year(self):
+        """This method helps in shifting the values to start of the year."""
+        return self.shift(months=-self.month + 1,
+                          days=-self.day + 1,
+                          hours=-self.hour,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-self.microsecond)
+
+    def start_of_month(self):
+        """This method helps in shifting the values to start of the month."""
+        return self.shift(days=-self.day + 1,
+                          hours=-self.hour,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-self.microsecond)
+
+    def start_of_day(self):
+        """This method helps in shifting the values to start of the day."""
+        return self.shift(hours=-self.hour,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-self.microsecond)
+
+    def start_of_hour(self):
+        """This method helps in shifting the values to start of the hour."""
+        return self.shift(minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-self.microsecond)
+
+    def start_of_minute(self):
+        """This method helps in shifting the values to start of the minute."""
+        return self.shift(seconds=-self.second,
+                          microseconds=-self.microsecond)
+
+    def start_of_second(self):
+        """This method helps in shifting the values to start of the second."""
+        return self.shift(microseconds=-self.microsecond)
+
+    def end_of_century(self, count):
+        """This method helps in shifting the values to end of the century."""
+        return self.shift(years=-(self.year % 100) + (count * 100),
+                          months=-self.month + 1,
+                          days=-self.day + 1,
+                          hours=-self.hour,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-1)
+
+    def end_of_decade(self, count):
+        """This method helps in shifting the values to end of the decade."""
+        return self.shift(years=-(self.year % 10) + (count * 10),
+                          months=-self.month + 1,
+                          days=-self.day + 1,
+                          hours=-self.hour,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-1)
+
+    def end_of_year(self, count):
+        """This method helps in shifting the values to end of the year."""
+        return self.shift(years=count * 1,
+                          months=-self.month + 1,
+                          days=-self.day + 1,
+                          hours=-self.hour,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-1)
+
+    def end_of_month(self, count):
+        """This method helps in shifting the values to end of the month."""
+        return self.shift(months=count * 1,
+                          days=-self.day + 1,
+                          hours=-self.hour,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-1)
+
+    def end_of_day(self, count):
+        """This method helps in shifting the values to end of the day."""
+        return self.shift(days=count * 1,
+                          hours=-self.hour,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-1)
+
+    def end_of_hour(self, count):
+        """This method helps in shifting the values to end of the hour."""
+        return self.shift(hours=count * 1,
+                          minutes=-self.minute,
+                          seconds=-self.second,
+                          microseconds=-1)
+
+    def end_of_minute(self, count):
+        """This method helps in shifting the values to end of the minute."""
+        return self.shift(minutes=count * 1,
+                          seconds=-self.second,
+                          microseconds=-1)
+
+    def end_of_second(self, count):
+        """This method helps in shifting the values to end of the second."""
+        return self.shift(seconds=count * 1,
+                          microseconds=-1)
+
+    def validate_frame(self, frame):
+        """Validates the given time frame."""
+        attrs = ['century',
+                 'decade',
+                 'year',
+                 'month',
+                 'day',
+                 'hour',
+                 'minute',
+                 'second']
+
+        if frame not in attrs:
+            raise ValueError('The given time frame {0} is invalid'
+                             .format(frame))
+
+    def start_of(self, frame):
+        """This method returns a floor value of datetime for the given time
+        frame.
+
+        Args:
+            frame (str): A time frame. Ex: year, month, day, minute, etc.
+
+        Returns:
+            zulu.Datetime.datetime
+        """
+        self.validate_frame(frame)
+        method = getattr(self, 'start_of_{0}'.format(frame), None)
+
+        return method()
+
+    def end_of(self, frame, count=1):
+        """This method returns a ceil value of datetime for the given time
+        frame.
+
+        Args:
+            frame (str): A time frame. Ex: year, month, day, minute, etc.
+            count (int): Number of frames to span
+
+        Returns:
+            zulu.Datetime.datetime
+        """
+        self.validate_frame(frame)
+        method = getattr(self, 'end_of_{0}'.format(frame), None)
+
+        return method(count=count)
+
+    def span(self, frame, count=1):
+        """Returns two new :class:`Datetime <datetime.datetime>` objects,
+        representing the time span of the :class:`Datetime <datetime.datetime>`
+         object in a given time frame.
+
+        Args:
+             frame (str): A time frame. Ex: year, month, day, minute, etc.
+             count (int): Number of frames to span
+
+        Returns:
+            floor: <datetime.datetime>
+            ceil: <datetime.datetime>
+        """
+        return (self.start_of(frame), self.end_of(frame, count))
+
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.DateTime`."""
         return '<DateTime [{0}]>'.format(self.isoformat())
