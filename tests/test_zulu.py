@@ -9,6 +9,7 @@ import pytz
 from tzlocal import get_localzone
 
 from zulu import DateTime, ParseError
+from zulu.parser import DATE_PATTERN_TO_DIRECTIVE
 
 
 from .fixtures import parametrize
@@ -71,31 +72,100 @@ def test_parse(string, expected):
     ('2000',
      {'formats': '%Y'},
      datetime(2000, 1, 1, tzinfo=UTC)),
+    ('2000',
+     {'formats': 'YYYY'},
+     datetime(2000, 1, 1, tzinfo=UTC)),
     ('1-5-2000 12:30 AM',
      {'formats': '%m-%d-%Y %I:%M %p'},
      datetime(2000, 1, 5, 0, 30, tzinfo=UTC)),
     ('1-5-2000 12:30 AM',
+     {'formats': 'M-d-YYYY h:m a'},
+     datetime(2000, 1, 5, 0, 30, tzinfo=UTC)),
+    ('1-5-2000 12:30 AM',
      {'formats': '%m-%d-%Y %I:%M %p', 'default_tz': eastern},
      datetime(2000, 1, 5, 5, 30, tzinfo=UTC)),
+    ('1-5-2000 12:30 AM',
+     {'formats': 'M-d-YYYY h:m a', 'default_tz': eastern},
+     datetime(2000, 1, 5, 5, 30, tzinfo=UTC)),
+    (('2016 16 July Jul 07 209 27 Wednesday Wed 3 '
+      '04 4 34 22 479776 AM'),
+     {'formats': ('%Y %y %B %b %m %j %d %A %a %w '
+                  '%H %I %M %S %f %p')},
+     datetime(2016, 7, 27, 4, 34, 22, 479776, tzinfo=UTC)),
+    (('2016 16 July Jul 07 209 27 Wednesday Wed 3 '
+      '04 4 34 22 479776 AM'),
+     {'formats': ('YYYY YY MMMM MMM MM DDD dd EEEE EEE e '
+                  'HH hh mm ss SSSSSS a')},
+     datetime(2016, 7, 27, 4, 34, 22, 479776, tzinfo=UTC)),
 ])
-def test_parse_formats(string, kargs, expected):
+def test_parse_format(string, kargs, expected):
     assert DateTime.parse(string, **kargs) == expected
 
 
-@parametrize('string', [
-    '2000/01/01',
-    '01/01/2000',
-    '01-01-2000',
-    '2000-01-01X00:00:00',
-    '2000-01-01T00,00,00',
-    '2000-01-01T00:00:00+2400',
-    '2000-01-01T00:00:00-2400',
-    '2000-01-01T00:00:00+2500',
-    '2000-01-01T00:00:00-2500',
+def test_format_pattern_mapping():
+    now = DateTime.now()
+
+    for unicode_token, c_token in DATE_PATTERN_TO_DIRECTIVE.items():
+        if isinstance(c_token, tuple):
+            c_token = c_token[1]
+
+        assert now.format(unicode_token) == now.format(c_token)
+
+
+@parametrize('string,pattern', [
+    ('2000', 'YYYY'),
+    ('00', 'YY'),
+    ('January', 'MMMM'),
+    ('Jan', 'MMM'),
+    ('01', 'MM'),
+    ('1', 'M'),
+    ('207', 'DDD'),
+    ('207', 'D'),
+    ('05', 'dd'),
+    ('5', 'd'),
+    ('Monday', 'EEEE'),
+    ('Mon', 'EEE'),
+    ('Mon', 'EE'),
+    ('Mon', 'E'),
+    ('Mon', 'eee'),
+    ('1', 'e'),
+    ('13', 'HH'),
+    ('3', 'H'),
+    ('12', 'hh'),
+    ('3', 'h'),
+    ('07', 'mm'),
+    ('59', 'mm'),
+    ('07', 'ss'),
+    ('59', 'ss'),
+    ('000006', 'SSSSSS'),
+    ('000006', 'SSSSS'),
+    ('000006', 'SSSS'),
+    ('000006', 'SS'),
+    ('000006', 'S'),
+    ('AM', 'a'),
 ])
-def test_parse_invalid(string):
-    with pytest.raises(ParseError):
-        DateTime.parse(string)
+def test_parse_pattern_mapping(string, pattern):
+    pat_dt = DateTime.parse(string, DATE_PATTERN_TO_DIRECTIVE[pattern])
+    dt = DateTime.parse(string, pattern)
+
+    assert pat_dt == dt
+
+
+@parametrize('string,kargs,exception', [
+    ('2000/01/01', {}, ParseError),
+    ('01/01/2000', {}, ParseError),
+    ('01-01-2000', {}, ParseError),
+    ('2000-01-01X00:00:00', {}, ParseError),
+    ('2000-01-01T00,00,00', {}, ParseError),
+    ('2000-01-01T00:00:00+2400', {}, ParseError),
+    ('2000-01-01T00:00:00-2400', {}, ParseError),
+    ('2000-01-01T00:00:00+2500', {}, ParseError),
+    ('2000-01-01T00:00:00-2500', {}, ParseError),
+    ('2000-01-01T00:00:00', {'default_tz': 'invalid'}, ValueError),
+])
+def test_parse_invalid(string, kargs, exception):
+    with pytest.raises(exception):
+        DateTime.parse(string, **kargs)
 
 
 @parametrize('dt,expected', [
@@ -581,3 +651,12 @@ def test_span_attribute_error():
         dt.span(frame)
 
     assert 'The given time frame {0} is invalid'.format(frame) in str(exc)
+
+
+# def test_new_style_parser():
+#     fmt = 'YYYY-M-DD'
+#     from zulu.parser import _translate, DATE_PATTERN_TO_DIRECTIVE
+#     t = _translate(fmt, DATE_PATTERN_TO_DIRECTIVE, for_parse=False)
+#     #dt = DateTime.parse('2000-01-01', fmt)
+#
+#     print(t)

@@ -11,7 +11,7 @@ from dateutil.relativedelta import relativedelta
 import pytz
 import tzlocal
 
-from .parser import get_timezone, parse
+from .parser import get_timezone, parse, _pattern_to_directive_formatting
 from ._compat import string_types
 
 
@@ -244,6 +244,9 @@ class DateTime(datetime):
         if format is None:
             return dt.isoformat()
         else:
+            if '%' not in format:
+                format = _pattern_to_directive_formatting(format)
+
             return dt.strftime(format)
 
     def astimezone(self, tz='local'):
