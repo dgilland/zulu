@@ -515,3 +515,69 @@ def test_compare_greater_than(dt, other, expected):
 ])
 def test_compare_greater_than_equal(dt, other, expected):
     assert (dt >= other) is expected
+
+
+@parametrize('dt,span,count,expected', [
+    (DateTime(2015, 4, 4, 12, 30),
+     'century',
+     1,
+     (DateTime(2000, 1, 1, 0, 0),
+      DateTime(2099, 12, 31, 23, 59, 59, 999999))),
+    (DateTime(2015, 4, 4, 12, 30),
+     'decade',
+     1,
+     (DateTime(2010, 1, 1, 0, 0),
+      DateTime(2019, 12, 31, 23, 59, 59, 999999))),
+    (DateTime(2015, 4, 4, 12, 30),
+     'century',
+     3,
+     (DateTime(2000, 1, 1, 0, 0),
+      DateTime(2299, 12, 31, 23, 59, 59, 999999))),
+    (DateTime(2015, 4, 4, 12, 30),
+     'decade',
+     3,
+     (DateTime(2010, 1, 1, 0, 0),
+      DateTime(2039, 12, 31, 23, 59, 59, 999999))),
+    (DateTime(2015, 4, 4, 12, 30),
+     'year',
+     1,
+     (DateTime(2015, 1, 1, 0, 0),
+      DateTime(2015, 12, 31, 23, 59, 59, 999999))),
+    (DateTime(2015, 4, 4, 12, 30),
+     'month',
+     1,
+     (DateTime(2015, 4, 1, 0, 0),
+      DateTime(2015, 4, 30, 23, 59, 59, 999999))),
+    (DateTime(2015, 4, 4, 12, 30),
+     'day',
+     3,
+     (DateTime(2015, 4, 4, 0, 0),
+      DateTime(2015, 4, 6, 23, 59, 59, 999999))),
+    (DateTime(2015, 4, 4, 12, 30),
+     'hour',
+     2,
+     (DateTime(2015, 4, 4, 12, 0),
+      DateTime(2015, 4, 4, 13, 59, 59, 999999))),
+    (DateTime(2015, 4, 4, 12, 30),
+     'minute',
+     5,
+     (DateTime(2015, 4, 4, 12, 30, 0),
+      DateTime(2015, 4, 4, 12, 34, 59, 999999))),
+    (DateTime(2015, 4, 4, 12, 30, 47),
+     'second',
+     20,
+     (DateTime(2015, 4, 4, 12, 30, 47, 0),
+      DateTime(2015, 4, 4, 12, 31, 6, 999999)))
+])
+def test_span(dt, span, count, expected):
+    time_span_tuple = dt.span(span, count)
+    assert time_span_tuple == expected
+
+
+def test_span_attribute_error():
+    frame = 'temp'
+    dt = DateTime(2015, 4, 4, 12, 30)
+    with pytest.raises(ValueError) as exc:
+        dt.span(frame)
+
+    assert 'The given time frame {0} is invalid'.format(frame) in str(exc)
