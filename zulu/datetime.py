@@ -549,7 +549,7 @@ class DateTime(datetime):
                           seconds=-self.second,
                           microseconds=-1)
 
-    def end_of_decade(self, count):
+    def end_of_decade(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the decade of
         this datetime.
 
@@ -567,7 +567,7 @@ class DateTime(datetime):
                           seconds=-self.second,
                           microseconds=-1)
 
-    def end_of_year(self, count):
+    def end_of_year(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the year of
         this datetime.
 
@@ -585,7 +585,7 @@ class DateTime(datetime):
                           seconds=-self.second,
                           microseconds=-1)
 
-    def end_of_month(self, count):
+    def end_of_month(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the month of
         this datetime.
 
@@ -602,7 +602,7 @@ class DateTime(datetime):
                           seconds=-self.second,
                           microseconds=-1)
 
-    def end_of_day(self, count):
+    def end_of_day(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the day of
         this datetime.
 
@@ -618,7 +618,7 @@ class DateTime(datetime):
                           seconds=-self.second,
                           microseconds=-1)
 
-    def end_of_hour(self, count):
+    def end_of_hour(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the hour of
         this datetime.
 
@@ -633,7 +633,7 @@ class DateTime(datetime):
                           seconds=-self.second,
                           microseconds=-1)
 
-    def end_of_minute(self, count):
+    def end_of_minute(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the minute of
         this datetime.
 
@@ -647,7 +647,7 @@ class DateTime(datetime):
                           seconds=-self.second,
                           microseconds=-1)
 
-    def end_of_second(self, count):
+    def end_of_second(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the second of
         this datetime.
 
