@@ -433,7 +433,12 @@ class DateTime(datetime):
         return DateTime(*args)
 
     def start_of_century(self):
-        """This method helps in shifting the values to start of the century."""
+        """Return a new :class:`.DateTime` set to the start of the century of
+        this datetime.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(years=-(self.year % 100),
                           months=-self.month + 1,
                           days=-self.day + 1,
@@ -443,7 +448,12 @@ class DateTime(datetime):
                           microseconds=-self.microsecond)
 
     def start_of_decade(self):
-        """This method helps in shifting the values to start of the decade."""
+        """Return a new :class:`.DateTime` set to the start of the decade of
+        this datetime.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(years=-(self.year % 10),
                           months=-self.month + 1,
                           days=-self.day + 1,
@@ -453,7 +463,12 @@ class DateTime(datetime):
                           microseconds=-self.microsecond)
 
     def start_of_year(self):
-        """This method helps in shifting the values to start of the year."""
+        """Return a new :class:`.DateTime` set to the start of the year of
+        this datetime.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(months=-self.month + 1,
                           days=-self.day + 1,
                           hours=-self.hour,
@@ -462,7 +477,12 @@ class DateTime(datetime):
                           microseconds=-self.microsecond)
 
     def start_of_month(self):
-        """This method helps in shifting the values to start of the month."""
+        """Return a new :class:`.DateTime` set to the start of the month of
+        this datetime.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(days=-self.day + 1,
                           hours=-self.hour,
                           minutes=-self.minute,
@@ -470,29 +490,57 @@ class DateTime(datetime):
                           microseconds=-self.microsecond)
 
     def start_of_day(self):
-        """This method helps in shifting the values to start of the day."""
+        """Return a new :class:`.DateTime` set to the start of the day of
+        this datetime.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(hours=-self.hour,
                           minutes=-self.minute,
                           seconds=-self.second,
                           microseconds=-self.microsecond)
 
     def start_of_hour(self):
-        """This method helps in shifting the values to start of the hour."""
+        """Return a new :class:`.DateTime` set to the start of the hour of
+        this datetime.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(minutes=-self.minute,
                           seconds=-self.second,
                           microseconds=-self.microsecond)
 
     def start_of_minute(self):
-        """This method helps in shifting the values to start of the minute."""
+        """Return a new :class:`.DateTime` set to the start of the minute of
+        this datetime.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(seconds=-self.second,
                           microseconds=-self.microsecond)
 
     def start_of_second(self):
-        """This method helps in shifting the values to start of the second."""
+        """Return a new :class:`.DateTime` set to the start of the second of
+        this datetime.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(microseconds=-self.microsecond)
 
-    def end_of_century(self, count):
-        """This method helps in shifting the values to end of the century."""
+    def end_of_century(self, count=1):
+        """Return a new :class:`.DateTime` set to the end of the century of
+        this datetime.
+
+        Args:
+            count (int): Number of frames to span.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(years=-(self.year % 100) + (count * 100),
                           months=-self.month + 1,
                           days=-self.day + 1,
@@ -502,7 +550,15 @@ class DateTime(datetime):
                           microseconds=-1)
 
     def end_of_decade(self, count):
-        """This method helps in shifting the values to end of the decade."""
+        """Return a new :class:`.DateTime` set to the end of the decade of
+        this datetime.
+
+        Args:
+            count (int): Number of frames to span.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(years=-(self.year % 10) + (count * 10),
                           months=-self.month + 1,
                           days=-self.day + 1,
@@ -512,7 +568,15 @@ class DateTime(datetime):
                           microseconds=-1)
 
     def end_of_year(self, count):
-        """This method helps in shifting the values to end of the year."""
+        """Return a new :class:`.DateTime` set to the end of the year of
+        this datetime.
+
+        Args:
+            count (int): Number of frames to span.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(years=count * 1,
                           months=-self.month + 1,
                           days=-self.day + 1,
@@ -522,7 +586,15 @@ class DateTime(datetime):
                           microseconds=-1)
 
     def end_of_month(self, count):
-        """This method helps in shifting the values to end of the month."""
+        """Return a new :class:`.DateTime` set to the end of the month of
+        this datetime.
+
+        Args:
+            count (int): Number of frames to span.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(months=count * 1,
                           days=-self.day + 1,
                           hours=-self.hour,
@@ -531,7 +603,15 @@ class DateTime(datetime):
                           microseconds=-1)
 
     def end_of_day(self, count):
-        """This method helps in shifting the values to end of the day."""
+        """Return a new :class:`.DateTime` set to the end of the day of
+        this datetime.
+
+        Args:
+            count (int): Number of frames to span.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(days=count * 1,
                           hours=-self.hour,
                           minutes=-self.minute,
@@ -539,20 +619,44 @@ class DateTime(datetime):
                           microseconds=-1)
 
     def end_of_hour(self, count):
-        """This method helps in shifting the values to end of the hour."""
+        """Return a new :class:`.DateTime` set to the end of the hour of
+        this datetime.
+
+        Args:
+            count (int): Number of frames to span.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(hours=count * 1,
                           minutes=-self.minute,
                           seconds=-self.second,
                           microseconds=-1)
 
     def end_of_minute(self, count):
-        """This method helps in shifting the values to end of the minute."""
+        """Return a new :class:`.DateTime` set to the end of the minute of
+        this datetime.
+
+        Args:
+            count (int): Number of frames to span.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(minutes=count * 1,
                           seconds=-self.second,
                           microseconds=-1)
 
     def end_of_second(self, count):
-        """This method helps in shifting the values to end of the second."""
+        """Return a new :class:`.DateTime` set to the end of the second of
+        this datetime.
+
+        Args:
+            count (int): Number of frames to span.
+
+        Returns:
+            :class:`.DateTime`
+        """
         return self.shift(seconds=count * 1,
                           microseconds=-1)
 
@@ -572,14 +676,13 @@ class DateTime(datetime):
                              .format(frame))
 
     def start_of(self, frame):
-        """This method returns a floor value of datetime for the given time
-        frame.
+        """Return the start of the given time frame for this datetime.
 
         Args:
-            frame (str): A time frame. Ex: year, month, day, minute, etc.
+            frame (str): A time frame (e.g. year, month, day, minute, etc).
 
         Returns:
-            zulu.Datetime.datetime
+            :class:`.DateTime`
         """
         self.validate_frame(frame)
         method = getattr(self, 'start_of_{0}'.format(frame), None)
@@ -587,15 +690,14 @@ class DateTime(datetime):
         return method()
 
     def end_of(self, frame, count=1):
-        """This method returns a ceil value of datetime for the given time
-        frame.
+        """Return the end of a given time frame for this datetime.
 
         Args:
-            frame (str): A time frame. Ex: year, month, day, minute, etc.
-            count (int): Number of frames to span
+            frame (str): A time frame (e.g. year, month, day, minute, etc).
+            count (int): Number of frames to span.
 
         Returns:
-            zulu.Datetime.datetime
+            :class:`.DateTime`
         """
         self.validate_frame(frame)
         method = getattr(self, 'end_of_{0}'.format(frame), None)
@@ -603,17 +705,15 @@ class DateTime(datetime):
         return method(count=count)
 
     def span(self, frame, count=1):
-        """Returns two new :class:`Datetime <datetime.datetime>` objects,
-        representing the time span of the :class:`Datetime <datetime.datetime>`
-         object in a given time frame.
+        """Returns two new :class:`.DateTime` objects corresponding to the time
+        span between this object and the given time frame.
 
-        Args:
-             frame (str): A time frame. Ex: year, month, day, minute, etc.
-             count (int): Number of frames to span
+        Args
+            frame (str): A time frame (e.g. year, month, day, minute, etc).
+            count (int): Number of frames to span.
 
         Returns:
-            floor: <datetime.datetime>
-            ceil: <datetime.datetime>
+            tuple: (`start_of_frame`, `end_of_frame`)
         """
         return (self.start_of(frame), self.end_of(frame, count))
 
