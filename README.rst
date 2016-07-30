@@ -107,11 +107,13 @@ Or replace datetime attributes:
 
 .. note:: Since ``DateTime`` is meant to be immutable, both ``shift`` and ``replace`` return new ``DateTime`` instances while leaving the original instance unchanged.
 
-You can get the time span of any unit:
+
+You can get the span across a time frame:
 
 .. code-block:: python
 
-    dt = DateTime(2015, 4, 4, 12, 30)
+    dt = DateTime(2015, 4, 4, 12, 30, 37, 651839)
+
     dt.span('century')
     # (<DateTime [2000-01-01T00:00:00+00:00]>, <DateTime [2099-12-31T23:59:59.999999+00:00]>)
 
@@ -121,6 +123,21 @@ You can get the time span of any unit:
     dt.span('year')
     # (<DateTime [2015-01-01T00:00:00+00:00]>, <DateTime [2015-12-31T23:59:59.999999+00:00]>)
 
+    dt.span('month')
+    # (<DateTime [2015-04-01T00:00:00+00:00]>, <DateTime [2015-04-30T23:59:59.999999+00:00]>)
+
+    dt.span('day')
+    # (<DateTime [2015-04-04T00:00:00+00:00]>, <DateTime [2015-04-04T23:59:59.999999+00:00]>)
+
+    dt.span('hour')
+    # (<DateTime [2015-04-04T12:00:00+00:00]>, <DateTime [2015-04-04T12:59:59.999999+00:00]>)
+
+    dt.span('minute')
+    # (<DateTime [2015-04-04T12:30:00+00:00]>, <DateTime [2015-04-04T12:30:59.999999+00:00]>)
+
+    dt.span('second')
+    # (<DateTime [2015-04-04T12:30:37+00:00]>, <DateTime [2015-04-04T12:30:37.999999+00:00]>)
+
     dt.span('century', count=3)
     # (<DateTime [2000-01-01T00:00:00+00:00]>, <DateTime [2299-12-31T23:59:59.999999+00:00]>)
 
@@ -128,33 +145,24 @@ You can get the time span of any unit:
     # (<DateTime [2010-01-01T00:00:00+00:00]>, <DateTime [2039-12-31T23:59:59.999999+00:00]>)
 
 
-Or you can also get the start and end of any unit:
+Or you can get the start and end a time frame:
 
 .. code-block:: python
 
-    dt = DateTime(2015, 4, 4, 12, 30)
-    dt.start_of('century')
-    # <DateTime [2000-01-01T00:00:00+00:00]>
+    dt.start_of('day')  # OR dt.start_of_day()
+    # <DateTime [2015-04-04T00:00:00+00:00]>
 
-    dt.start_of('decade')
-    # <DateTime [2010-01-01T00:00:00+00:00]>
+    dt.end_of('day')  # OR dt.end_of_day()
+    # <DateTime [2015-04-04T23:59:59.999999+00:00]>
 
-    dt.start_of('year')
-    # <DateTime [2015-01-01T00:00:00+00:00]>
-
-    dt.end_of('century')
-    # <DateTime [2099-12-31T23:59:59.999999+00:00]>
-
-    dt.end_of('decade')
-    # <DateTime [2019-12-31T23:59:59.999999+00:00]>
-
-    dt.end_of('year', count=3)
+    dt.end_of('year', count=3)  # OR dt.end_of_year()
     # <DateTime [2017-12-31T23:59:59.999999+00:00]>
 
 
-.. note:: Supported units are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second``.
+.. note:: Supported time frames are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second`` and are accessible both from ``start_of(frame)``/``end_of(frame)`` and ``start_of_<frame>()``/``end_of_<frame>``.
 
-Time zones other than UTC are not expressable within a ``DateTime`` instance. Other time zones are only ever applied when either casting a ``DateTime`` object as a native datetime (via ``DateTime.astimezone``) or during string formatting (via ``DateTime.format``). ``DateTime`` understands both ``tzinfo`` objects and ``pytz.timezone`` strings.
+
+Time zones other than UTC are not expressable within a ``DateTime`` instance. Other time zones are only ever applied when either converting a ``DateTime`` object to a native datetime (via ``DateTime.astimezone``) or during string formatting (via ``DateTime.format``). ``DateTime`` understands both ``tzinfo`` objects and ``pytz.timezone`` string names.
 
 
 .. code-block:: python
