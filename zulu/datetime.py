@@ -136,8 +136,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        tz = pytz.UTC
-        return super(DateTime, cls).fromtimestamp(timestamp, tz)
+        return cls.utcfromtimestamp(timestamp)
 
     @classmethod
     def utcfromtimestamp(cls, timestamp):
@@ -150,7 +149,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return cls.fromtimestamp(timestamp)
+        return cls.fromdatetime(datetime.utcfromtimestamp(timestamp))
 
     @classmethod
     def fromordinal(cls, ordinal):
