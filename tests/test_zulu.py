@@ -190,6 +190,39 @@ def test_fromtimestamp(factory, timestamp, expected):
     assert factory(timestamp) == expected
 
 
+@parametrize('struct,expected', [
+    (struct_time((2016, 7, 29, 21, 23, 50, 4, 211, 0)),
+     DateTime(2016, 7, 29, 21, 23, 50))
+])
+def test_fromgmtime(struct, expected):
+    assert DateTime.fromgmtime(struct) == expected
+
+
+def test_fromordinal():
+    assert DateTime.fromordinal(730120) == DateTime(2000, 1, 1)
+
+
+@parametrize('struct,expected', [
+    (struct_time((2016, 7, 29, 21, 23, 50, 4, 211, 0)),
+     DateTime(2016, 7, 30, 2, 23, 50))
+])
+def test_fromlocaltime(struct, expected):
+    assert DateTime.fromlocaltime(struct) == expected
+
+
+@parametrize('date,time,expected', [
+    (datetime(2000, 1, 1), time(12, 30),
+     DateTime(2000, 1, 1, 12, 30)),
+    (date(2000, 1, 1), time(12, 30),
+     DateTime(2000, 1, 1, 12, 30)),
+    (DateTime(2000, 1, 1), DateTime(1990, 12, 3, 12, 30),
+     DateTime(2000, 1, 1, 12, 30))
+])
+def test_combine(date, time, expected):
+    dt = DateTime.combine(date, time)
+    assert dt == expected
+
+
 @parametrize('dt,properties', [
     (DateTime(2000, 1, 2, 3, 4, 5, 6),
      {'year': 2000,
@@ -236,21 +269,9 @@ def test_basic_property_methods(dt, methods):
         assert getattr(dt, meth)() == val
 
 
-def test_fromordinal():
-    assert DateTime.fromordinal(730120) == DateTime(2000, 1, 1)
 
 
-@parametrize('date,time,expected', [
-    (datetime(2000, 1, 1), time(12, 30),
-     DateTime(2000, 1, 1, 12, 30)),
-    (date(2000, 1, 1), time(12, 30),
-     DateTime(2000, 1, 1, 12, 30)),
-    (DateTime(2000, 1, 1), DateTime(1990, 12, 3, 12, 30),
-     DateTime(2000, 1, 1, 12, 30))
 ])
-def test_combine(date, time, expected):
-    dt = DateTime.combine(date, time)
-    assert dt == expected
 
 
 def test_copy():

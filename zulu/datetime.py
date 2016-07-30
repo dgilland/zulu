@@ -6,6 +6,7 @@ from __future__ import absolute_import
 
 from datetime import datetime, timedelta
 from functools import wraps
+import time
 
 from dateutil.relativedelta import relativedelta
 import pytz
@@ -162,6 +163,32 @@ class DateTime(datetime):
             :class:`.DateTime`
         """
         return cls.fromdatetime(datetime.fromordinal(ordinal))
+
+    @classmethod
+    def fromgmtime(cls, struct):
+        """Return :class:`.DateTime` object from a ``tuple`` like that returned
+        by ``time.gmtime`` that represents a UTC datetime.
+
+        Args:
+            struct (tuple): Tuple like that returned by ``time.gmtime``.
+
+        Returns:
+            :class:`.DateTime`
+        """
+        return cls.fromtimestamp(calendar.timegm(struct))
+
+    @classmethod
+    def fromlocaltime(cls, struct):
+        """Return :class:`.DateTime` object from a ``tuple`` like that returned
+        by ``time.localtime`` that represents a local datetime.
+
+        Args:
+            struct (tuple): Tuple like that returned by ``time.localtime``.
+
+        Returns:
+            :class:`.DateTime`
+        """
+        return cls.fromtimestamp(time.mktime(struct))
 
     @classmethod
     def combine(cls, date, time):

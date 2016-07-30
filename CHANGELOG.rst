@@ -2,7 +2,12 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
 - Add ``DateTime.datetime`` property that returns a native datetime.
+- Add ``DateTime.fromgmtime`` that creates a ``DateTime`` from a UTC based ``time.struct_time``.
+- Add ``DateTime.fromlocaltime`` that creates a ``DateTime`` from a local ``time.struct_time``.
 - Add ``DateTime.add`` and ``DateTime.sub`` methods.
 - Make ``DateTime.shift/add/sub`` use ``dateutil.relativedelta.relativedelta`` under the hood which brings new shiftable arguments: years and months
 - Drop support for milliseconds from ``DateTime.shift/add/sub``. **breaking change**
