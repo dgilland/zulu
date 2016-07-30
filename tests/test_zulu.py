@@ -269,9 +269,26 @@ def test_basic_property_methods(dt, methods):
         assert getattr(dt, meth)() == val
 
 
-
-
+@parametrize('year,expected', [
+    (100, False),
+    (104, True),
+    (1900, False),
+    (1904, True),
+    (2000, True),
+    (2001, False),
+    (2004, True),
 ])
+def test_isleap(year, expected):
+    assert DateTime(year).isleap() == expected
+
+
+@parametrize('dt,year_or_dt,expected', [
+    (DateTime(1900), 2000, 24),
+    (DateTime(2000), 1900, -24),
+    (DateTime(1), DateTime(9999), 2424)
+])
+def test_leapdays(dt, year_or_dt, expected):
+    assert dt.leapdays(year_or_dt) == expected
 
 
 def test_copy():
