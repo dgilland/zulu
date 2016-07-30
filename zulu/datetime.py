@@ -685,9 +685,7 @@ class DateTime(datetime):
             :class:`.DateTime`
         """
         self.validate_frame(frame)
-        method = getattr(self, 'start_of_{0}'.format(frame), None)
-
-        return method()
+        return getattr(self, 'start_of_{0}'.format(frame))()
 
     def end_of(self, frame, count=1):
         """Return the end of a given time frame for this datetime.
@@ -700,9 +698,7 @@ class DateTime(datetime):
             :class:`.DateTime`
         """
         self.validate_frame(frame)
-        method = getattr(self, 'end_of_{0}'.format(frame), None)
-
-        return method(count=count)
+        return getattr(self, 'end_of_{0}'.format(frame))(count)
 
     def span(self, frame, count=1):
         """Returns two new :class:`.DateTime` objects corresponding to the time
