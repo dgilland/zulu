@@ -439,13 +439,13 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(years=-(self.year % 100),
-                          months=-self.month + 1,
-                          days=-self.day + 1,
-                          hours=-self.hour,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-self.microsecond)
+        return self.replace(year=self.year - (self.year % 100),
+                            month=1,
+                            day=1,
+                            hour=0,
+                            minute=0,
+                            second=0,
+                            microsecond=0)
 
     def start_of_decade(self):
         """Return a new :class:`.DateTime` set to the start of the decade of
@@ -454,13 +454,13 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(years=-(self.year % 10),
-                          months=-self.month + 1,
-                          days=-self.day + 1,
-                          hours=-self.hour,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-self.microsecond)
+        return self.replace(year=self.year - (self.year % 10),
+                            month=1,
+                            day=1,
+                            hour=0,
+                            minute=0,
+                            second=0,
+                            microsecond=0)
 
     def start_of_year(self):
         """Return a new :class:`.DateTime` set to the start of the year of
@@ -469,12 +469,12 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(months=-self.month + 1,
-                          days=-self.day + 1,
-                          hours=-self.hour,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-self.microsecond)
+        return self.replace(month=1,
+                            day=1,
+                            hour=0,
+                            minute=0,
+                            second=0,
+                            microsecond=0)
 
     def start_of_month(self):
         """Return a new :class:`.DateTime` set to the start of the month of
@@ -483,11 +483,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(days=-self.day + 1,
-                          hours=-self.hour,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-self.microsecond)
+        return self.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     def start_of_day(self):
         """Return a new :class:`.DateTime` set to the start of the day of
@@ -496,10 +492,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(hours=-self.hour,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-self.microsecond)
+        return self.replace(hour=0, minute=0, second=0, microsecond=0)
 
     def start_of_hour(self):
         """Return a new :class:`.DateTime` set to the start of the hour of
@@ -508,9 +501,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-self.microsecond)
+        return self.replace(minute=0, second=0, microsecond=0)
 
     def start_of_minute(self):
         """Return a new :class:`.DateTime` set to the start of the minute of
@@ -519,8 +510,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(seconds=-self.second,
-                          microseconds=-self.microsecond)
+        return self.replace(second=0, microsecond=0)
 
     def start_of_second(self):
         """Return a new :class:`.DateTime` set to the start of the second of
@@ -529,7 +519,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(microseconds=-self.microsecond)
+        return self.replace(microsecond=0)
 
     def end_of_century(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the century of
