@@ -693,12 +693,3 @@ def test_span_attribute_error():
         dt.span(frame)
 
     assert 'The given time frame {0} is invalid'.format(frame) in str(exc)
-
-
-# def test_new_style_parser():
-#     fmt = 'YYYY-M-DD'
-#     from zulu.parser import _translate, DATE_PATTERN_TO_DIRECTIVE
-#     t = _translate(fmt, DATE_PATTERN_TO_DIRECTIVE, for_parse=False)
-#     #dt = DateTime.parse('2000-01-01', fmt)
-#
-#     print(t)
