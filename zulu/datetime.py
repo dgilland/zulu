@@ -577,7 +577,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(years=count * 1,
+        return self.shift(years=count,
                           months=-self.month + 1,
                           days=-self.day + 1,
                           hours=-self.hour,
@@ -595,7 +595,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(months=count * 1,
+        return self.shift(months=count,
                           days=-self.day + 1,
                           hours=-self.hour,
                           minutes=-self.minute,
@@ -612,7 +612,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(days=count * 1,
+        return self.shift(days=count,
                           hours=-self.hour,
                           minutes=-self.minute,
                           seconds=-self.second,
@@ -628,7 +628,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(hours=count * 1,
+        return self.shift(hours=count,
                           minutes=-self.minute,
                           seconds=-self.second,
                           microseconds=-1)
@@ -643,7 +643,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(minutes=count * 1,
+        return self.shift(minutes=count,
                           seconds=-self.second,
                           microseconds=-1)
 
@@ -657,7 +657,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(seconds=count * 1,
+        return self.shift(seconds=count,
                           microseconds=-1)
 
     def validate_frame(self, frame):
