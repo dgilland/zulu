@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import date, datetime, time, timedelta
-from time import struct_time
+from time import localtime, mktime, struct_time
 
 from iso8601 import UTC
 import pytest
@@ -202,12 +202,9 @@ def test_fromordinal():
     assert DateTime.fromordinal(730120) == DateTime(2000, 1, 1)
 
 
-@parametrize('struct,expected', [
-    (struct_time((2016, 7, 29, 21, 23, 50, 4, 211, 0)),
-     DateTime(2016, 7, 30, 2, 23, 50))
-])
-def test_fromlocaltime(struct, expected):
-    assert DateTime.fromlocaltime(struct) == expected
+def test_fromlocaltime():
+    now = localtime()
+    assert DateTime.fromlocaltime(now).timestamp() == mktime(now)
 
 
 @parametrize('date,time,expected', [
