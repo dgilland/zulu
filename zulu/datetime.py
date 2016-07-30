@@ -13,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 import pytz
 import tzlocal
 
-from .parser import get_timezone, parse, _pattern_to_directive_formatting
+from . import parser
 from ._compat import string_types
 
 
@@ -103,7 +103,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        dt = parse(obj, formats=formats, default_tz=default_tz)
+        dt = parser.parse(obj, formats, default_tz=default_tz)
         return cls.fromdatetime(dt)
 
     @classmethod
@@ -285,18 +285,7 @@ class DateTime(datetime):
         Returns:
             :class:`str`
         """
-        if tz is not None:
-            dt = self.astimezone(tz)
-        else:
-            dt = self
-
-        if format is None:
-            return dt.isoformat()
-        else:
-            if '%' not in format:
-                format = _pattern_to_directive_formatting(format)
-
-            return dt.strftime(format)
+        return parser.format(self, format, tz=tz)
 
     def astimezone(self, tz='local'):
         """Return datetime shifted to timezone `tz`.
@@ -311,7 +300,7 @@ class DateTime(datetime):
         """
         if tz is None:
             tz = 'local'
-        tz = get_timezone(tz)
+        tz = parser.get_timezone(tz)
         return super(DateTime, self).astimezone(tz)
 
     def shift(self,
@@ -719,4 +708,4 @@ DateTime.min = DateTime(1, 1, 1)
 DateTime.max = DateTime(9999, 12, 31, 23, 59, 59, 999999)
 
 #: DateTime value of EPOCH.
-DateTime.epoch = DateTime(1970, 1, 1)
+DateTime.epoch = DateTime.fromdatetime(parser.EPOCH)

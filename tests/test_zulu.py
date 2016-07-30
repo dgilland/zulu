@@ -106,14 +106,50 @@ def test_parse_format(string, kargs, expected):
     assert DateTime.parse(string, **kargs) == expected
 
 
-def test_format_pattern_mapping():
-    now = DateTime.now()
-
-    for unicode_token, c_token in DATE_PATTERN_TO_DIRECTIVE.items():
-        if isinstance(c_token, tuple):
-            c_token = c_token[1]
-
-        assert now.format(unicode_token) == now.format(c_token)
+@parametrize('dt,pattern,expected', [
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'YYYY', '2000'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'YY', '00'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'MMMM', 'January'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'MMM', 'Jan'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'MM', '01'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'M', '1'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'DDD', '005'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'DD', '05'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'D', '5'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'dd', '05'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'd', '5'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'EEEE', 'Wednesday'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'EEE', 'Wed'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'EE', 'Wed'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'E', 'Wed'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'eee', 'Wed'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'ee', 'Wed'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'e', '3'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'HH', '13'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'H', '13'),
+    (DateTime(2000, 1, 5, 9, 7, 8, 123456), 'HH', '09'),
+    (DateTime(2000, 1, 5, 9, 7, 8, 123456), 'H', '9'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'hh', '01'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'h', '1'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'mm', '07'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'm', '7'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'ss', '08'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 's', '8'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'SSSSSS', '123456'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'SSSSS', '12345'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'SSSS', '1234'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'SSS', '123'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'SS', '12'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'S', '1'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'A', 'PM'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'a', 'pm'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'Z', '+0000'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'ZZ', '+00:00'),
+    (DateTime(1970, 1, 1, 0, 17, 30), 'X', '1050.0'),
+    (DateTime(), ' ', ' '),
+])
+def test_format_pattern(dt, pattern, expected):
+    assert dt.format(pattern) == expected
 
 
 @parametrize('string,pattern', [
@@ -405,6 +441,13 @@ def test_strptime(string, fmt, expected):
 ])
 def test_format(dt, args, expected):
     assert dt.format(**args) == expected
+
+
+def test_abc():
+    import zulu
+    dt = zulu.now()
+    print(dt.microsecond)
+    print(zulu.parser.format(dt, 'SSS'))
 
 
 @parametrize('dt,tzinfo,expected', [

@@ -15,14 +15,18 @@ import tzlocal
 from ._compat import string_types
 
 
-try:
-    datetime.utcnow().strftime('%-S')
-except Exception:  # pragma: no cover
-    # Platform cannot use '%-' format directives for removing leading zeros.
-    _ENHANCED_FORMATTING_SUPPORTED = False
-else:  # pragma: no cover
-    # Platform supports '%-' format directives for removing leading zeros.
-    _ENHANCED_FORMATTING_SUPPORTED = True
+def _truncate(value, length):
+    return value[:length]
+
+
+def _remove_leading_zero(value, count=1):
+    for _ in range(count):
+        if value.startswith('0'):
+            value = value[1:]
+    return value
+
+
+EPOCH = pytz.UTC.localize(datetime(1970, 1, 1), is_dst=None)
 
 
 # Subset of Unicode date field patterns from:
@@ -34,39 +38,71 @@ else:  # pragma: no cover
 # second item is the directive used for string formatting. The second items are
 # platform dependent and may not work on all systems.
 DATE_PATTERN_TO_DIRECTIVE = {
-    'YYYY': '%Y',          # Year with century
-    'YY': '%y',            # Year without century
-    'MMMM': '%B',          # Month's full name
-    'MMM': '%b',           # Month's abbreviated name
-    'MM': '%m',            # Month padded
-    'M': ('%m', '%-m'),    # Month not padded
-    'DDD': '%j',           # Day of the year padded
-    'D': ('%j', '%-j'),    # Day of the year not padded
-    'dd': '%d',            # Day of the month padded
-    'd': ('%d', '%-d'),    # Day of the month not padded
-    'EEEE': '%A',          # Weekday's full name
-    'EEE': '%a',           # Weekday's abbreviated name
-    'EE': '%a',            # Weekday's abbreviated name
-    'E': '%a',             # Weekday's abbreviated name
-    'eee': '%a',           # Weekday's abbreviated name
-    'ee': '%a',            # Weekday's abbreviated name
-    'e': '%w',             # Weekday as decimal
-    'HH': '%H',            # Hour-24 padded
-    'H': ('%H', '%-H'),    # Hour-24 not padded
-    'hh': '%I',            # Hour-12 padded
-    'h': ('%I', '%-I'),    # Hour-12 not padded
-    'mm': '%M',            # Minute padded
-    'm': ('%M', '%-M'),    # Minute not padded
-    'ss': '%S',            # Second padded
-    's': ('%S', '%-S'),    # Second not padded
-    'SSSSSS': '%f',        # Microsecond padded
-    'SSSSS': '%f',         # Microsecond padded
-    'SSSS': '%f',          # Microsecond padded
-    'SSS': '%f',           # Microsecond padded
-    'SS': '%f',            # Microsecond padded
-    'S': '%f',             # Microsecond not padded
-    'a': '%p',             # AM or PM
-    'Z': '%z',             # UTC offset without separator
+    'YYYY': '%Y',    # Year with century
+    'YY': '%y',      # Year without century
+    'MMMM': '%B',    # Month's full name
+    'MMM': '%b',     # Month's abbreviated name
+    'MM': '%m',      # Month padded
+    'M': '%m',       # Month not padded
+    'DDD': '%j',     # Day of the year padded
+    'DD': '%j',      # Day of the year padded
+    'D': '%j',       # Day of the year not padded
+    'dd': '%d',      # Day of the month padded
+    'd': '%d',       # Day of the month not padded
+    'EEEE': '%A',    # Weekday's full name
+    'EEE': '%a',     # Weekday's abbreviated name
+    'EE': '%a',      # Weekday's abbreviated name
+    'E': '%a',       # Weekday's abbreviated name
+    'eee': '%a',     # Weekday's abbreviated name
+    'ee': '%a',      # Weekday's abbreviated name
+    'e': '%w',       # Weekday as decimal
+    'HH': '%H',      # Hour-24 padded
+    'H': '%H',       # Hour-24 not padded
+    'hh': '%I',      # Hour-12 padded
+    'h': '%I',       # Hour-12 not padded
+    'mm': '%M',      # Minute padded
+    'm': '%M',       # Minute not padded
+    'ss': '%S',      # Second padded
+    's': '%S',       # Second not padded
+    'SSSSSS': '%f',  # Microsecond padded
+    'SSSSS': '%f',   # Microsecond padded
+    'SSSS': '%f',    # Microsecond padded
+    'SSS': '%f',     # Microsecond padded
+    'SS': '%f',      # Microsecond padded
+    'S': '%f',       # Microsecond not padded
+    'A': '%p',       # AM or PM
+    'a': '%p',       # am or pm
+    'Z': '%z',       # UTC offset without separator
+    'ZZ': '%z',      # UTC offset with separator
+}
+
+# Transform functions to apply to strftime() output from these date patterns.
+# These are use to modify strftime() output for cases where strftime() cannot
+# produce the desired output but can produce something that can be transformed
+# in the what's expected.
+PATTERN_FORMAT_TRANSFORMS = {
+    'M': _remove_leading_zero,
+    'DD': partial(_remove_leading_zero, count=1),
+    'D': partial(_remove_leading_zero, count=2),
+    'd': _remove_leading_zero,
+    'H': _remove_leading_zero,
+    'h': _remove_leading_zero,
+    'm': _remove_leading_zero,
+    's': _remove_leading_zero,
+    'SSSSS': partial(_truncate, length=5),
+    'SSSS': partial(_truncate, length=4),
+    'SSS': partial(_truncate, length=3),
+    'SS': partial(_truncate, length=2),
+    'S': partial(_truncate, length=1),
+    'A': lambda value: value.upper(),
+    'a': lambda value: value.lower(),
+    'ZZ': lambda value: value[:-2] + ':' + value[-2:]
+}
+
+# Pattern formatter functions that operate on the datetime object. These
+# correspond to patterns that are not supported by stftime().
+PATTERN_DATETIME_FORMATTERS = {
+    'X': lambda dt: str((dt - EPOCH).total_seconds())  # Timestamp
 }
 
 
@@ -75,14 +111,14 @@ class ParseError(Exception):
     pass
 
 
-def parse(obj, formats=None, default_tz=None):
-    """Attempt to parse `obj` as a ``datetime`` using  a list of `formats`. If
+def parse(obj, fmts=None, default_tz=None):
+    """Attempt to parse `obj` as a ``datetime`` using  a list of `fmts`. If
     no timezone information is found in `obj` and `default_tz` is set, then
     the naive datetime object will be shifted to the default timezone.
 
     Args:
         obj (mixed): Object to parse.
-        formats (list, optional): List of string formats to use when parsing.
+        fmts (list, optional): List of string formats to use when parsing.
             Defaults to ``['ISO8601', 'timestamp']``.
         default_tz (None|str|tzinfo, optional): Default timezone to use when
             parsed datetime object does not contain a timezone. Defaults to
@@ -92,18 +128,17 @@ def parse(obj, formats=None, default_tz=None):
         default_tz = iso8601.UTC
 
     if not is_valid_timezone(default_tz):
-        raise ValueError('Unrecognized timezone given to use as default: {0}'
-                         .format(default_tz))
+        raise ValueError('Unrecognized timezone: {0}'.format(default_tz))
 
     if is_valid_datetime(obj):
         return obj
 
-    if formats is None:
-        formats = ['ISO8601', 'timestamp']
-    elif not isinstance(formats, (list, tuple)):
-        formats = [formats]
+    if fmts is None:
+        fmts = ['ISO8601', 'X']
+    elif not isinstance(fmts, (list, tuple)):
+        fmts = [fmts]
 
-    dt = _parse_formats(obj, formats)
+    dt = _parse_formats(obj, fmts)
 
     if dt.tzinfo is None and default_tz is not None:
         dt = dt.replace(tzinfo=get_timezone(default_tz))
@@ -115,85 +150,114 @@ def parse(obj, formats=None, default_tz=None):
     return dt
 
 
-def _parse_formats(obj, formats):
-    """Parse `obj` as datetime using list of `formats`."""
+def _parse_formats(obj, fmts):
+    """Parse `obj` as datetime using list of `fmts`."""
     dt = None
     errors = {}
 
-    for format in formats:
+    for fmt in fmts:
         try:
-            dt = _parse_format(obj, format)
+            dt = _parse_format(obj, fmt)
         except Exception as exc:
-            errors[format] = str(exc)
+            errors[fmt] = str(exc)
             dt = None
         else:
             break
 
     if dt is None:
         err = ', '.join('"{0}" ({1})'.format(fmt, errors[fmt])
-                        for fmt in formats)
+                        for fmt in fmts)
         raise ParseError('Value "{0}" does not match any format in {1}'
                          .format(obj, err))
 
     return dt
 
 
-def _parse_format(obj, format):
-    """Parse `obj` as datetime using `format`."""
-    if format.upper() == 'ISO8601':
+def _parse_format(obj, fmt):
+    """Parse `obj` as datetime using `fmt`."""
+    if fmt.upper() == 'ISO8601':
         return iso8601.parse_date(obj, default_timezone=None)
-    elif format == 'timestamp':
+    elif fmt == 'X':
         return datetime.fromtimestamp(obj, pytz.UTC)
     else:
-        if '%' not in format:
-            format = _pattern_to_directive_parsing(format)
-        return datetime.strptime(obj, format)
+        if '%' not in fmt:
+            fmt = _date_pattern_to_directive(fmt)
+        return datetime.strptime(obj, fmt)
 
 
-def _pattern_to_directive_parsing(format):
-    """Translate a pattern format into a strptime directive format string."""
-    return _translate_parse_format(format,
-                                   mapping=DATE_PATTERN_TO_DIRECTIVE,
-                                   token_index=0)
+def format(dt, fmt=None, tz=None):
+    """Return string formatted datetime, `dt`, using format directives or
+    pattern in `fmt`. If timezone, `tz`, is supplied, the datetime will be
+    shifted to that timezone before being formatted.
 
+    Args:
+        dt (datetime): A datetime instance.
+        fmt (str, optional): Datetime format string. Defaults to ``None`` which
+            uses ISO-8601 format.
+        tz (None|str|tzinfo, optional): Timezone to shift `dt` to before
+            formatting.
 
-def _pattern_to_directive_formatting(format):
-    """Translate a pattern format into a strftime directive format string."""
-    return _translate_parse_format(format,
-                                   mapping=DATE_PATTERN_TO_DIRECTIVE,
-                                   token_index=1)
-
-
-def _translate_parse_format(format, mapping, token_index=0):
-    """Translate a parse `format` using `mapping` ``dict`` where the keys of
-    `mapping` corresponding to possible tokens that would be found in `format`
-    and the values of `mapping` corresponding to what should be substituted for
-    those tokens. If the translated token value in `mapping` is a tuple, then
-    `token_index` will be used to index into that tuple and substitute its
-    value.
+    Returns:
+        str
     """
-    if not _ENHANCED_FORMATTING_SUPPORTED:  # pragma: no cover
-        token_index = 0
+    if not isinstance(dt, datetime):
+        raise TypeError("zulu.parser.format()'s first argument must be a "
+                        "datetime, not {0}"
+                        .format(type(dt)))  # pragma: no cover
 
-    # This groups tokens by repeating characters so that each set of repeating
-    # characters is a list item.
-    # (e.g. 'YY-MM-dd' becomes ['YY', '-', 'MM', '-', 'dd'])
-    tokens = [''.join(group) for key, group in groupby(format)]
+    if fmt is not None and not isinstance(fmt, string_types):
+        raise TypeError("zulu.parser.format()'s second argument must be a "
+                        "string or None, not {0}"
+                        .format(type(fmt)))  # pragma: no cover
 
-    for idx, token in enumerate(tokens):
-        if token not in mapping:
-            continue
+    if not is_valid_timezone(tz):  # pragma: no cover
+        raise ValueError('Unrecognized timezone: {0}'.format(tz))
 
-        mapped = mapping[token]
+    if tz is not None:
+        dt = dt.astimezone(tz)
 
-        if isinstance(mapped, tuple):
-            # Get indexed value from tuple in cases where a token can be
-            # translated to different values depending on the context.
-            mapped = mapped[token_index]
+    if fmt is None:
+        return dt.isoformat()
+    elif '%' not in fmt:
+        return _format_date_pattern(dt, fmt)
+    else:
+        return dt.strftime(fmt)
 
-        tokens[idx] = mapped
 
-    return ''.join(tokens)
+def _format_date_pattern(dt, fmt):
+    """Format datetime, `dt`, using date-pattern format, `fmt`."""
+    formatted = ''
+
+    for token in _tokenize_date_pattern(fmt):
+        if token in DATE_PATTERN_TO_DIRECTIVE:
+            value = dt.strftime(DATE_PATTERN_TO_DIRECTIVE[token])
+        else:
+            value = token
+
+        if token in PATTERN_FORMAT_TRANSFORMS:
+            value = PATTERN_FORMAT_TRANSFORMS[token](value)
+        elif token in PATTERN_DATETIME_FORMATTERS:
+            value = PATTERN_DATETIME_FORMATTERS[token](dt)
+
+        formatted += value
+
+    return formatted
+
+
+def _date_pattern_to_directive(fmt):
+    """Convert date pattern format to strptime/strftime directives."""
+    return ''.join(DATE_PATTERN_TO_DIRECTIVE.get(token, token)
+                   for token in _tokenize_date_pattern(fmt))
+
+
+def _tokenize_date_pattern(fmt):
+    """Return list of date pattern tokens.
+
+    This groups tokens by repeating characters so that each set of repeating
+    characters is a list item (e.g. ``'YY-MM-dd'`` becomes
+    ``['YY', '-', 'MM', '-', 'dd']``).
+    """
+    return [''.join(group) for key, group in groupby(fmt)]
 
 
 def get_timezone(tz):
