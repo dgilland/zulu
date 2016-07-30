@@ -18,6 +18,10 @@ from .fixtures import parametrize
 eastern = pytz.timezone('US/Eastern')
 
 
+def test_new_defaults():
+    assert DateTime() == DateTime.fromtimestamp(0)
+
+
 @parametrize('factory', [
     DateTime.utcnow,
     datetime.utcnow
