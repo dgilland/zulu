@@ -629,6 +629,66 @@ def test_compare_greater_than_equal(dt, other, expected):
     assert (dt >= other) is expected
 
 
+@parametrize('dt,frame,expected', [
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'second',
+     DateTime(2015, 2, 5, 12, 30, 15)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'minute',
+     DateTime(2015, 2, 5, 12, 30)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'hour',
+     DateTime(2015, 2, 5, 12)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'day',
+     DateTime(2015, 2, 5)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'month',
+     DateTime(2015, 2, 1)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'year',
+     DateTime(2015, 1, 1)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'decade',
+     DateTime(2010, 1, 1)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'century',
+     DateTime(2000, 1, 1)),
+])
+def test_start_of_frame(dt, frame, expected):
+    assert dt.start_of(frame) == expected
+
+
+@parametrize('dt,frame,expected', [
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'second',
+     DateTime(2015, 2, 5, 12, 30, 15, 999999)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'minute',
+     DateTime(2015, 2, 5, 12, 30, 59, 999999)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'hour',
+     DateTime(2015, 2, 5, 12, 59, 59, 999999)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'day',
+     DateTime(2015, 2, 5, 23, 59, 59, 999999)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'month',
+     DateTime(2015, 2, 28, 23, 59, 59, 999999)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'year',
+     DateTime(2015, 12, 31, 23, 59, 59, 999999)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'decade',
+     DateTime(2019, 12, 31, 23, 59, 59, 999999)),
+    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     'century',
+     DateTime(2099, 12, 31, 23, 59, 59, 999999)),
+])
+def test_end_of_frame(dt, frame, expected):
+    assert dt.end_of(frame) == expected
+
+
 @parametrize('dt,span,count,expected', [
     (DateTime(2015, 4, 4, 12, 30),
      'century',

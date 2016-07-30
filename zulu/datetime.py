@@ -541,13 +541,14 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(years=-(self.year % 100) + (count * 100),
-                          months=-self.month + 1,
-                          days=-self.day + 1,
-                          hours=-self.hour,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-1)
+        return (self.start_of_second()
+                    .shift(years=-(self.year % 100) + (count * 100),
+                           months=-self.month + 1,
+                           days=-self.day + 1,
+                           hours=-self.hour,
+                           minutes=-self.minute,
+                           seconds=-self.second,
+                           microseconds=-1))
 
     def end_of_decade(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the decade of
@@ -559,13 +560,14 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(years=-(self.year % 10) + (count * 10),
-                          months=-self.month + 1,
-                          days=-self.day + 1,
-                          hours=-self.hour,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-1)
+        return (self.start_of_second()
+                    .shift(years=-(self.year % 10) + (count * 10),
+                           months=-self.month + 1,
+                           days=-self.day + 1,
+                           hours=-self.hour,
+                           minutes=-self.minute,
+                           seconds=-self.second,
+                           microseconds=-1))
 
     def end_of_year(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the year of
@@ -577,13 +579,14 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(years=count,
-                          months=-self.month + 1,
-                          days=-self.day + 1,
-                          hours=-self.hour,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-1)
+        return (self.start_of_second()
+                    .shift(years=count,
+                           months=-self.month + 1,
+                           days=-self.day + 1,
+                           hours=-self.hour,
+                           minutes=-self.minute,
+                           seconds=-self.second,
+                           microseconds=-1))
 
     def end_of_month(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the month of
@@ -595,12 +598,13 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(months=count,
-                          days=-self.day + 1,
-                          hours=-self.hour,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-1)
+        return (self.start_of_second()
+                    .shift(months=count,
+                           days=-self.day + 1,
+                           hours=-self.hour,
+                           minutes=-self.minute,
+                           seconds=-self.second,
+                           microseconds=-1))
 
     def end_of_day(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the day of
@@ -612,11 +616,12 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(days=count,
-                          hours=-self.hour,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-1)
+        return (self.start_of_second()
+                    .shift(days=count,
+                           hours=-self.hour,
+                           minutes=-self.minute,
+                           seconds=-self.second,
+                           microseconds=-1))
 
     def end_of_hour(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the hour of
@@ -628,10 +633,11 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(hours=count,
-                          minutes=-self.minute,
-                          seconds=-self.second,
-                          microseconds=-1)
+        return (self.start_of_second()
+                    .shift(hours=count,
+                           minutes=-self.minute,
+                           seconds=-self.second,
+                           microseconds=-1))
 
     def end_of_minute(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the minute of
@@ -643,9 +649,10 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(minutes=count,
-                          seconds=-self.second,
-                          microseconds=-1)
+        return (self.start_of_second()
+                    .shift(minutes=count,
+                           seconds=-self.second,
+                           microseconds=-1))
 
     def end_of_second(self, count=1):
         """Return a new :class:`.DateTime` set to the end of the second of
@@ -657,8 +664,9 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        return self.shift(seconds=count,
-                          microseconds=-1)
+        return (self.start_of_second()
+                    .shift(seconds=count,
+                           microseconds=-1))
 
     def validate_frame(self, frame):
         """Validates the given time frame."""
