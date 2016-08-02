@@ -20,11 +20,11 @@ Links
 Features
 ========
 
-- Supported on Python 2.7 and Python >= 3.4
+- Supported on Python 2.7 and Python 3.4+
 - All datetime objects converted and stored as UTC.
 - Parses ISO8601 formatted strings and POSIX timestamps by default.
 - Timezone representation applied only during string output formatting or when casting to native datetime object.
-- Drop-in replacement interface for native datetime objects.
+- Drop-in replacement for native datetime objects.
 
 
 Quickstart
@@ -38,30 +38,15 @@ Install using pip:
     pip install zulu
 
 
-Zulu's main type is ``zulu.DateTime`` which represents a fixed UTC datetime object.
-
 .. code-block:: python
 
     import zulu
 
-    dt = zulu.now()
+    zulu.now()
     # <DateTime [2016-07-25T19:33:18.137493+00:00]>
 
-    assert isinstance(dt, zulu.DateTime)
-
-
-It's a drop-in replacement for native datetime objects (it inherits from ``datetime.datetime``) but deals only with UTC time zones internally.
-
-.. code-block:: python
-
-    assert dt.year == 2016
-    assert dt.month == 7
-    assert dt.day == 25
-    assert dt.hour == 19
-    assert dt.minute == 33
-    assert dt.second == 18
-    assert dt.microsecond == 137493
-    assert dt.tzname() == 'UTC'
+    dt = zulu.parse('2016-07-25T19:33:18.137493+00:00')
+    # <DateTime [2016-07-25T19:33:18.137493+00:00]>
 
     dt.isoformat()
     # '2016-07-25T19:33:18.137493+00:00'
@@ -69,190 +54,38 @@ It's a drop-in replacement for native datetime objects (it inherits from ``datet
     dt.timestamp()
     # 1469475198.137493
 
-    dt.date()
-    # datetime.date(2016, 7, 25)
-
-    dt.time()
-    # datetime.time(19, 33, 18, 137493)
-
-
-Easy access to a naive datetime object:
-
-.. code-block:: python
-
-
     dt.naive
     # datetime.datetime(2016, 7, 25, 19, 33, 18, 137493)
 
+    dt.datetime
+    # datetime.datetime(2016, 7, 25, 19, 33, 18, 137493, tzinfo=<UTC>)
 
-It can easily apply timedelta's using the ``shift`` method:
-
-.. code-block:: python
-
-    shifted = dt.shift(hours=-5, minutes=10)
+    dt.shift(hours=-5, minutes=10)
     # <DateTime [2016-07-25T14:43:18.137493+00:00]>
 
-    assert shifted is not dt
-
-
-Or replace datetime attributes:
-
-.. code-block:: python
-
-    replaced = dt.replace(hour=14, minute=43)
+    dt.replace(hour=14, minute=43)
     # <DateTime [2016-07-25T14:43:18.137493+00:00]>
 
-    assert replaced is not dt
-
-
-.. note:: Since ``DateTime`` is meant to be immutable, both ``shift`` and ``replace`` return new ``DateTime`` instances while leaving the original instance unchanged.
-
-
-You can get the span across a time frame:
-
-.. code-block:: python
-
-    dt = DateTime(2015, 4, 4, 12, 30, 37, 651839)
-
-    dt.span('century')
-    # (<DateTime [2000-01-01T00:00:00+00:00]>, <DateTime [2099-12-31T23:59:59.999999+00:00]>)
-
-    dt.span('decade')
-    # (<DateTime [2010-01-01T00:00:00+00:00]>, <DateTime [2019-12-31T23:59:59.999999+00:00]>)
-
-    dt.span('year')
-    # (<DateTime [2015-01-01T00:00:00+00:00]>, <DateTime [2015-12-31T23:59:59.999999+00:00]>)
-
-    dt.span('month')
-    # (<DateTime [2015-04-01T00:00:00+00:00]>, <DateTime [2015-04-30T23:59:59.999999+00:00]>)
-
-    dt.span('day')
-    # (<DateTime [2015-04-04T00:00:00+00:00]>, <DateTime [2015-04-04T23:59:59.999999+00:00]>)
-
-    dt.span('hour')
-    # (<DateTime [2015-04-04T12:00:00+00:00]>, <DateTime [2015-04-04T12:59:59.999999+00:00]>)
-
-    dt.span('minute')
-    # (<DateTime [2015-04-04T12:30:00+00:00]>, <DateTime [2015-04-04T12:30:59.999999+00:00]>)
-
-    dt.span('second')
-    # (<DateTime [2015-04-04T12:30:37+00:00]>, <DateTime [2015-04-04T12:30:37.999999+00:00]>)
-
-    dt.span('century', count=3)
-    # (<DateTime [2000-01-01T00:00:00+00:00]>, <DateTime [2299-12-31T23:59:59.999999+00:00]>)
-
-    dt.span('decade', count=3)
-    # (<DateTime [2010-01-01T00:00:00+00:00]>, <DateTime [2039-12-31T23:59:59.999999+00:00]>)
-
-
-Or you can get the start and end a time frame:
-
-.. code-block:: python
-
-    dt.start_of('day')  # OR dt.start_of_day()
-    # <DateTime [2015-04-04T00:00:00+00:00]>
-
-    dt.end_of('day')  # OR dt.end_of_day()
-    # <DateTime [2015-04-04T23:59:59.999999+00:00]>
-
-    dt.end_of('year', count=3)  # OR dt.end_of_year()
-    # <DateTime [2017-12-31T23:59:59.999999+00:00]>
-
-
-.. note:: Supported time frames are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second`` and are accessible both from ``start_of(frame)``/``end_of(frame)`` and ``start_of_<frame>()``/``end_of_<frame>``.
-
-
-You can get a range of time spans:
-
-.. code-block:: python
-
-    start = DateTime(2015, 4, 4, 12, 30)
-    end = DateTime(2015, 4, 4, 16, 30)
-
-    for span in Datetime.span_range('hour', start, end):
-        print(span)
-    # (<DateTime [2015-04-04T12:00:00+00:00]>, <DateTime [2015-04-04T12:59:59.999999+00:00]>)
-    # (<DateTime [2015-04-04T13:00:00+00:00]>, <DateTime [2015-04-04T13:59:59.999999+00:00]>)
-    # (<DateTime [2015-04-04T14:00:00+00:00]>, <DateTime [2015-04-04T14:59:59.999999+00:00]>)
-    # (<DateTime [2015-04-04T15:00:00+00:00]>, <DateTime [2015-04-04T15:59:59.999999+00:00]>)
-
-
-Or you can iterate over a range of time:
-
-.. code-block:: python
-
-    start = DateTime(2015, 4, 4, 12, 30)
-    end = DateTime(2015, 4, 4, 16, 30)
-
-    for dt in Datetime.range('hour', start, end):
-        print(dt)
-    # <DateTime [2015-04-04T12:30:00+00:00]>
-    # <DateTime [2015-04-04T13:30:00+00:00]>
-    # <DateTime [2015-04-04T14:30:00+00:00]>
-
-.. note:: Supported range/span time frames are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second``.
-
-Time zones other than UTC are not expressable within a ``DateTime`` instance. Other time zones are only ever applied when either converting a ``DateTime`` object to a native datetime (via ``DateTime.astimezone``) or during string formatting (via ``DateTime.format``). ``DateTime`` understands both ``tzinfo`` objects and ``pytz.timezone`` string names.
-
-
-.. code-block:: python
-
-    local = dt.astimezone()
-    # same as doing dt.astimezone('local')
-    # datetime.datetime(2016, 7, 25, 15, 33, 18, 137493, tzinfo=<DstTzInfo 'America/New_York' EDT-1 day, 20:00:00 DST>)
-
-    pacific = dt.astimezone('US/Pacific')
-    # datetime.datetime(2016, 7, 25, 12, 33, 18, 137493, tzinfo=<DstTzInfo 'US/Pacific' PDT-1 day, 17:00:00 DST>)
-
-    import pytz
-    mountain = dt.astimezone(pytz.timezone('US/Mountain'))
-    # datetime.datetime(2016, 7, 25, 13, 33, 18, 137493, tzinfo=<DstTzInfo 'US/Mountain' MDT-1 day, 18:00:00 DST>)
-
-
-String parsing/formatting in ``DateTime`` supports both `strftime/strptime <https://docs.python.org/3.5/library/datetime.html#strftime-and-strptime-behavior>`_ directives and `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_.
-
-.. code-block:: python
-
-    dt.format('%Y-%m-%d %H:%M:%S%z')
-    # '2016-07-25 19:33:18+0000'
-
-    dt.format('YYYY-MM-dd HH:mm:ssZ')
-    # '2016-07-25 19:33:18+0000'
-
-    dt.format('%Y-%m-%d %H:%M:%S%z', tz='US/Eastern')
-    # '2016-07-25 15:33:18-0400'
-
-    zulu.parse('2016-07-25 15:33:18-0400', '%Y-%m-%d %H:%M:%S%z')
-    # <DateTime [2016-07-25T19:33:18+00:00]>
-
-
-By default, ``zulu.parse`` will look for either an ISO-8601 formatted string or a POSIX timestamp while assuming that in the absence of an explicit timezone, UTC will be used:
-
-.. code-block:: python
-
-    zulu.parse('2016-07-25 15:33:18-0400')
-    # <DateTime [2016-07-25T19:33:18+00:00]>
-
-    zulu.parse('2016-07-25')
+    dt.start_of('day')
     # <DateTime [2016-07-25T00:00:00+00:00]>
 
-    zulu.parse('2016-07-25 19:33')
-    # <DateTime [2016-07-25T19:33:00+00:00]>
+    dt.end_of('day')
+    #<DateTime [2016-07-25T23:59:59.999999+00:00]>
 
-    zulu.parse(1469475198.0)
-    # <DateTime [2016-07-25T19:33:18+00:00]>
+    dt.span('hour')
+    # (<DateTime [2016-07-25T19:00:00+00:00]>, <DateTime [2016-07-25T19:59:59.999999+00:00]>)
 
+    list(zulu.DateTime.range('hour', dt, dt.shift(hours=4)))
+    # [<DateTime [2016-07-25T19:33:18.137493+00:00]>,
+    #  <DateTime [2016-07-25T20:33:18.137493+00:00]>,
+    #  <DateTime [2016-07-25T21:33:18.137493+00:00]>,
+    #  <DateTime [2016-07-25T22:33:18.137493+00:00]>]
 
-Local time zones can be substituted for naive datetimes by setting ``default_tz``:
-
-.. code-block:: python
-
-    zulu.parse('2016-07-25', default_tz='US/Eastern')
-    # <DateTime [2016-07-25T04:00:00+00:00]>
-
-    # default ignored when string provides it
-    zulu.parse('2016-07-25T15:33:18-0700', default_tz='US/Eastern')
-    # <DateTime [2016-07-25T22:33:18+00:00]>
+    list(zulu.DateTime.span_range('minute', dt, dt.shift(minutes=4)))
+    # [(<DateTime [2016-07-25T19:33:00+00:00]>, <DateTime [2016-07-25T19:33:59.999999+00:00]>),
+    #  (<DateTime [2016-07-25T19:34:00+00:00]>, <DateTime [2016-07-25T19:34:59.999999+00:00]>),
+    #  (<DateTime [2016-07-25T19:35:00+00:00]>, <DateTime [2016-07-25T19:35:59.999999+00:00]>),
+    #  (<DateTime [2016-07-25T19:36:00+00:00]>, <DateTime [2016-07-25T19:36:59.999999+00:00]>)]
 
 
 Why Zulu?
@@ -261,9 +94,10 @@ Why Zulu?
 Why zulu instead of `native datetimes <https://docs.python.org/3.5/library/datetime.html#datetime-objects>`_:
 
 - Zulu has extended datetime features such as ``parse()``, ``format()``, ``shift()``, and `pytz <http://pytz.sourceforge.net/>`_ timezone support.
-- Parses ISO 8601 and timestamps by default without any extra arguments.
+- Parses ISO8601 and timestamps by default without any extra arguments.
 - Easier to reason about ``DateTime`` objects since they are only ever UTC datetimes.
 - Clear delineation between UTC and other time zones where timezone representation is only applicable for display or conversion to native datetime.
+- Supports more string parsing/formatting options using Unicode date patterns as well as ``strptime/strftime`` directives.
 
 
 Why zulu instead of `Arrow <https://arrow.readthedocs.io>`_:
@@ -271,6 +105,7 @@ Why zulu instead of `Arrow <https://arrow.readthedocs.io>`_:
 - Zulu is a drop-in replacement for native datetimes (inherits from ``datetime.datetime``). No need to convert using ``arrow.datetime`` when you need a datetime (zulu is always a datetime).
 - Stricter parsing to avoid silent errors. For example, one might expect ``arrow.get('02/08/1987', 'MM/DD/YY')`` to fail (input does not match format) but it gladly returns ``<Arrow [2019-02-08T00:00:00+00:00]>`` whereas ``zulu.parse('02/08/1987', '%m/%d/%y')`` throws ``zulu.parser.ParseError: Value "02/08/1987" does not match any format in ['%m/%d/%y']``.
 - Avoids timezone/DST shifting bugs by only dealing with UTC datetimes when applying timedeltas or performing other calculations.
+- Supports ``strptime/strftime`` as well as Unicode date patterns for string parsing/formatting.
 
 
 For more details, please see the full documentation at https://zulu.readthedocs.io.
