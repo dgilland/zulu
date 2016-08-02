@@ -2,8 +2,8 @@ Changelog
 =========
 
 
-(unreleased)
-------------
+v0.2.0 (2016-08-02)
+-------------------
 
 - Add ``DateTime.datetime`` property that returns a native datetime.
 - Add ``DateTime.fromgmtime`` that creates a ``DateTime`` from a UTC based ``time.struct_time``.
