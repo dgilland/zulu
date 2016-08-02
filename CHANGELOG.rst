@@ -21,11 +21,13 @@ Changelog
   - ``start/end_of_minute``
   - ``start/end_of_second``
 
-- Add ``DateTime.span`` for that returns the start and end of a time frame.
+- Add ``DateTime.span`` that returns the start and end of a time frame.
+- Add ``DateTime.span_range`` that returns a range of spans.
+- Add ``DateTime.range`` that returns a range of datetimes.
 - Add ``DateTime.add`` and ``DateTime.sub`` methods.
 - Add ``years`` and ``months`` arguments to ``DateTime.shift/add/sub``.
 - Drop support for milliseconds from ``DateTime.shift/add/sub``. **breaking change**
-- Make ``DateTime.parse/format`` understand a subset of `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_ by translating them to strptime/strftime format directives.
+- Make ``DateTime.parse/format`` understand a subset of `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_.
 - Set defaults for year (1970), month (1), and day (1) arguments to new ``DateTime`` objects. Creating a new ``DateTime`` now defaults to the start of the POSIX epoch.
 
 
