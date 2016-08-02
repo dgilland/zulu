@@ -134,7 +134,7 @@ def parse(obj, fmts=None, default_tz=None):
         return obj
 
     if fmts is None:
-        fmts = ['ISO8601', 'X']
+        fmts = ['ISO8601', 'timestamp']
     elif not isinstance(fmts, (list, tuple)):
         fmts = [fmts]
 
@@ -177,7 +177,7 @@ def _parse_format(obj, fmt):
     """Parse `obj` as datetime using `fmt`."""
     if fmt.upper() == 'ISO8601':
         return iso8601.parse_date(obj, default_timezone=None)
-    elif fmt == 'X':
+    elif fmt in ('timestamp', 'X'):
         return datetime.fromtimestamp(obj, pytz.UTC)
     else:
         if '%' not in fmt:
