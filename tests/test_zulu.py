@@ -123,7 +123,7 @@ def test_parse_format(string, kargs, expected):
     (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'EE', 'Wed'),
     (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'E', 'Wed'),
     (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'eee', 'Wed'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'ee', 'Wed'),
+    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'ee', '03'),
     (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'e', '3'),
     (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'HH', '13'),
     (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'H', '13'),
@@ -145,7 +145,8 @@ def test_parse_format(string, kargs, expected):
     (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'a', 'pm'),
     (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'Z', '+0000'),
     (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'ZZ', '+00:00'),
-    (DateTime(1970, 1, 1, 0, 17, 30), 'X', '1050.0'),
+    (DateTime(1970, 1, 1, 0, 17, 30), 'XX', '1050.0'),
+    (DateTime(1970, 1, 1, 0, 17, 30, 123456), 'X', '1050'),
     (DateTime(), ' ', ' '),
 ])
 def test_format_pattern(dt, pattern, expected):
@@ -965,6 +966,13 @@ def test_span_range_error(frame, start, end):
         [DateTime(2015, 4, 4, 12, 30),
          DateTime(2015, 4, 4, 13, 30),
          DateTime(2015, 4, 4, 14, 30)]
+    ),
+    (
+        'hour',
+        DateTime(2015, 4, 4, 12, 30, 15, 123456),
+        DateTime(2015, 4, 4, 15, 30),
+        [DateTime(2015, 4, 4, 12, 30, 15, 123456),
+         DateTime(2015, 4, 4, 13, 30, 15, 123456)]
     ),
     (
         'minute',
