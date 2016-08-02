@@ -54,8 +54,8 @@ DATE_PATTERN_TO_DIRECTIVE = {
     'EE': '%a',      # Weekday's abbreviated name
     'E': '%a',       # Weekday's abbreviated name
     'eee': '%a',     # Weekday's abbreviated name
-    'ee': '%a',      # Weekday's abbreviated name
-    'e': '%w',       # Weekday as decimal
+    'ee': '%w',      # Weekday as decimal padded
+    'e': '%w',       # Weekday as decimal not padded
     'HH': '%H',      # Hour-24 padded
     'H': '%H',       # Hour-24 not padded
     'hh': '%I',      # Hour-12 padded
@@ -85,6 +85,7 @@ PATTERN_FORMAT_TRANSFORMS = {
     'DD': partial(_remove_leading_zero, count=1),
     'D': partial(_remove_leading_zero, count=2),
     'd': _remove_leading_zero,
+    'ee': lambda value: '0{0}'.format(value),
     'H': _remove_leading_zero,
     'h': _remove_leading_zero,
     'm': _remove_leading_zero,
@@ -96,7 +97,7 @@ PATTERN_FORMAT_TRANSFORMS = {
     'S': partial(_truncate, length=1),
     'A': lambda value: value.upper(),
     'a': lambda value: value.lower(),
-    'ZZ': lambda value: value[:-2] + ':' + value[-2:]
+    'ZZ': lambda value: value[:-2] + ':' + value[-2:],
 }
 
 # Pattern formatter functions that operate on the datetime object. These
