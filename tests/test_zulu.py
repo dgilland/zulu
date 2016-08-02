@@ -786,13 +786,15 @@ def test_span(dt, span, count, expected):
     assert time_span_tuple == expected
 
 
-def test_span_attribute_error():
+def test_span_frame_error():
     frame = 'temp'
     dt = DateTime(2015, 4, 4, 12, 30)
+
     with pytest.raises(ValueError) as exc:
         dt.span(frame)
 
-    assert 'The given time frame {0} is invalid'.format(frame) in str(exc)
+    assert 'Time frame must be one of' in str(exc.value)
+    assert "not '{0}'".format(frame)
 
 
 @parametrize('frame,start,end,expected', [
@@ -892,6 +894,12 @@ def test_span_attribute_error():
          (DateTime(2015, 4, 4, 12, 30, 4, 0),
           DateTime(2015, 4, 4, 12, 30, 4, 999999))]
     ),
+    (
+        'second',
+        DateTime(2015, 4, 4, 12, 30, 5),
+        DateTime(2015, 4, 4, 12, 30, 1),
+        []
+    ),
 ])
 def test_span_range(frame, start, end, expected):
     span_range = []
@@ -899,6 +907,15 @@ def test_span_range(frame, start, end, expected):
         span_range.append(time_span)
 
     assert span_range == expected
+
+
+@parametrize('frame,start,end', [
+    ('century', '1', DateTime(2015, 4, 4, 12, 30, 0)),
+    ('year', DateTime(2015, 4, 4, 12, 30, 0), '1')
+])
+def test_span_range_error(frame, start, end):
+    with pytest.raises(ParseError):
+        list(DateTime.span_range(frame, start, end))
 
 
 @parametrize('frame,start,end,expected', [
@@ -965,34 +982,23 @@ def test_span_range(frame, start, end, expected):
          DateTime(2015, 4, 4, 12, 30, 1),
          DateTime(2015, 4, 4, 12, 30, 2)]
     ),
+    (
+        'second',
+        DateTime(2015, 4, 4, 12, 30, 3),
+        DateTime(2015, 4, 4, 12, 30, 0),
+        []
+    ),
 ])
 def test_range(frame, start, end, expected):
-    time_range = []
-    for date_time in DateTime.range(frame, start, end):
-        time_range.append(date_time)
+    time_range = list(DateTime.range(frame, start, end))
 
     assert time_range == expected
 
 
-@parametrize('frame,start,end,expected_error', [
-    ('century',
-     1,
-     DateTime(2015, 4, 4, 12, 30, 0),
-     'Provided value {0} is invalid datetime'.format(1)),
-    ('year',
-     DateTime(2015, 4, 4, 12, 30, 0),
-     1,
-     'Provided value {0} is invalid datetime'.format(1)),
-    ('year',
-     DateTime(2019, 4, 4, 12, 30, 0),
-     DateTime(2015, 4, 4, 12, 30, 0),
-     'Start datetime should always be less than end datetime')
+@parametrize('frame,start,end', [
+    ('century', '1', DateTime(2015, 4, 4, 12, 30, 0)),
+    ('year', DateTime(2015, 4, 4, 12, 30, 0), '1')
 ])
-def test_span_range_error(frame, start, end, expected_error):
-    span_range = []
-    with pytest.raises(ValueError) as exc:
-        for time_span in DateTime.span_range(frame, start, end):
-            span_range.append(time_span)
-
-    assert len(span_range) == 0
-    assert expected_error in str(exc)
+def test_range_error(frame, start, end):
+    with pytest.raises(ParseError):
+        list(DateTime.range(frame, start, end))
