@@ -229,6 +229,103 @@ class DateTime(datetime):
 
         return cls.fromdatetime(datetime.combine(date, time))
 
+    @classmethod
+    def span_range(cls, frame, start, end):
+        """Return a range of time spans from `start` to `end` in steps of
+        time frame, `frame`.
+
+        Args:
+            frame (str): A time frame (e.g. year, month, day, minute, etc).
+            start (datetime): The starting datetime.
+            end (datetime): The ending datetime.
+
+        Returns:
+            list: List of all time spans
+        """
+        if not isinstance(start, DateTime):
+            start = cls.parse(start)
+
+        if not isinstance(end, DateTime):
+            end = cls.parse(end)
+
+        if start > end:
+            # Return empty items when start is greater than end.
+            return
+
+        # The next starting value to span from.
+        next_start = start
+
+        while True:
+            # We use the span() method to bring the actual tuple with the
+            # given time frame.
+            span = next_start.span(frame)
+
+            if span[1] <= end:
+                yield span
+
+                # All span-ends have 999999 microseconds set. Shift to the next
+                # microsecond to "turn-over" to the next start value of the
+                # frame.
+                next_start = span[1].shift(microseconds=1)
+            else:
+                break
+
+    @classmethod
+    def range(cls, frame, start, end):
+        """Return a range of :class:`.DateTime` instances from `start` to `end`
+        in steps of time frame, `frame`.
+
+        Args:
+            frame (str): A time frame (e.g. year, month, day, minute, etc).
+            start (datetime): The starting datetime.
+            end (datetime): The ending datetime.
+
+        Returns:
+            list: A list of datetime values ranging from the given start and
+                end datetimes.
+        """
+        if not isinstance(start, DateTime):
+            start = cls.parse(start)
+
+        if not isinstance(end, DateTime):
+            end = cls.parse(end)
+
+        validate_frame(frame)
+
+        if start > end:
+            # Return empty items when start is greater than end.
+            return
+
+        if frame == 'century':
+            # Step every 100 years.
+            step_value = 100
+            frame = 'year'
+        elif frame == 'decade':
+            # Step every 10 years.
+            step_value = 10
+            frame = 'year'
+        else:
+            # Step every 1 time frame unit.
+            step_value = 1
+
+        # Use the plural frame name since the shift() method expects that.
+        step = {'{0}s'.format(frame): step_value}
+
+        # The next starting value to shift from.
+        next_start = start
+
+        while True:
+            # pylint: disable=E1123
+            # NOTE: pylint returns a false-positive since it's unable to
+            # resolve the "'{0}s'.format(frame)" as a valid function argument.
+            next_end = next_start.shift(**step)
+
+            if next_end <= end:
+                yield next_start
+                next_start = next_end
+            else:
+                break
+
     @property
     def naive(self):
         """The datetime object as a naive datetime (tzinfo=None).
@@ -660,103 +757,6 @@ class DateTime(datetime):
             tuple: (`start_of_frame`, `end_of_frame`)
         """
         return (self.start_of(frame), self.end_of(frame, count))
-
-    @classmethod
-    def span_range(cls, frame, start, end):
-        """Return a range of time spans from `start` to `end` in steps of
-        time frame, `frame`.
-
-        Args:
-            frame (str): A time frame (e.g. year, month, day, minute, etc).
-            start (datetime): The starting datetime.
-            end (datetime): The ending datetime.
-
-        Returns:
-            list: List of all time spans
-        """
-        if not isinstance(start, DateTime):
-            start = cls.parse(start)
-
-        if not isinstance(end, DateTime):
-            end = cls.parse(end)
-
-        if start > end:
-            # Return empty items when start is greater than end.
-            return
-
-        # The next starting value to span from.
-        next_start = start
-
-        while True:
-            # We use the span() method to bring the actual tuple with the
-            # given time frame.
-            span = next_start.span(frame)
-
-            if span[1] <= end:
-                yield span
-
-                # All span-ends have 999999 microseconds set. Shift to the next
-                # microsecond to "turn-over" to the next start value of the
-                # frame.
-                next_start = span[1].shift(microseconds=1)
-            else:
-                break
-
-    @classmethod
-    def range(cls, frame, start, end):
-        """Return a range of :class:`.DateTime` instances from `start` to `end`
-        in steps of time frame, `frame`.
-
-        Args:
-            frame (str): A time frame (e.g. year, month, day, minute, etc).
-            start (datetime): The starting datetime.
-            end (datetime): The ending datetime.
-
-        Returns:
-            list: A list of datetime values ranging from the given start and
-                end datetimes.
-        """
-        if not isinstance(start, DateTime):
-            start = cls.parse(start)
-
-        if not isinstance(end, DateTime):
-            end = cls.parse(end)
-
-        validate_frame(frame)
-
-        if start > end:
-            # Return empty items when start is greater than end.
-            return
-
-        if frame == 'century':
-            # Step every 100 years.
-            step_value = 100
-            frame = 'year'
-        elif frame == 'decade':
-            # Step every 10 years.
-            step_value = 10
-            frame = 'year'
-        else:
-            # Step every 1 time frame unit.
-            step_value = 1
-
-        # Use the plural frame name since the shift() method expects that.
-        step = {'{0}s'.format(frame): step_value}
-
-        # The next starting value to shift from.
-        next_start = start
-
-        while True:
-            # pylint: disable=E1123
-            # NOTE: pylint returns a false-positive since it's unable to
-            # resolve the "'{0}s'.format(frame)" as a valid function argument.
-            next_end = next_start.shift(**step)
-
-            if next_end <= end:
-                yield next_start
-                next_start = next_end
-            else:
-                break
 
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.DateTime`."""
