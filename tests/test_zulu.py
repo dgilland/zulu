@@ -336,10 +336,10 @@ def test_copy():
 @parametrize('method,dt,delta,expected', [
     ('shift', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
     ('add', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
-    ('sub', DateTime(2000, 1, 1), {'days': 1}, DateTime(1999, 12, 31)),
+    ('subtract', DateTime(2000, 1, 1), {'days': 1}, DateTime(1999, 12, 31)),
     ('shift', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
     ('add', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
-    ('sub', DateTime(2000, 1, 1), {'days': -1}, DateTime(2000, 1, 2)),
+    ('subtract', DateTime(2000, 1, 1), {'days': -1}, DateTime(2000, 1, 2)),
     ('shift', DateTime(2000, 1, 1), {'years': 1}, DateTime(2001, 1, 1)),
     ('shift', DateTime(2000, 1, 1), {'years': -1}, DateTime(1999, 1, 1)),
     ('shift', DateTime(2000, 1, 1), {'weeks': 1}, DateTime(2000, 1, 8)),
@@ -492,7 +492,7 @@ def test_astimezone(dt, tzinfo, expected):
      timedelta(weeks=1),
      DateTime(2000, 1, 8, 12, 30, 45, 15)),
 ])
-def test_add(dt, delta, expected):
+def test_addition(dt, delta, expected):
     dt += delta
     assert dt == expected
 
@@ -540,7 +540,7 @@ def test_add(dt, delta, expected):
      DateTime(2000, 1, 1, 12, 30, 45, 15),
      timedelta(weeks=-1)),
 ])
-def test_subtract(dt, offset, expected):
+def test_subtraction(dt, offset, expected):
     result = dt - offset
     assert result == expected
 

@@ -467,15 +467,15 @@ class DateTime(datetime):
                           seconds,
                           microseconds)
 
-    def sub(self,
-            years=0,
-            months=0,
-            weeks=0,
-            days=0,
-            hours=0,
-            minutes=0,
-            seconds=0,
-            microseconds=0):
+    def subtract(self,
+                 years=0,
+                 months=0,
+                 weeks=0,
+                 days=0,
+                 hours=0,
+                 minutes=0,
+                 seconds=0,
+                 microseconds=0):
         """Subtract time using a timedelta created from the supplied arguments
         and return a new :class:`.DateTime` instance.
 

@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+- Rename ``DateTime.sub`` to ``DateTime.subtract``. **breaking change**
+
+
 v0.2.0 (2016-08-02)
 -------------------
 
