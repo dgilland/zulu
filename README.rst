@@ -168,8 +168,9 @@ You can get a range of time spans:
 
     start = DateTime(2015, 4, 4, 12, 30)
     end = DateTime(2015, 4, 4, 16, 30)
-    for time_span_tuple in Datetime.span_range('hour', start, end):
-        print(time_span_tuple)
+
+    for span in Datetime.span_range('hour', start, end):
+        print(span)
     # (<DateTime [2015-04-04T12:00:00+00:00]>, <DateTime [2015-04-04T12:59:59.999999+00:00]>)
     # (<DateTime [2015-04-04T13:00:00+00:00]>, <DateTime [2015-04-04T13:59:59.999999+00:00]>)
     # (<DateTime [2015-04-04T14:00:00+00:00]>, <DateTime [2015-04-04T14:59:59.999999+00:00]>)
@@ -182,13 +183,14 @@ Or you can iterate over a range of time:
 
     start = DateTime(2015, 4, 4, 12, 30)
     end = DateTime(2015, 4, 4, 16, 30)
-    for time_span_tuple in Datetime.range('hour', start, end):
-        print(time_span_tuple)
+
+    for dt in Datetime.range('hour', start, end):
+        print(dt)
     # <DateTime [2015-04-04T12:30:00+00:00]>
     # <DateTime [2015-04-04T13:30:00+00:00]>
     # <DateTime [2015-04-04T14:30:00+00:00]>
 
-.. note:: Supported units are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second``.
+.. note:: Supported range/span time frames are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second``.
 
 Time zones other than UTC are not expressable within a ``DateTime`` instance. Other time zones are only ever applied when either converting a ``DateTime`` object to a native datetime (via ``DateTime.astimezone``) or during string formatting (via ``DateTime.format``). ``DateTime`` understands both ``tzinfo`` objects and ``pytz.timezone`` string names.
 
@@ -207,11 +209,14 @@ Time zones other than UTC are not expressable within a ``DateTime`` instance. Ot
     # datetime.datetime(2016, 7, 25, 13, 33, 18, 137493, tzinfo=<DstTzInfo 'US/Mountain' MDT-1 day, 18:00:00 DST>)
 
 
-Currently, ``DateTime`` only supports `strftime/strptime-style <https://docs.python.org/3.5/library/datetime.html#strftime-and-strptime-behavior>`_ tokens during parsing and formatting, but there are plans to support `Arrow's format tokens <https://arrow.readthedocs.io/en/latest/#tokens>`_.
+String parsing/formatting in ``DateTime`` supports both `strftime/strptime <https://docs.python.org/3.5/library/datetime.html#strftime-and-strptime-behavior>`_ directives and `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_.
 
 .. code-block:: python
 
     dt.format('%Y-%m-%d %H:%M:%S%z')
+    # '2016-07-25 19:33:18+0000'
+
+    dt.format('YYYY-MM-dd HH:mm:ssZ')
     # '2016-07-25 19:33:18+0000'
 
     dt.format('%Y-%m-%d %H:%M:%S%z', tz='US/Eastern')
@@ -221,7 +226,7 @@ Currently, ``DateTime`` only supports `strftime/strptime-style <https://docs.pyt
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
 
-By default, ``zulu.parse`` will look for either an ISO 8601 formatted string or a POSIX timestamp while assuming that in the absence of an explicit timezone, UTC will be used:
+By default, ``zulu.parse`` will look for either an ISO-8601 formatted string or a POSIX timestamp while assuming that in the absence of an explicit timezone, UTC will be used:
 
 .. code-block:: python
 
@@ -234,7 +239,7 @@ By default, ``zulu.parse`` will look for either an ISO 8601 formatted string or 
     zulu.parse('2016-07-25 19:33')
     # <DateTime [2016-07-25T19:33:00+00:00]>
 
-    zulu.parse(1469475198.0, 'timestamp')
+    zulu.parse(1469475198.0)
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
 
