@@ -17,6 +17,38 @@ from . import parser
 from ._compat import string_types
 
 
+def validate_frame(frame):
+    """Method that validates the given time frame."""
+    attrs = ['century',
+             'decade',
+             'year',
+             'month',
+             'day',
+             'hour',
+             'minute',
+             'second']
+
+    if frame not in attrs:
+        raise ValueError('The given time frame {0} is invalid'
+                         .format(frame))
+
+
+def validate_times(start, end):
+    """Method that helps in validating the given start and end datetimes."""
+    if not start or not isinstance(start, datetime):
+        raise ValueError('Provided value {0} is invalid datetime'
+                         .format(start))
+
+    if not end or not isinstance(end, datetime):
+        raise ValueError('Provided value {0} is invalid datetime'
+                         .format(end))
+
+    if start > end:
+        raise ValueError(
+            'Start datetime should always be less than end '
+            'datetime')
+
+
 class DateTime(datetime):
     """The DateTime class represents an immutable UTC datetime object. Any
     timezone information given to it during instantiation results in the
@@ -606,21 +638,6 @@ class DateTime(datetime):
         """
         return self.start_of_second().shift(seconds=count, microseconds=-1)
 
-    def validate_frame(self, frame):
-        """Validates the given time frame."""
-        attrs = ['century',
-                 'decade',
-                 'year',
-                 'month',
-                 'day',
-                 'hour',
-                 'minute',
-                 'second']
-
-        if frame not in attrs:
-            raise ValueError('The given time frame {0} is invalid'
-                             .format(frame))
-
     def start_of(self, frame):
         """Return the start of the given time frame for this datetime.
 
@@ -630,7 +647,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        self.validate_frame(frame)
+        validate_frame(frame)
         return getattr(self, 'start_of_{0}'.format(frame))()
 
     def end_of(self, frame, count=1):
@@ -643,7 +660,7 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        self.validate_frame(frame)
+        validate_frame(frame)
         return getattr(self, 'end_of_{0}'.format(frame))(count)
 
     def span(self, frame, count=1):
@@ -658,6 +675,91 @@ class DateTime(datetime):
             tuple: (`start_of_frame`, `end_of_frame`)
         """
         return (self.start_of(frame), self.end_of(frame, count))
+
+    @classmethod
+    def span_range(cls, frame, start=None, end=None):
+        """Class method that helps in getting a range of time spans.
+
+        Args:
+            frame (str): A time frame. Ex: year, month, day, minute, etc.
+            start (datetime): A start datetime value.
+            end (datetime): An end datetime value.
+
+        Returns:
+            list: List of all time spans
+        """
+        # Validate the start datetime, end datetime and the given frame.
+        validate_times(start, end)
+        validate_frame(frame)
+
+        # This loop helps in bringing all the time spans with the given time
+        # frame.
+        while True:
+            # We use the span() method to bring the actual tuple with the
+            # given time frame.
+            time_span = cls.fromdatetime(start).span(frame)
+
+            # We change the value of start date to the floor value of the
+            # returned tuple from span() method.
+            next_dt = cls.fromdatetime(time_span[1])
+
+            # If the changed start value (next_dt) is less than the given end
+            # datetime, we make the loop stop otherwise, we add up the
+            # returned tuple to the list.
+            if next_dt > end:
+                break
+            else:
+                yield time_span
+                start = next_dt.shift(microseconds=1)
+
+    @classmethod
+    def range(cls, frame, start=None, end=None):
+        """Class method that helps in getting a range of time values from the
+        given start datetime and end datetime with the given frame value.
+
+        Args:
+            frame (str): A time frame. Ex: year, month, day, minute, etc.
+            start (datetime): A start datetime value.
+            end (datetime): An end datetime value.
+
+        Returns:
+            list: A list of datetime values ranging from the given start and
+                end datetimes.
+        """
+        validate_times(start, end)
+        validate_frame(frame)
+
+        if frame == 'century':
+            # When the given frame is 'century', we make the value base-lined
+            # to year value. So, the value will be 100.
+            step = 100
+        elif frame == 'decade':
+            # When the given frame is 'decade', we make the value base-lined
+            # to year value. So, the value will be 10.
+            step = 10
+        else:
+            # All the other frame values will be 1.
+            step = 1
+
+        if frame in ['century', 'decade']:
+            frame = 'year'
+
+        # Get the plural frame name for making it use in shift() method.
+        plural_frame = '{0}s'.format(frame)
+
+        while True:
+            next_range_start = cls.fromdatetime(start)
+            # pylint: disable=E1123
+            # We disable this particular pylint code because, pylint raises
+            # an error on the below kwargs usage (**{plural_frame: step}).
+            # But, the kwargs usage is appropriate.
+            next_range_end = next_range_start.shift(**{plural_frame: step})
+
+            if next_range_end > end:
+                break
+            else:
+                yield next_range_start
+                start = next_range_end
 
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.DateTime`."""
@@ -699,7 +801,6 @@ class DateTime(datetime):
             return self.fromdatetime(result)
         else:
             return result
-
 
 #: Minimum DateTime value.
 DateTime.min = DateTime(1, 1, 1)

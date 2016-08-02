@@ -793,3 +793,206 @@ def test_span_attribute_error():
         dt.span(frame)
 
     assert 'The given time frame {0} is invalid'.format(frame) in str(exc)
+
+
+@parametrize('frame,start,end,expected', [
+    (
+        'century',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2215, 4, 4, 12, 30),
+        [(DateTime(2000, 1, 1, 0, 0),
+          DateTime(2099, 12, 31, 23, 59, 59, 999999)),
+         (DateTime(2100, 1, 1, 0, 0),
+          DateTime(2199, 12, 31, 23, 59, 59, 999999))]
+    ),
+    (
+        'decade',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2049, 4, 4, 12, 30),
+        [(DateTime(2010, 1, 1, 0, 0),
+          DateTime(2019, 12, 31, 23, 59, 59, 999999)),
+         (DateTime(2020, 1, 1, 0, 0),
+          DateTime(2029, 12, 31, 23, 59, 59, 999999)),
+         (DateTime(2030, 1, 1, 0, 0),
+          DateTime(2039, 12, 31, 23, 59, 59, 999999))]
+    ),
+    (
+        'year',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2018, 4, 4, 12, 30),
+        [(DateTime(2015, 1, 1, 0, 0),
+          DateTime(2015, 12, 31, 23, 59, 59, 999999)),
+         (DateTime(2016, 1, 1, 0, 0),
+          DateTime(2016, 12, 31, 23, 59, 59, 999999)),
+         (DateTime(2017, 1, 1, 0, 0),
+          DateTime(2017, 12, 31, 23, 59, 59, 999999))]
+    ),
+    (
+        'month',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2015, 8, 4, 12, 30),
+        [(DateTime(2015, 4, 1, 0, 0),
+          DateTime(2015, 4, 30, 23, 59, 59, 999999)),
+         (DateTime(2015, 5, 1, 0, 0),
+          DateTime(2015, 5, 31, 23, 59, 59, 999999)),
+         (DateTime(2015, 6, 1, 0, 0),
+          DateTime(2015, 6, 30, 23, 59, 59, 999999)),
+         (DateTime(2015, 7, 1, 0, 0),
+          DateTime(2015, 7, 31, 23, 59, 59, 999999))]
+    ),
+    (
+        'day',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2015, 4, 8, 12, 30),
+        [(DateTime(2015, 4, 4, 0, 0),
+          DateTime(2015, 4, 4, 23, 59, 59, 999999)),
+         (DateTime(2015, 4, 5, 0, 0),
+          DateTime(2015, 4, 5, 23, 59, 59, 999999)),
+         (DateTime(2015, 4, 6, 0, 0),
+          DateTime(2015, 4, 6, 23, 59, 59, 999999)),
+         (DateTime(2015, 4, 7, 0, 0),
+          DateTime(2015, 4, 7, 23, 59, 59, 999999))]
+    ),
+    (
+        'hour',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2015, 4, 4, 16, 30),
+        [(DateTime(2015, 4, 4, 12, 0),
+          DateTime(2015, 4, 4, 12, 59, 59, 999999)),
+         (DateTime(2015, 4, 4, 13, 0),
+          DateTime(2015, 4, 4, 13, 59, 59, 999999)),
+         (DateTime(2015, 4, 4, 14, 0),
+          DateTime(2015, 4, 4, 14, 59, 59, 999999)),
+         (DateTime(2015, 4, 4, 15, 0),
+          DateTime(2015, 4, 4, 15, 59, 59, 999999))]
+    ),
+    (
+        'minute',
+        DateTime(2015, 4, 4, 12, 30, 0),
+        DateTime(2015, 4, 4, 12, 34, 0),
+        [(DateTime(2015, 4, 4, 12, 30, 0),
+          DateTime(2015, 4, 4, 12, 30, 59, 999999)),
+         (DateTime(2015, 4, 4, 12, 31, 0),
+          DateTime(2015, 4, 4, 12, 31, 59, 999999)),
+         (DateTime(2015, 4, 4, 12, 32, 0),
+          DateTime(2015, 4, 4, 12, 32, 59, 999999)),
+         (DateTime(2015, 4, 4, 12, 33, 0),
+          DateTime(2015, 4, 4, 12, 33, 59, 999999))]
+    ),
+    (
+        'second',
+        DateTime(2015, 4, 4, 12, 30, 1),
+        DateTime(2015, 4, 4, 12, 30, 5),
+        [(DateTime(2015, 4, 4, 12, 30, 1, 0),
+          DateTime(2015, 4, 4, 12, 30, 1, 999999)),
+         (DateTime(2015, 4, 4, 12, 30, 2, 0),
+          DateTime(2015, 4, 4, 12, 30, 2, 999999)),
+         (DateTime(2015, 4, 4, 12, 30, 3, 0),
+          DateTime(2015, 4, 4, 12, 30, 3, 999999)),
+         (DateTime(2015, 4, 4, 12, 30, 4, 0),
+          DateTime(2015, 4, 4, 12, 30, 4, 999999))]
+    ),
+])
+def test_span_range(frame, start, end, expected):
+    span_range = []
+    for time_span in DateTime.span_range(frame, start, end):
+        span_range.append(time_span)
+
+    assert span_range == expected
+
+
+@parametrize('frame,start,end,expected', [
+    (
+        'century',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2215, 4, 4, 12, 30),
+        [DateTime(2015, 4, 4, 12, 30),
+         DateTime(2115, 4, 4, 12, 30)]
+    ),
+    (
+        'decade',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2045, 4, 4, 12, 30),
+        [DateTime(2015, 4, 4, 12, 30),
+         DateTime(2025, 4, 4, 12, 30),
+         DateTime(2035, 4, 4, 12, 30)]
+    ),
+    (
+        'year',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2018, 4, 4, 12, 30),
+        [DateTime(2015, 4, 4, 12, 30),
+         DateTime(2016, 4, 4, 12, 30),
+         DateTime(2017, 4, 4, 12, 30)]
+    ),
+    (
+        'month',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2015, 7, 4, 12, 30),
+        [DateTime(2015, 4, 4, 12, 30),
+         DateTime(2015, 5, 4, 12, 30),
+         DateTime(2015, 6, 4, 12, 30)]
+    ),
+    (
+        'day',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2015, 4, 7, 12, 30),
+        [DateTime(2015, 4, 4, 12, 30),
+         DateTime(2015, 4, 5, 12, 30),
+         DateTime(2015, 4, 6, 12, 30)]
+    ),
+    (
+        'hour',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2015, 4, 4, 15, 30),
+        [DateTime(2015, 4, 4, 12, 30),
+         DateTime(2015, 4, 4, 13, 30),
+         DateTime(2015, 4, 4, 14, 30)]
+    ),
+    (
+        'minute',
+        DateTime(2015, 4, 4, 12, 30),
+        DateTime(2015, 4, 4, 12, 33),
+        [DateTime(2015, 4, 4, 12, 30),
+         DateTime(2015, 4, 4, 12, 31),
+         DateTime(2015, 4, 4, 12, 32)]
+    ),
+    (
+        'second',
+        DateTime(2015, 4, 4, 12, 30, 0),
+        DateTime(2015, 4, 4, 12, 30, 3),
+        [DateTime(2015, 4, 4, 12, 30, 0),
+         DateTime(2015, 4, 4, 12, 30, 1),
+         DateTime(2015, 4, 4, 12, 30, 2)]
+    ),
+])
+def test_range(frame, start, end, expected):
+    time_range = []
+    for date_time in DateTime.range(frame, start, end):
+        time_range.append(date_time)
+
+    assert time_range == expected
+
+
+@parametrize('frame,start,end,expected_error', [
+    ('century',
+     1,
+     DateTime(2015, 4, 4, 12, 30, 0),
+     'Provided value {0} is invalid datetime'.format(1)),
+    ('year',
+     DateTime(2015, 4, 4, 12, 30, 0),
+     1,
+     'Provided value {0} is invalid datetime'.format(1)),
+    ('year',
+     DateTime(2019, 4, 4, 12, 30, 0),
+     DateTime(2015, 4, 4, 12, 30, 0),
+     'Start datetime should always be less than end datetime')
+])
+def test_span_range_error(frame, start, end, expected_error):
+    span_range = []
+    with pytest.raises(ValueError) as exc:
+        for time_span in DateTime.span_range(frame, start, end):
+            span_range.append(time_span)
+
+    assert len(span_range) == 0
+    assert expected_error in str(exc)

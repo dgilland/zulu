@@ -162,6 +162,34 @@ Or you can get the start and end a time frame:
 .. note:: Supported time frames are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second`` and are accessible both from ``start_of(frame)``/``end_of(frame)`` and ``start_of_<frame>()``/``end_of_<frame>``.
 
 
+You can get a range of time spans:
+
+.. code-block:: python
+
+    start = DateTime(2015, 4, 4, 12, 30)
+    end = DateTime(2015, 4, 4, 16, 30)
+    for time_span_tuple in Datetime.span_range('hour', start, end):
+        print(time_span_tuple)
+    # (<DateTime [2015-04-04T12:00:00+00:00]>, <DateTime [2015-04-04T12:59:59.999999+00:00]>)
+    # (<DateTime [2015-04-04T13:00:00+00:00]>, <DateTime [2015-04-04T13:59:59.999999+00:00]>)
+    # (<DateTime [2015-04-04T14:00:00+00:00]>, <DateTime [2015-04-04T14:59:59.999999+00:00]>)
+    # (<DateTime [2015-04-04T15:00:00+00:00]>, <DateTime [2015-04-04T15:59:59.999999+00:00]>)
+
+
+Or you can iterate over a range of time:
+
+.. code-block:: python
+
+    start = DateTime(2015, 4, 4, 12, 30)
+    end = DateTime(2015, 4, 4, 16, 30)
+    for time_span_tuple in Datetime.range('hour', start, end):
+        print(time_span_tuple)
+    # <DateTime [2015-04-04T12:30:00+00:00]>
+    # <DateTime [2015-04-04T13:30:00+00:00]>
+    # <DateTime [2015-04-04T14:30:00+00:00]>
+
+.. note:: Supported units are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second``.
+
 Time zones other than UTC are not expressable within a ``DateTime`` instance. Other time zones are only ever applied when either converting a ``DateTime`` object to a native datetime (via ``DateTime.astimezone``) or during string formatting (via ``DateTime.format``). ``DateTime`` understands both ``tzinfo`` objects and ``pytz.timezone`` string names.
 
 
