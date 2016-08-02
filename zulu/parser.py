@@ -103,7 +103,8 @@ PATTERN_FORMAT_TRANSFORMS = {
 # Pattern formatter functions that operate on the datetime object. These
 # correspond to patterns that are not supported by stftime().
 PATTERN_DATETIME_FORMATTERS = {
-    'X': lambda dt: str((dt - EPOCH).total_seconds())  # Timestamp
+    'XX': lambda dt: str(get_timestamp(dt)),      # Timestamp float
+    'X': lambda dt: str(int(get_timestamp(dt))),  # Timestamp integer
 }
 
 
@@ -273,6 +274,11 @@ def get_timezone(tz):
         tz = pytz.timezone(tz)
 
     return tz
+
+
+def get_timestamp(dt):
+    """Return timestamp for datetime, `dt`."""
+    return (dt - EPOCH).total_seconds()
 
 
 def is_valid_datetime(obj):
