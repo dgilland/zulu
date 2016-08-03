@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v0.3.0 (2016-08-03)
+-------------------
+
 - Rename ``DateTime.sub`` to ``DateTime.subtract``. **breaking change**
 - Allow the first argument to ``DateTime.add`` to be a ``datetime.timedelta`` or ``dateutil.relativedelta`` object.
 - Allow the first argument to ``DateTime.subtract`` to be a ``DateTime``, ``datetime.datetime``, ``datetime.timedelta``, or ``dateutil.relativedelta`` object.
