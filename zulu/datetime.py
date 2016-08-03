@@ -453,11 +453,17 @@ class DateTime(datetime):
             seconds=0,
             microseconds=0):
         """Add time using a timedelta created from the supplied arguments and
-        return a new :class:`.DateTime` instance.
+        return a new :class:`.DateTime` instance. The first argument can be a
+        `:class:`timedelta` or :class:`dateutil.relativedelta` object in which
+        case all other arguments are ignored and the object is added to this
+        datetime.
 
         Returns:
             :class:`.DateTime`
         """
+        if isinstance(years, (timedelta, relativedelta)):
+            return self + years
+
         return self.shift(years,
                           months,
                           weeks,
@@ -477,11 +483,20 @@ class DateTime(datetime):
                  seconds=0,
                  microseconds=0):
         """Subtract time using a timedelta created from the supplied arguments
-        and return a new :class:`.DateTime` instance.
+        and return a new :class:`.DateTime` instance. The first argument can be
+        a :class:`.DateTime`, :class:`datetime`, :class:`timedelta`, or
+        :class:`dateutil.relativedelta` object in which case all other
+        arguments are ignored and the object is subtracted from this datetime.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.DateTime`: if subtracting :class:`timedelta` or
+                :class:`timedelta` arguments.
+            :class:`timedelta`: if subtracting a :class:`datetime` or
+                :class:`.DateTime`
         """
+        if isinstance(years, (datetime, timedelta, relativedelta)):
+            return self - years
+
         return self.shift(-years,
                           -months,
                           -weeks,

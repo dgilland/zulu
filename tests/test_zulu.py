@@ -3,6 +3,7 @@
 from datetime import date, datetime, time, timedelta
 from time import localtime, mktime, struct_time
 
+from dateutil.relativedelta import relativedelta
 from iso8601 import UTC
 import pytest
 import pytz
@@ -336,7 +337,37 @@ def test_copy():
 @parametrize('method,dt,delta,expected', [
     ('shift', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
     ('add', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
+    ('add',
+     DateTime(2000, 1, 1),
+     timedelta(days=1),
+     DateTime(2000, 1, 2)),
+    ('add',
+     DateTime(2000, 1, 1),
+     relativedelta(days=1),
+     DateTime(2000, 1, 2)),
     ('subtract', DateTime(2000, 1, 1), {'days': 1}, DateTime(1999, 12, 31)),
+    ('subtract', DateTime(2000, 1, 1),
+     timedelta(days=1),
+     DateTime(1999, 12, 31)),
+    ('subtract', DateTime(2000, 1, 1),
+     relativedelta(days=1),
+     DateTime(1999, 12, 31)),
+    ('subtract',
+     DateTime(2000, 1, 1),
+     timedelta(days=1),
+     DateTime(1999, 12, 31)),
+    ('subtract',
+     DateTime(2000, 1, 1),
+     DateTime(1999, 12, 31),
+     timedelta(days=1)),
+    ('subtract',
+     DateTime(1999, 12, 31),
+     DateTime(2000, 1, 1),
+     timedelta(days=-1)),
+    ('subtract',
+     DateTime(2000, 1, 1),
+     datetime(1999, 12, 31),
+     timedelta(days=1)),
     ('shift', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
     ('add', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
     ('subtract', DateTime(2000, 1, 1), {'days': -1}, DateTime(2000, 1, 2)),
@@ -351,7 +382,10 @@ def test_copy():
      DateTime(2003, 12, 5)),
 ])
 def test_shift(method, dt, delta, expected):
-    assert getattr(dt, method)(**delta) == expected
+    if isinstance(delta, dict):
+        assert getattr(dt, method)(**delta) == expected
+    else:
+        assert getattr(dt, method)(delta) == expected
 
 
 @parametrize('dt,replace,expected', [
