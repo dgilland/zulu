@@ -164,6 +164,23 @@ String parsing/formatting in ``DateTime`` supports both `strftime/strptime <http
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
 
+You can even use ``zulu.format`` with native datetimes:
+
+.. code-block:: python
+
+    native = datetime(2016, 7, 25, 19, 33, 18, 137493, tzinfo=pytz.UTC)
+
+    zulu.format(native, '%Y-%m-%d %H:%M:%S%z')
+    # '2016-07-25 19:33:18+0000'
+
+    zulu.format(native, 'YYYY-MM-dd HH:mm:ssZ')
+    # '2016-07-25 19:33:18+0000'
+
+    dt = DateTime.fromdatetime(native)
+    zulu.format(dt, 'YYYY-MM-dd HH:mm:ssZ')
+    # '2016-07-25 19:33:18+0000'
+
+
 Multiple formats can be supplied and ``zulu.parse`` will try them all:
 
 .. code-block:: python

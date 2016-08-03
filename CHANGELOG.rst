@@ -7,6 +7,7 @@ Changelog
 - Allow the first argument to ``DateTime.subtract`` to be a ``DateTime``, ``datetime.datetime``, ``datetime.timedelta``, or ``dateutil.relativedelta`` object.
 - Provide ``zulu.ISO8601`` and ``zulu.TIMESTAMP`` as parse/format constants that can be used in ``zulu.parse(string, zulu.ISO8601)`` and ``DateTime.format(zulu.ISO8601)``.
 - Remove special parse format string ``'timestamp'`` in favor of using just ``'X'`` as defined in ``zulu.TIMESTAMP``. (**breaking change**)
+- Import ``zulu.parser.format`` to ``zulu.format``.
 - Fix bug in ``DateTime`` addition operation that resulted in a native ``datetime`` being returned instead of ``DateTime``.
 
 
