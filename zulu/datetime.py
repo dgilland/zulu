@@ -17,6 +17,8 @@ from . import parser
 from ._compat import number_types, string_types
 
 
+LOCAL = 'local'
+
 TIME_FRAMES = ['century',
                'decade',
                'year',
@@ -401,19 +403,20 @@ class DateTime(datetime):
         """
         return parser.format(self, format, tz=tz)
 
-    def astimezone(self, tz='local'):
+    def astimezone(self, tz=LOCAL):
         """Return datetime shifted to timezone `tz`.
 
         .. note:: This returns a native datetime object.
 
         Args:
-            tz (None|str|tzinfo, optional): Timezone to shift to.
+            tz (None|str|tzinfo, optional): Timezone to shift to. Defaults to
+                `'local'` which uses the local timezone.
 
         Returns:
             :class:`.DateTime`
         """
         if tz is None:
-            tz = 'local'
+            tz = LOCAL
         tz = parser.get_timezone(tz)
         return super(DateTime, self).astimezone(tz)
 

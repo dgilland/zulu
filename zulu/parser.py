@@ -28,6 +28,10 @@ def _remove_leading_zero(value, count=1):
 
 EPOCH = pytz.UTC.localize(datetime(1970, 1, 1), is_dst=None)
 
+ISO8601 = 'ISO8601'
+TIMESTAMP = 'X'
+DEFAULT_PARSE_FORMATS = (ISO8601, TIMESTAMP)
+
 
 # Subset of Unicode date field patterns from:
 # http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table
@@ -136,7 +140,7 @@ def parse(obj, fmts=None, default_tz=None):
         return obj
 
     if fmts is None:
-        fmts = ['ISO8601', 'timestamp']
+        fmts = DEFAULT_PARSE_FORMATS
     elif not isinstance(fmts, (list, tuple)):
         fmts = [fmts]
 
@@ -177,9 +181,9 @@ def _parse_formats(obj, fmts):
 
 def _parse_format(obj, fmt):
     """Parse `obj` as datetime using `fmt`."""
-    if fmt.upper() == 'ISO8601':
+    if fmt.upper() == ISO8601:
         return iso8601.parse_date(obj, default_timezone=None)
-    elif fmt in ('timestamp', 'X'):
+    elif fmt == TIMESTAMP:
         return datetime.fromtimestamp(obj, pytz.UTC)
     else:
         if '%' not in fmt:
@@ -215,10 +219,13 @@ def format(dt, fmt=None, tz=None):
     if not is_valid_timezone(tz):  # pragma: no cover
         raise ValueError('Unrecognized timezone: {0}'.format(tz))
 
+    if fmt is None:
+        fmt = ISO8601
+
     if tz is not None:
         dt = dt.astimezone(tz)
 
-    if fmt is None:
+    if fmt == ISO8601:
         return dt.isoformat()
     elif '%' not in fmt:
         return _format_date_pattern(dt, fmt)

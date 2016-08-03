@@ -107,7 +107,7 @@ By default, ``zulu.parse`` will look for either an ISO8601 formatted string or a
     zulu.parse('2016-07-25 15:33:18-0400')
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
-    zulu.parse('2016-07-25 15:33:18-0400', 'ISO8601')
+    zulu.parse('2016-07-25 15:33:18-0400', zulu.ISO8601)
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
     zulu.parse('2016-07-25')
@@ -119,7 +119,7 @@ By default, ``zulu.parse`` will look for either an ISO8601 formatted string or a
     zulu.parse(1469475198.0)
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
-    zulu.parse(1469475198.0, 'timestamp')
+    zulu.parse(1469475198.0, zulu.TIMESTAMP)
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
 
