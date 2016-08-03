@@ -322,12 +322,24 @@ Zulu can easily apply timedelta's using the ``shift`` method:
     assert shifted is not dt
 
 
-And add and subtract with the ``add`` and ``sub`` methods:
+And add and subtract with the ``add`` and ``subtract`` methods:
 
 .. code-block:: python
 
-    shifted = dt.sub(hours=5).add(minutes=10)
+    shifted = dt.subtract(hours=5).add(minutes=10)
     # <DateTime [2016-07-25T14:43:18.137493+00:00]>
+
+    # First argument to subtract() can be a timedelta or dateutil.relativedelta
+    shifted = dt.subtract(timedelta(hours=5))
+    # <DateTime [2016-07-25T14:33:18+00:00]>
+
+    # First argument to subtract() can also be another datetime object
+    dt.subtract(shifted)
+    # datetime.timedelta(0, 18000)
+
+    # First argument to add() can be a timedelta or dateutil.relativedelta
+    dt.add(timedelta(minutes=10))
+    # <DateTime [2016-07-25T19:43:18+00:00]>
 
 
 Or replace datetime attributes:
