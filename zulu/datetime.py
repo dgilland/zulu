@@ -14,7 +14,7 @@ import pytz
 import tzlocal
 
 from . import parser
-from ._compat import string_types
+from ._compat import number_types, string_types
 
 
 TIME_FRAMES = ['century',
@@ -782,8 +782,8 @@ class DateTime(datetime):
         return self.isoformat()
 
     def __iter__(self):
-        """Return :class:`.DateTime` instance as an iterator that yields a tuple
-        corresponding to
+        """Return :class:`.DateTime` instance as an iterator that yields a
+        tuple corresponding to
         ``(year, month, day, hour, minute, second, microsecond, tzinfo)``.
         """
         return iter((self.year,
@@ -795,9 +795,30 @@ class DateTime(datetime):
                      self.microsecond,
                      self.tzinfo))
 
+    def __add__(self, other):
+        """Add a ``timedelta`` and return the result.
+
+        Returns:
+            :class:`.DateTime`
+        """
+        if not isinstance(other, (timedelta, relativedelta, number_types)):
+            return NotImplemented
+
+        if isinstance(other, number_types):
+            other = timedelta(seconds=other)
+
+        if isinstance(other, timedelta):
+            result = super(DateTime, self).__add__(other)
+        else:
+            result = other.__add__(self)
+
+        return self.fromdatetime(result)
+
+    __radd__ = __add__
+
     def __sub__(self, other):
-        """Subtract a ``timedelta``, ``datetime``, or :class:`.DateTime` and
-        return the result.
+        """Subtract a ``timedelta``, ``dateutil.relativedelta``, ``datetime``,
+        or :class:`.DateTime` and return the result.
 
         Returns:
             :class:`.DateTime`: if subtracting a :class:`timedelta`

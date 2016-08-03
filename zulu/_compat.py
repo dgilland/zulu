@@ -10,6 +10,7 @@
     https://github.com/mitsuhiko/flask/blob/master/flask/_compat.py
 """
 
+from decimal import Decimal
 import sys
 
 
@@ -20,6 +21,7 @@ if PY2:
     text_type = unicode
     string_types = (str, unicode)
     integer_types = (int, long)
+    number_types = (int, long, float, Decimal)
 
     def iterkeys(d):
         return d.iterkeys()
@@ -33,6 +35,7 @@ else:
     text_type = str
     string_types = (str,)
     integer_types = (int,)
+    number_types = (int, float, Decimal)
 
     def iterkeys(d):
         return iter(d.keys())

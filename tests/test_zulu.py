@@ -334,60 +334,6 @@ def test_copy():
     assert copy == dt
 
 
-@parametrize('method,dt,delta,expected', [
-    ('shift', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
-    ('add', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
-    ('add',
-     DateTime(2000, 1, 1),
-     timedelta(days=1),
-     DateTime(2000, 1, 2)),
-    ('add',
-     DateTime(2000, 1, 1),
-     relativedelta(days=1),
-     DateTime(2000, 1, 2)),
-    ('subtract', DateTime(2000, 1, 1), {'days': 1}, DateTime(1999, 12, 31)),
-    ('subtract', DateTime(2000, 1, 1),
-     timedelta(days=1),
-     DateTime(1999, 12, 31)),
-    ('subtract', DateTime(2000, 1, 1),
-     relativedelta(days=1),
-     DateTime(1999, 12, 31)),
-    ('subtract',
-     DateTime(2000, 1, 1),
-     timedelta(days=1),
-     DateTime(1999, 12, 31)),
-    ('subtract',
-     DateTime(2000, 1, 1),
-     DateTime(1999, 12, 31),
-     timedelta(days=1)),
-    ('subtract',
-     DateTime(1999, 12, 31),
-     DateTime(2000, 1, 1),
-     timedelta(days=-1)),
-    ('subtract',
-     DateTime(2000, 1, 1),
-     datetime(1999, 12, 31),
-     timedelta(days=1)),
-    ('shift', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
-    ('add', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
-    ('subtract', DateTime(2000, 1, 1), {'days': -1}, DateTime(2000, 1, 2)),
-    ('shift', DateTime(2000, 1, 1), {'years': 1}, DateTime(2001, 1, 1)),
-    ('shift', DateTime(2000, 1, 1), {'years': -1}, DateTime(1999, 1, 1)),
-    ('shift', DateTime(2000, 1, 1), {'weeks': 1}, DateTime(2000, 1, 8)),
-    ('shift', DateTime(2000, 1, 1), {'weeks': -1}, DateTime(1999, 12, 25)),
-    ('shift', DateTime(2000, 1, 1), {'months': 1}, DateTime(2000, 2, 1)),
-    ('shift', DateTime(2000, 1, 1), {'months': -1}, DateTime(1999, 12, 1)),
-    ('shift', DateTime(2000, 1, 1),
-     {'years': 2, 'months': 7, 'weeks': 13, 'days': 400},
-     DateTime(2003, 12, 5)),
-])
-def test_shift(method, dt, delta, expected):
-    if isinstance(delta, dict):
-        assert getattr(dt, method)(**delta) == expected
-    else:
-        assert getattr(dt, method)(delta) == expected
-
-
 @parametrize('dt,replace,expected', [
     (DateTime(2000, 1, 1),
      {'year': 1999,
@@ -478,13 +424,6 @@ def test_format(dt, args, expected):
     assert dt.format(**args) == expected
 
 
-def test_abc():
-    import zulu
-    dt = zulu.now()
-    print(dt.microsecond)
-    print(zulu.parser.format(dt, 'SSS'))
-
-
 @parametrize('dt,tzinfo,expected', [
     (DateTime(2000, 1, 1, 10),
      None,
@@ -513,6 +452,65 @@ def test_astimezone(dt, tzinfo, expected):
     assert ldt.tzinfo == expected.tzinfo
 
 
+@parametrize('method,dt,delta,expected', [
+    ('shift', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
+    ('add', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
+    ('add',
+     DateTime(2000, 1, 1),
+     timedelta(days=1),
+     DateTime(2000, 1, 2)),
+    ('add',
+     DateTime(2000, 1, 1),
+     relativedelta(days=1),
+     DateTime(2000, 1, 2)),
+    ('subtract', DateTime(2000, 1, 1), {'days': 1}, DateTime(1999, 12, 31)),
+    ('subtract', DateTime(2000, 1, 1),
+     timedelta(days=1),
+     DateTime(1999, 12, 31)),
+    ('subtract', DateTime(2000, 1, 1),
+     relativedelta(days=1),
+     DateTime(1999, 12, 31)),
+    ('subtract',
+     DateTime(2000, 1, 1),
+     timedelta(days=1),
+     DateTime(1999, 12, 31)),
+    ('subtract',
+     DateTime(2000, 1, 1),
+     DateTime(1999, 12, 31),
+     timedelta(days=1)),
+    ('subtract',
+     DateTime(1999, 12, 31),
+     DateTime(2000, 1, 1),
+     timedelta(days=-1)),
+    ('subtract',
+     DateTime(2000, 1, 1),
+     datetime(1999, 12, 31),
+     timedelta(days=1)),
+    ('shift', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
+    ('add', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
+    ('subtract', DateTime(2000, 1, 1), {'days': -1}, DateTime(2000, 1, 2)),
+    ('shift', DateTime(2000, 1, 1), {'years': 1}, DateTime(2001, 1, 1)),
+    ('shift', DateTime(2000, 1, 1), {'years': -1}, DateTime(1999, 1, 1)),
+    ('shift', DateTime(2000, 1, 1), {'weeks': 1}, DateTime(2000, 1, 8)),
+    ('shift', DateTime(2000, 1, 1), {'weeks': -1}, DateTime(1999, 12, 25)),
+    ('shift', DateTime(2000, 1, 1), {'months': 1}, DateTime(2000, 2, 1)),
+    ('shift', DateTime(2000, 1, 1), {'months': -1}, DateTime(1999, 12, 1)),
+    ('shift', DateTime(2000, 1, 1),
+     {'years': 2, 'months': 7, 'weeks': 13, 'days': 400},
+     DateTime(2003, 12, 5)),
+])
+def test_shift(method, dt, delta, expected):
+    meth = getattr(dt, method)
+
+    if isinstance(delta, dict):
+        result = meth(**delta)
+    else:
+        result = meth(delta)
+
+    assert result == expected
+    assert type(result) == type(expected)
+
+
 @parametrize('dt,delta,expected', [
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
      timedelta(days=1,
@@ -525,10 +523,21 @@ def test_astimezone(dt, tzinfo, expected):
     (DateTime(2000, 1, 1, 12, 30, 45, 15),
      timedelta(weeks=1),
      DateTime(2000, 1, 8, 12, 30, 45, 15)),
+    (DateTime(2000, 1, 1, 12, 30, 45, 0),
+     60.123456,
+     DateTime(2000, 1, 1, 12, 31, 45, 123456)),
 ])
 def test_addition(dt, delta, expected):
-    dt += delta
-    assert dt == expected
+    dt1 = (dt + delta)
+    dt2 = (delta + dt)
+
+    assert dt1 == dt2 == expected
+    assert type(dt1) == type(dt2) == DateTime
+
+
+def test_addition_invalid_type():
+    with pytest.raises(TypeError):
+        DateTime() + 'string'
 
 
 @parametrize('dt,offset,expected', [
@@ -577,6 +586,7 @@ def test_addition(dt, delta, expected):
 def test_subtraction(dt, offset, expected):
     result = dt - offset
     assert result == expected
+    assert type(result) == type(expected)
 
 
 def test_hash():

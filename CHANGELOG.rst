@@ -5,6 +5,7 @@ Changelog
 - Rename ``DateTime.sub`` to ``DateTime.subtract``. **breaking change**
 - Allow the first argument to ``DateTime.add`` to be a ``datetime.timedelta`` or ``dateutil.relativedelta`` object.
 - Allow the first argument to ``DateTime.subtract`` to be a ``DateTime``, ``datetime.datetime``, ``datetime.timedelta``, or ``dateutil.relativedelta`` object.
+- Fix bug in ``DateTime`` addition operation that resulted in a native ``datetime`` being returned instead of ``DateTime``.
 
 
 v0.2.0 (2016-08-02)
@@ -45,7 +46,7 @@ v0.1.2 (2016-07-26)
 v0.1.1 (2016-07-26)
 -------------------
 
-- Fix bug in ``DateTime.naive`` that resulted in a DateTime object being returned instead of a native datetime.
+- Fix bug in ``DateTime.naive`` that resulted in a ``DateTime`` object being returned instead of a native ``datetime``.
 
 
 v0.1.0 (2016-07-26)
