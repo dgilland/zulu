@@ -11,6 +11,7 @@ from tzlocal import get_localzone
 
 from zulu import DateTime, ParseError
 from zulu.parser import DATE_PATTERN_TO_DIRECTIVE
+from zulu.delta import Delta
 
 
 from .fixtures import parametrize
@@ -1054,3 +1055,123 @@ def test_range(frame, start, end, expected):
 def test_range_error(frame, start, end):
     with pytest.raises(ParseError):
         list(DateTime.range(frame, start, end))
+
+
+def test_diff_in_microseconds():
+    start = DateTime.now()
+    end = start.add(microseconds=999999)
+
+    datetime_diff = start.diff(end, absolute=True)
+
+    assert datetime_diff.in_microseconds() == 999999
+    assert start.diff(end).in_microseconds() == -999999
+
+
+@parametrize('start,end,absolute,expected_seconds', [
+    (DateTime.now(), DateTime.now().add(seconds=20), False, -20),
+    (DateTime.now().add(seconds=20), DateTime.now(), False, 20),
+    (DateTime.now(), DateTime.now().add(seconds=20), True, 20),
+    (DateTime.now().add(seconds=20), DateTime.now(), True, 20)
+])
+def test_diff_in_seconds(start, end, absolute, expected_seconds):
+    diff_in_seconds = start.diff(end, absolute=absolute).in_seconds()
+    assert diff_in_seconds == expected_seconds
+
+
+@parametrize('start,end,absolute,expected_seconds', [
+    (DateTime.now(), DateTime.now().add(seconds=20), False, -20),
+    (DateTime.now().add(seconds=20), DateTime.now(), False, 20),
+    (DateTime.now(), DateTime.now().add(seconds=20), True, 20),
+    (DateTime.now().add(seconds=20), DateTime.now(), True, 20)
+])
+def test_delta_in_seconds(start, end, absolute, expected_seconds):
+    assert Delta(start, end, absolute).in_seconds() == expected_seconds
+
+
+@parametrize('start,end,absolute,expected_minutes', [
+    (DateTime.now(), DateTime.now().add(minutes=20), False, -20),
+    (DateTime.now().add(minutes=20), DateTime.now(), False, 20),
+    (DateTime.now(), DateTime.now().add(minutes=20), True, 20),
+    (DateTime.now().add(minutes=20), DateTime.now(), True, 20)
+])
+def test_diff_in_minutes(start, end, absolute, expected_minutes):
+    diff_in_minutes = start.diff(end, absolute=absolute).in_minutes()
+    assert diff_in_minutes == expected_minutes
+
+
+@parametrize('start,end,absolute,expected_minutes', [
+    (DateTime.now(), DateTime.now().add(minutes=20), False, -20),
+    (DateTime.now().add(minutes=20), DateTime.now(), False, 20),
+    (DateTime.now(), DateTime.now().add(minutes=20), True, 20),
+    (DateTime.now().add(minutes=20), DateTime.now(), True, 20)
+])
+def test_delta_in_minutes(start, end, absolute, expected_minutes):
+    assert Delta(start, end, absolute).in_minutes() == expected_minutes
+
+
+@parametrize('start,end,absolute,expected_hours', [
+    (DateTime.now(), DateTime.now().add(hours=20), False, -20),
+    (DateTime.now().add(hours=20), DateTime.now(), False, 20),
+    (DateTime.now(), DateTime.now().add(hours=20), True, 20),
+    (DateTime.now().add(hours=20), DateTime.now(), True, 20)
+])
+def test_diff_in_hours(start, end, absolute, expected_hours):
+    diff_in_hours = start.diff(end, absolute=absolute).in_hours()
+    assert diff_in_hours == expected_hours
+
+
+@parametrize('start,end,absolute,expected_days', [
+    (DateTime.now(), DateTime.now().add(days=20), False, -20),
+    (DateTime.now().add(days=20), DateTime.now(), False, 20),
+    (DateTime.now(), DateTime.now().add(days=20), True, 20),
+    (DateTime.now().add(days=20), DateTime.now(), True, 20)
+])
+def test_diff_in_days(start, end, absolute, expected_days):
+    diff_in_days = start.diff(end, absolute=absolute).in_days()
+    assert diff_in_days == expected_days
+
+
+@parametrize('start,end,absolute,expected_weeks', [
+    (DateTime.now(), DateTime.now().add(days=14), False, -2),
+    (DateTime.now().add(days=14), DateTime.now(), False, 2),
+    (DateTime.now(), DateTime.now().add(days=14), True, 2),
+    (DateTime.now().add(days=14), DateTime.now(), True, 2)
+])
+def test_diff_in_weeks(start, end, absolute, expected_weeks):
+    diff_in_weeks = start.diff(end, absolute=absolute).in_weeks()
+    assert diff_in_weeks == expected_weeks
+
+
+@parametrize('start,end,expected_text', [
+    (DateTime.now(),
+     '03/23/2016',
+     '{0} should be a valid datetime object'.format('03/23/2016'))
+])
+def test_diff_invalid_datetime(start, end, expected_text):
+    with pytest.raises(ValueError) as exc:
+        start.diff(end).in_weeks()
+
+    assert expected_text in str(exc)
+
+
+@parametrize('start,end,absolute,expected_days', [
+    (DateTime.now(), DateTime.now().add(days=20), True, 20)
+])
+def test_delta(start, end, absolute, expected_days):
+    diff_in_days = start.diff(end, absolute=absolute).delta()
+    assert diff_in_days.days == expected_days
+
+
+@parametrize('start,end,expected_text', [
+    (DateTime.now(),
+     '03/23/2016',
+     '{0} should be a valid datetime object'.format('03/23/2016')),
+    ('03/23/2016',
+     DateTime.now(),
+     '{0} should be a valid datetime object'.format('03/23/2016'))
+])
+def test_delta_invalid_datetime(start, end, expected_text):
+    with pytest.raises(ValueError) as exc:
+        Delta(start=start, end=end)
+
+    assert expected_text in str(exc)

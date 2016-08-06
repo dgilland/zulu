@@ -15,3 +15,4 @@ from .__pkg__ import (
 from .api import format, now, parse
 from .datetime import DateTime
 from .parser import ParseError, ISO8601, TIMESTAMP
+from .delta import Delta

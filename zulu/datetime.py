@@ -13,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 import pytz
 import tzlocal
 
-from . import parser
+from . import parser, delta
 from ._compat import number_types, string_types
 
 
@@ -775,6 +775,26 @@ class DateTime(datetime):
             tuple: (`start_of_frame`, `end_of_frame`)
         """
         return (self.start_of(frame), self.end_of(frame, count))
+
+    def diff(self, dt=None, absolute=False, decimal=False):
+        """Returns difference between two given dates.
+
+        Args:
+            dt (mixed): Either a :class:`.DateTime`, ``datetime.date``,
+                or ``datetime.datetime`` object.
+            absolute (bool): Boolean value for retrieving an absolute value.
+            decimal (bool): Boolean value for retrieving a round value.
+
+        Returns:
+            :class: `zulu.Interval`
+        """
+        if not isinstance(dt, (datetime, DateTime)):
+            raise ValueError('{0} should be a valid datetime object'
+                             .format(dt))
+
+        end = self.now() if dt is None else self.fromdatetime(dt)
+
+        return delta.Delta(self, end, absolute=absolute, decimal=decimal)
 
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.DateTime`."""
