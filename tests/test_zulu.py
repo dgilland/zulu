@@ -313,8 +313,8 @@ def test_basic_property_methods(dt, methods):
     (2001, False),
     (2004, True),
 ])
-def test_isleap(year, expected):
-    assert DateTime(year).isleap() == expected
+def test_is_leap_year(year, expected):
+    assert DateTime(year).is_leap_year() == expected
 
 
 @parametrize('dt,year_or_dt,expected', [

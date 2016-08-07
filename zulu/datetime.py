@@ -366,7 +366,7 @@ class DateTime(datetime):
         """
         return DateTime(*tuple(self))
 
-    def isleap(self):
+    def is_leap_year(self):
         """Return whether this datetime's :attr:`year` is a leap year.
 
         Returns:
