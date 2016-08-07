@@ -317,15 +317,6 @@ def test_is_leap_year(year, expected):
     assert DateTime(year).is_leap_year() == expected
 
 
-@parametrize('dt,year_or_dt,expected', [
-    (DateTime(1900), 2000, 24),
-    (DateTime(2000), 1900, -24),
-    (DateTime(1), DateTime(9999), 2424)
-])
-def test_leapdays(dt, year_or_dt, expected):
-    assert dt.leapdays(year_or_dt) == expected
-
-
 def test_copy():
     dt = DateTime(2000, 1, 1)
     copy = dt.copy()

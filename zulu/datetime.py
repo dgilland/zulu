@@ -374,20 +374,6 @@ class DateTime(datetime):
         """
         return calendar.isleap(self.year)
 
-    def leapdays(self, year_or_dt):
-        """Return the number of leap days between this datetime's :attr:`year`
-        and `to_year`.
-
-        Args:
-            year_or_dt (int|datetime): Year or year from datetime to calculate
-                leap days between.
-
-        Returns:
-            int
-        """
-        other_year = getattr(year_or_dt, 'year', year_or_dt)
-        return calendar.leapdays(self.year, other_year)
-
     def format(self, format=None, tz=None):
         """Return datetime as a string using the format string `format` while
         optionally converting to timezone `tz` first.
