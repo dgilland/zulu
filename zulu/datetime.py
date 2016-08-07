@@ -374,6 +374,14 @@ class DateTime(datetime):
         """
         return calendar.isleap(self.year)
 
+    def days_in_month(self):
+        """Return the number of days in the month.
+
+        Returns:
+            int
+        """
+        return calendar.monthrange(self.year, self.month)[1]
+
     def format(self, format=None, tz=None):
         """Return datetime as a string using the format string `format` while
         optionally converting to timezone `tz` first.

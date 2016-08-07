@@ -317,6 +317,25 @@ def test_is_leap_year(year, expected):
     assert DateTime(year).is_leap_year() == expected
 
 
+@parametrize('dt,expected', [
+    (DateTime(2001, 1, 1), 31),
+    (DateTime(2001, 2, 1), 28),
+    (DateTime(2001, 3, 1), 31),
+    (DateTime(2001, 4, 1), 30),
+    (DateTime(2001, 5, 1), 31),
+    (DateTime(2001, 6, 1), 30),
+    (DateTime(2001, 7, 1), 31),
+    (DateTime(2001, 8, 1), 31),
+    (DateTime(2001, 9, 1), 30),
+    (DateTime(2001, 10, 1), 31),
+    (DateTime(2001, 11, 1), 30),
+    (DateTime(2001, 12, 1), 31),
+    (DateTime(2004, 2, 1), 29),
+])
+def test_days_in_month(dt, expected):
+    assert dt.days_in_month() == expected
+
+
 def test_copy():
     dt = DateTime(2000, 1, 1)
     copy = dt.copy()

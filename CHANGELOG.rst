@@ -7,6 +7,7 @@ vX.X.X (XXXX-XX-XX)
 
 - Rename ``DateTime.isleap`` to ``DateTime.is_leap_year``. **breaking change**
 - Remove ``DateTime.leapdays``. **breaking change**
+- Add ``DateTime.days_in_month``.
 
 
 v0.3.0 (2016-08-03)
