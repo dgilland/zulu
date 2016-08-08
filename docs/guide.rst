@@ -87,11 +87,8 @@ Along with a few new ones:
     dt.datetime
     # datetime.datetime(2016, 7, 25, 19, 33, 18, 137493, tzinfo=<UTC>)
 
-    dt.isleap()
+    dt.is_leap_year()
     # True
-
-    dt.leapdays(2050)
-    # 0
 
     tuple(dt)
     # (2016, 7, 25, 19, 33, 18, 137493, <UTC>)
