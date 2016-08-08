@@ -379,6 +379,70 @@ Or even make a copy:
 
 .. note:: Since ``DateTime`` is meant to be immutable, both ``shift``, ``replace``, and ``copy`` return new ``DateTime`` instances while leaving the original instance unchanged.
 
+Difference
+----------
+
+You can get the time difference between two datetime objects:
+
+.. code-block:: python
+
+    from zulu.datetime import DateTime
+
+    start = DateTime(2016, 8, 8, 12, 0, 0, 0)
+    end = DateTime(2016, 8, 8, 12, 0, 0, 999999)
+    start.diff(end).in_microseconds()
+    # -999999
+    start.diff(end, absolute=True).in_microseconds()
+    # 999999
+    start.diff(end, absolute=True, decimal=True).in_microseconds()
+    # 999999.0
+
+    start = DateTime(2016, 8, 8, 12, 0, 0, 0)
+    end = DateTime(2016, 8, 8, 12, 0, 20, 0)
+    start.diff(end).in_seconds()
+    # -20
+
+    start = DateTime(2016, 8, 8, 12, 0, 0, 0)
+    end = DateTime(2016, 8, 8, 12, 20, 0, 0)
+    start.diff(end).in_minutes()
+    # -20
+
+    start = DateTime(2016, 8, 8, 0, 0, 0, 0)
+    end = DateTime(2016, 8, 8, 20, 0, 0, 0)
+    start.diff(end).in_hours()
+    # -20
+
+    start = DateTime(2016, 8, 8, 0, 0, 0, 0)
+    end = DateTime(2016, 8, 9, 0, 0, 0, 0)
+    start.diff(end).in_days()
+    # -1
+
+You can do this too:
+
+.. code-block:: python
+
+    from zulu.delta import Delta
+
+    start = DateTime(2016, 8, 8, 12, 0, 0, 0)
+    end = DateTime(2016, 8, 8, 12, 0, 0, 999999)
+    Delta(start, end).in_microseconds()
+    # -999999
+    Delta(start, end, absolute=True).in_microseconds()
+    # 999999
+    Delta(start, end, absolute=True, decimal=True).in_microseconds()
+    # 999999.0
+
+    start = DateTime(2016, 8, 8, 12, 0, 0, 0)
+    end = DateTime(2016, 8, 8, 12, 0, 20, 0)
+    Delta(start, end).in_seconds()
+    # -20
+
+    start = DateTime(2016, 8, 8, 12, 0, 0, 0)
+    end = DateTime(2016, 8, 8, 12, 20, 0, 0)
+    Delta(start, end).in_minutes()
+    # -20
+
+.. note:: The supported methods are ``in_microseconds()``, ``in_seconds()``, ``in_minutes()``, ``in_hours()``, ``in_days()``, ``in_weeks()``.
 
 Spans, Ranges, Starts, and Ends
 -------------------------------
