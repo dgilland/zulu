@@ -28,6 +28,15 @@ TIME_FRAMES = ['century',
                'minute',
                'second']
 
+SHIFT_UNITS = ['years',
+               'months',
+               'weeks',
+               'days',
+               'hours',
+               'minutes',
+               'seconds',
+               'microseconds']
+
 
 def validate_frame(frame):
     """Method that validates the given time frame."""
@@ -426,6 +435,16 @@ class DateTime(datetime):
         """Shift datetime forward or backward using a timedelta created from
         the supplied arguments and return a new :class:`.DateTime` instance.
 
+        Args:
+            years (int, optional): Years to shift.
+            months (int, optional): Months to shift.
+            weeks (int, optional): Weeks to shift.
+            days (int, optional): Days to shift.
+            hours (int, optional): Hours to shift.
+            minutes (int, optional): Minutes to shift.
+            seconds (int, optional): Seconds to shift.
+            microseconds (int, optional): Microseconds to shift.
+
         Returns:
             :class:`.DateTime`
         """
@@ -440,50 +459,58 @@ class DateTime(datetime):
 
         return self.fromdatetime(dt)
 
-    def add(self,
-            years=0,
-            months=0,
-            weeks=0,
-            days=0,
-            hours=0,
-            minutes=0,
-            seconds=0,
-            microseconds=0):
+    def add(self, other=None, **units):
         """Add time using a timedelta created from the supplied arguments and
         return a new :class:`.DateTime` instance. The first argument can be a
         `:class:`timedelta` or :class:`dateutil.relativedelta` object in which
         case all other arguments are ignored and the object is added to this
         datetime.
 
+        Args:
+            other (timedelta|relativedelta, optional): A ``timedelta`` or
+                ``dateutil.relativedelta`` object to add.
+
+        Keyword Args:
+            years (int, optional): Years to add.
+            months (int, optional): Months to add.
+            weeks (int, optional): Weeks to add.
+            days (int, optional): Days to add.
+            hours (int, optional): Hours to add.
+            minutes (int, optional): Minutes to add.
+            seconds (int, optional): Seconds to add.
+            microseconds (int, optional): Microseconds to add.
+
         Returns:
             :class:`.DateTime`
         """
-        if isinstance(years, (timedelta, relativedelta)):
-            return self + years
+        if isinstance(other, (timedelta, relativedelta)):
+            return self + other
 
-        return self.shift(years,
-                          months,
-                          weeks,
-                          days,
-                          hours,
-                          minutes,
-                          seconds,
-                          microseconds)
+        units = {unit: units.get(unit, 0) for unit in SHIFT_UNITS}
 
-    def subtract(self,
-                 years=0,
-                 months=0,
-                 weeks=0,
-                 days=0,
-                 hours=0,
-                 minutes=0,
-                 seconds=0,
-                 microseconds=0):
+        return self.shift(**units)
+
+    def subtract(self, other=None, **units):
         """Subtract time using a timedelta created from the supplied arguments
         and return a new :class:`.DateTime` instance. The first argument can be
         a :class:`.DateTime`, :class:`datetime`, :class:`timedelta`, or
         :class:`dateutil.relativedelta` object in which case all other
         arguments are ignored and the object is subtracted from this datetime.
+
+        Args:
+            other (datetime|timedelta|relativedelta, optional): A ``datetime``,
+                ``timedelta``, or ``dateutil.relativedelta`` object to
+                subtract.
+
+        Keyword Args:
+            years (int, optional): Years to subtract.
+            months (int, optional): Months to subtract.
+            weeks (int, optional): Weeks to subtract.
+            days (int, optional): Days to subtract.
+            hours (int, optional): Hours to subtract.
+            minutes (int, optional): Minutes to subtract.
+            seconds (int, optional): Seconds to subtract.
+            microseconds (int, optional): Microseconds to subtract.
 
         Returns:
             :class:`.DateTime`: if subtracting :class:`timedelta` or
@@ -491,17 +518,12 @@ class DateTime(datetime):
             :class:`timedelta`: if subtracting a :class:`datetime` or
                 :class:`.DateTime`
         """
-        if isinstance(years, (datetime, timedelta, relativedelta)):
-            return self - years
+        if isinstance(other, (datetime, timedelta, relativedelta)):
+            return self - other
 
-        return self.shift(-years,
-                          -months,
-                          -weeks,
-                          -days,
-                          -hours,
-                          -minutes,
-                          -seconds,
-                          -microseconds)
+        units = {unit: -units.get(unit, 0) for unit in SHIFT_UNITS}
+
+        return self.shift(**units)
 
     def replace(self,
                 year=None,
