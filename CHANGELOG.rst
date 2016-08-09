@@ -8,6 +8,7 @@ vX.X.X (XXXX-XX-XX)
 - Rename ``DateTime.isleap`` to ``DateTime.is_leap_year``. **breaking change**
 - Remove ``DateTime.leapdays``. **breaking change**
 - Add ``DateTime.days_in_month``.
+- Add ``zulu.TimeDelta`` class that inherits from ``datetime.timedelta``.
 - Make time units (years, months, weeks, days, hours, minutes, seconds, microseconds) keyword arguments only for ``DateTime.add/subtract``, but allow positional argument to be an addable/subtractable object (datetime, timedelta, dateutil.relativedelta). **breaking change**
 
 
