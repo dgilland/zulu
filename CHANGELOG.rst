@@ -9,6 +9,7 @@ vX.X.X (XXXX-XX-XX)
 - Remove ``DateTime.leapdays``. **breaking change**
 - Add ``DateTime.days_in_month``.
 - Add ``zulu.TimeDelta`` class that inherits from ``datetime.timedelta``.
+- Add ``DateTime.format_from``, ``DateTime.format_to``, ``DateTime.format_from_now``, and ``DateTime.format_to_now`` that return "time ago" or "time to" humanized strings.
 - Make time units (years, months, weeks, days, hours, minutes, seconds, microseconds) keyword arguments only for ``DateTime.add/subtract``, but allow positional argument to be an addable/subtractable object (datetime, timedelta, dateutil.relativedelta). **breaking change**
 
 

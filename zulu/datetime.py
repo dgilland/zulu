@@ -14,6 +14,7 @@ import pytz
 import tzlocal
 
 from . import parser
+from .timedelta import TimeDelta
 from ._compat import number_types, string_types
 
 
@@ -405,6 +406,68 @@ class DateTime(datetime):
             :class:`str`
         """
         return parser.format(self, format, tz=tz)
+
+    def format_from(self, dt, **options):
+        """Return "time ago" difference between this datetime and another as a
+        humanized string.
+
+        Args:
+            dt (datetime): A datetime object.
+
+        Keyword Args:
+            See :meth:`.TimeDelta.format` for listing.
+
+        Returns:
+            str
+        """
+        return self._format_delta(self - dt)
+
+    def format_to(self, dt, **options):
+        """Return "time to" difference between another datetime and this one as
+        a humanized string.
+
+        Args:
+            dt (datetime): A datetime object.
+
+        Keyword Args:
+            See :meth:`.TimeDelta.format` for listing.
+
+        Returns:
+            str
+        """
+        return self._format_delta(dt - self)
+
+    def format_from_now(self, **options):
+        """Return "time ago" difference between this datetime and now as a
+        humanized string.
+
+        Keyword Args:
+            See :meth:`.TimeDelta.format` for listing.
+
+        Returns:
+            str
+        """
+        return self.format_from(DateTime.now())
+
+    def format_to_now(self, **options):
+        """Return "time to" difference between now and this datetime as a
+        humanized string.
+
+        Keyword Args:
+            See :meth:`.TimeDelta.format` for listing.
+
+        Returns:
+            str
+        """
+        return self.format_to(DateTime.now())
+
+    def _format_delta(self, delta, **options):
+        """Return a humanized "time ago"/"time to" string from a timedelta."""
+        options.setdefault('add_direction', True)
+        delta = TimeDelta(days=delta.days,
+                          seconds=delta.seconds,
+                          microseconds=delta.microseconds)
+        return delta.format(**options)
 
     def astimezone(self, tz=LOCAL):
         """Return datetime shifted to timezone `tz`.
