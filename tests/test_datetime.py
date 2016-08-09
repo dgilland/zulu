@@ -19,7 +19,7 @@ from .fixtures import parametrize
 eastern = pytz.timezone('US/Eastern')
 
 
-def test_new_defaults():
+def test_datetime_defaults():
     assert DateTime() == DateTime.fromtimestamp(0)
 
 
@@ -27,7 +27,7 @@ def test_new_defaults():
     DateTime.utcnow,
     datetime.utcnow
 ])
-def test_now_is_utcnow(factory):
+def test_datetime_now_is_utcnow(factory):
     dt = DateTime.now()
     expected = factory()
 
@@ -69,8 +69,25 @@ def test_now_is_utcnow(factory):
     (DateTime(2000, 1, 1),
      datetime(2000, 1, 1, tzinfo=UTC)),
 ])
-def test_parse(string, expected):
+def test_datetime_parse(string, expected):
     assert DateTime.parse(string) == expected
+
+
+@parametrize('string,kargs,exception', [
+    ('2000/01/01', {}, ParseError),
+    ('01/01/2000', {}, ParseError),
+    ('01-01-2000', {}, ParseError),
+    ('2000-01-01X00:00:00', {}, ParseError),
+    ('2000-01-01T00,00,00', {}, ParseError),
+    ('2000-01-01T00:00:00+2400', {}, ParseError),
+    ('2000-01-01T00:00:00-2400', {}, ParseError),
+    ('2000-01-01T00:00:00+2500', {}, ParseError),
+    ('2000-01-01T00:00:00-2500', {}, ParseError),
+    ('2000-01-01T00:00:00', {'default_tz': 'invalid'}, ValueError),
+])
+def test_datetime_parse_invalid(string, kargs, exception):
+    with pytest.raises(exception):
+        DateTime.parse(string, **kargs)
 
 
 @parametrize('string,kargs,expected', [
@@ -103,7 +120,7 @@ def test_parse(string, expected):
                   'HH hh mm ss SSSSSS a')},
      datetime(2016, 7, 27, 4, 34, 22, 479776, tzinfo=UTC)),
 ])
-def test_parse_format(string, kargs, expected):
+def test_datetime_parse_format(string, kargs, expected):
     assert DateTime.parse(string, **kargs) == expected
 
 
@@ -150,7 +167,7 @@ def test_parse_format(string, kargs, expected):
     (DateTime(1970, 1, 1, 0, 17, 30, 123456), 'X', '1050'),
     (DateTime(), ' ', ' '),
 ])
-def test_format_pattern(dt, pattern, expected):
+def test_datetime_format_pattern(dt, pattern, expected):
     assert dt.format(pattern) == expected
 
 
@@ -186,28 +203,47 @@ def test_format_pattern(dt, pattern, expected):
     ('000006', 'S'),
     ('AM', 'a'),
 ])
-def test_parse_pattern_mapping(string, pattern):
+def test_datetime_parse_pattern_mapping(string, pattern):
     pat_dt = DateTime.parse(string, DATE_PATTERN_TO_DIRECTIVE[pattern])
     dt = DateTime.parse(string, pattern)
 
     assert pat_dt == dt
 
 
-@parametrize('string,kargs,exception', [
-    ('2000/01/01', {}, ParseError),
-    ('01/01/2000', {}, ParseError),
-    ('01-01-2000', {}, ParseError),
-    ('2000-01-01X00:00:00', {}, ParseError),
-    ('2000-01-01T00,00,00', {}, ParseError),
-    ('2000-01-01T00:00:00+2400', {}, ParseError),
-    ('2000-01-01T00:00:00-2400', {}, ParseError),
-    ('2000-01-01T00:00:00+2500', {}, ParseError),
-    ('2000-01-01T00:00:00-2500', {}, ParseError),
-    ('2000-01-01T00:00:00', {'default_tz': 'invalid'}, ValueError),
+@parametrize('dt,args,expected', [
+    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+     {},
+     '2000-01-01T12:30:45.000015+00:00'),
+    (DateTime(2000, 1, 1, 12, 30),
+     {'tz': 'US/Eastern'},
+     '2000-01-01T07:30:00-05:00'),
+    (DateTime(2000, 1, 1, 12, 30),
+     {'format': '%a %b %d'},
+     'Sat Jan 01')
 ])
-def test_parse_invalid(string, kargs, exception):
-    with pytest.raises(exception):
-        DateTime.parse(string, **kargs)
+def test_datetime_format(dt, args, expected):
+    assert dt.format(**args) == expected
+
+
+@parametrize('dt,fmt,expected', [
+    (DateTime(2000, 1, 1, 12, 30),
+     '%Y-%m-%dT%H:%M:%S%z',
+     '2000-01-01T12:30:00+0000'),
+    (DateTime(2000, 1, 1, 12, 30),
+     '%a %b %d',
+     'Sat Jan 01')
+])
+def test_datetime_strftime(dt, fmt, expected):
+    assert dt.strftime(fmt) == expected
+
+
+@parametrize('string,fmt,expected', [
+    ('2000-01-01T12:30:00',
+     '%Y-%m-%dT%H:%M:%S',
+     DateTime(2000, 1, 1, 12, 30)),
+])
+def test_datetime_strptime(string, fmt, expected):
+    assert DateTime.strptime(string, fmt) == expected
 
 
 @parametrize('dt,expected', [
@@ -216,7 +252,7 @@ def test_parse_invalid(string, kargs, exception):
     (DateTime(2000, 1, 1, tzinfo='UTC'),
      datetime(2000, 1, 1, tzinfo=pytz.UTC))
 ])
-def test_fromdatetime(dt, expected):
+def test_datetime_fromdatetime(dt, expected):
     assert DateTime.fromdatetime(dt) == expected
 
 
@@ -224,7 +260,7 @@ def test_fromdatetime(dt, expected):
     (DateTime.fromtimestamp, 0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
     (DateTime.utcfromtimestamp, 0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
 ])
-def test_fromtimestamp(factory, timestamp, expected):
+def test_datetime_fromtimestamp(factory, timestamp, expected):
     assert factory(timestamp) == expected
 
 
@@ -232,15 +268,15 @@ def test_fromtimestamp(factory, timestamp, expected):
     (struct_time((2016, 7, 29, 21, 23, 50, 4, 211, 0)),
      DateTime(2016, 7, 29, 21, 23, 50))
 ])
-def test_fromgmtime(struct, expected):
+def test_datetime_fromgmtime(struct, expected):
     assert DateTime.fromgmtime(struct) == expected
 
 
-def test_fromordinal():
+def test_datetime_fromordinal():
     assert DateTime.fromordinal(730120) == DateTime(2000, 1, 1)
 
 
-def test_fromlocaltime():
+def test_datetime_fromlocaltime():
     now = localtime()
     assert DateTime.fromlocaltime(now).timestamp() == mktime(now)
 
@@ -253,7 +289,7 @@ def test_fromlocaltime():
     (DateTime(2000, 1, 1), DateTime(1990, 12, 3, 12, 30),
      DateTime(2000, 1, 1, 12, 30))
 ])
-def test_combine(date, time, expected):
+def test_datetime_combine(date, time, expected):
     dt = DateTime.combine(date, time)
     assert dt == expected
 
@@ -274,7 +310,7 @@ def test_combine(date, time, expected):
       'naive': datetime(2000, 1, 2, 3, 4, 5, 6),
       'datetime': datetime(2000, 1, 2, 3, 4, 5, 6, pytz.UTC)}),
 ])
-def test_basic_properties(dt, properties):
+def test_datetime_basic_properties(dt, properties):
     for prop, val in properties.items():
         assert getattr(dt, prop) == val
 
@@ -299,7 +335,7 @@ def test_basic_properties(dt, properties):
       'utctimetuple': struct_time((2000, 1, 2, 3, 4, 5, 6, 2, 0)),
       'timestamp': 946782245.000006}),
 ])
-def test_basic_property_methods(dt, methods):
+def test_datetime_basic_property_methods(dt, methods):
     for meth, val in methods.items():
         assert getattr(dt, meth)() == val
 
@@ -313,7 +349,7 @@ def test_basic_property_methods(dt, methods):
     (2001, False),
     (2004, True),
 ])
-def test_is_leap_year(year, expected):
+def test_datetime_is_leap_year(year, expected):
     assert DateTime(year).is_leap_year() == expected
 
 
@@ -332,11 +368,11 @@ def test_is_leap_year(year, expected):
     (DateTime(2001, 12, 1), 31),
     (DateTime(2004, 2, 1), 29),
 ])
-def test_days_in_month(dt, expected):
+def test_datetime_days_in_month(dt, expected):
     assert dt.days_in_month() == expected
 
 
-def test_copy():
+def test_datetime_copy():
     dt = DateTime(2000, 1, 1)
     copy = dt.copy()
 
@@ -365,11 +401,11 @@ def test_copy():
       'tzinfo': 'US/Eastern'},
      DateTime(1999, 12, 31, 17, 30, 15, 10)),
 ])
-def test_replace(dt, replace, expected):
+def test_datetime_replace(dt, replace, expected):
     assert dt.replace(**replace) == expected
 
 
-def test_iter():
+def test_datetime_as_iter():
     dt = DateTime(2000, 1, 1)
     expected = (2000, 1, 1, 0, 0, 0, 0, pytz.UTC)
 
@@ -383,55 +419,19 @@ def test_iter():
     (DateTime(2000, 1, 1, 12), '2000-01-01T12:00:00+00:00'),
     (DateTime(2000, 1, 1), '2000-01-01T00:00:00+00:00'),
 ])
-def test_isoformat(dt, expected):
+def test_datetime_isoformat(dt, expected):
     assert dt.isoformat() == expected
 
 
-def test_str():
+def test_datetime_as_string():
     dt = DateTime(2000, 1, 1)
     assert str(dt) == dt.isoformat()
 
 
-def test_str_format():
+def test_datetime_string_format():
     dt = DateTime(2000, 1, 1)
     assert '{0}'.format(dt) == dt.isoformat()
     assert '{0:%Y-%m-%dT%H:%M:%S}'.format(dt) == dt.format('%Y-%m-%dT%H:%M:%S')
-
-
-@parametrize('dt,fmt,expected', [
-    (DateTime(2000, 1, 1, 12, 30),
-     '%Y-%m-%dT%H:%M:%S%z',
-     '2000-01-01T12:30:00+0000'),
-    (DateTime(2000, 1, 1, 12, 30),
-     '%a %b %d',
-     'Sat Jan 01')
-])
-def test_strftime(dt, fmt, expected):
-    assert dt.strftime(fmt) == expected
-
-
-@parametrize('string,fmt,expected', [
-    ('2000-01-01T12:30:00',
-     '%Y-%m-%dT%H:%M:%S',
-     DateTime(2000, 1, 1, 12, 30)),
-])
-def test_strptime(string, fmt, expected):
-    assert DateTime.strptime(string, fmt) == expected
-
-
-@parametrize('dt,args,expected', [
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     {},
-     '2000-01-01T12:30:45.000015+00:00'),
-    (DateTime(2000, 1, 1, 12, 30),
-     {'tz': 'US/Eastern'},
-     '2000-01-01T07:30:00-05:00'),
-    (DateTime(2000, 1, 1, 12, 30),
-     {'format': '%a %b %d'},
-     'Sat Jan 01')
-])
-def test_format(dt, args, expected):
-    assert dt.format(**args) == expected
 
 
 @parametrize('dt,tzinfo,expected', [
@@ -448,7 +448,7 @@ def test_format(dt, args, expected):
      pytz.timezone('US/Eastern'),
      eastern.localize(datetime(2000, 1, 1, 5, 0)))
 ])
-def test_astimezone(dt, tzinfo, expected):
+def test_datetime_astimezone(dt, tzinfo, expected):
     ldt = dt.astimezone(tzinfo)
 
     assert type(ldt) is datetime
@@ -509,7 +509,7 @@ def test_astimezone(dt, tzinfo, expected):
      {'years': 2, 'months': 7, 'weeks': 13, 'days': 400},
      DateTime(2003, 12, 5)),
 ])
-def test_shift(method, dt, delta, expected):
+def test_datetime_shift(method, dt, delta, expected):
     meth = getattr(dt, method)
 
     if isinstance(delta, dict):
@@ -537,7 +537,7 @@ def test_shift(method, dt, delta, expected):
      60.123456,
      DateTime(2000, 1, 1, 12, 31, 45, 123456)),
 ])
-def test_addition(dt, delta, expected):
+def test_datetime_addition(dt, delta, expected):
     dt1 = (dt + delta)
     dt2 = (delta + dt)
 
@@ -545,7 +545,7 @@ def test_addition(dt, delta, expected):
     assert type(dt1) == type(dt2) == DateTime
 
 
-def test_addition_invalid_type():
+def test_datetime_addition_invalid_type():
     with pytest.raises(TypeError):
         DateTime() + 'string'
 
@@ -593,13 +593,13 @@ def test_addition_invalid_type():
      DateTime(2000, 1, 1, 12, 30, 45, 15),
      timedelta(weeks=-1)),
 ])
-def test_subtraction(dt, offset, expected):
+def test_datetime_subtraction(dt, offset, expected):
     result = dt - offset
     assert result == expected
     assert type(result) == type(expected)
 
 
-def test_hash():
+def test_datetime_hash():
     dt = DateTime(2000, 1, 1)
     assert hash(dt) == hash(datetime(2000, 1, 1, tzinfo=UTC))
 
@@ -618,7 +618,7 @@ def test_hash():
      datetime(2000, 1, 1, tzinfo=UTC),
      False),
 ])
-def test_compare_equal(dt, other, expected):
+def test_datetime_compare_equal(dt, other, expected):
     assert (dt == other) is expected
 
 
@@ -636,7 +636,7 @@ def test_compare_equal(dt, other, expected):
      datetime(2000, 1, 1, tzinfo=UTC),
      True),
 ])
-def test_compare_not_equal(dt, other, expected):
+def test_datetime_compare_not_equal(dt, other, expected):
     assert (dt != other) is expected
 
 
@@ -654,7 +654,7 @@ def test_compare_not_equal(dt, other, expected):
      datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      True),
 ])
-def test_compare_less_than(dt, other, expected):
+def test_datetime_compare_less_than(dt, other, expected):
     assert (dt < other) is expected
 
 
@@ -678,7 +678,7 @@ def test_compare_less_than(dt, other, expected):
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
 ])
-def test_compare_less_than_equal(dt, other, expected):
+def test_datetime_compare_less_than_equal(dt, other, expected):
     assert (dt <= other) is expected
 
 
@@ -696,7 +696,7 @@ def test_compare_less_than_equal(dt, other, expected):
      datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      False),
 ])
-def test_compare_greater_than(dt, other, expected):
+def test_datetime_compare_greater_than(dt, other, expected):
     assert (dt > other) is expected
 
 
@@ -720,7 +720,7 @@ def test_compare_greater_than(dt, other, expected):
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
 ])
-def test_compare_greater_than_equal(dt, other, expected):
+def test_datetime_compare_greater_than_equal(dt, other, expected):
     assert (dt >= other) is expected
 
 
@@ -750,7 +750,7 @@ def test_compare_greater_than_equal(dt, other, expected):
      'century',
      DateTime(2000, 1, 1)),
 ])
-def test_start_of_frame(dt, frame, expected):
+def test_datetime_start_of_frame(dt, frame, expected):
     assert dt.start_of(frame) == expected
 
 
@@ -780,7 +780,7 @@ def test_start_of_frame(dt, frame, expected):
      'century',
      DateTime(2099, 12, 31, 23, 59, 59, 999999)),
 ])
-def test_end_of_frame(dt, frame, expected):
+def test_datetime_end_of_frame(dt, frame, expected):
     assert dt.end_of(frame) == expected
 
 
@@ -836,12 +836,12 @@ def test_end_of_frame(dt, frame, expected):
      (DateTime(2015, 4, 4, 12, 30, 47, 0),
       DateTime(2015, 4, 4, 12, 31, 6, 999999)))
 ])
-def test_span(dt, span, count, expected):
+def test_datetime_span(dt, span, count, expected):
     time_span_tuple = dt.span(span, count)
     assert time_span_tuple == expected
 
 
-def test_span_frame_error():
+def test_datetime_span_frame_error():
     frame = 'temp'
     dt = DateTime(2015, 4, 4, 12, 30)
 
@@ -956,7 +956,7 @@ def test_span_frame_error():
         []
     ),
 ])
-def test_span_range(frame, start, end, expected):
+def test_datetime_span_range(frame, start, end, expected):
     span_range = []
     for time_span in DateTime.span_range(frame, start, end):
         span_range.append(time_span)
@@ -968,7 +968,7 @@ def test_span_range(frame, start, end, expected):
     ('century', '1', DateTime(2015, 4, 4, 12, 30, 0)),
     ('year', DateTime(2015, 4, 4, 12, 30, 0), '1')
 ])
-def test_span_range_error(frame, start, end):
+def test_datetime_span_range_error(frame, start, end):
     with pytest.raises(ParseError):
         list(DateTime.span_range(frame, start, end))
 
@@ -1051,7 +1051,7 @@ def test_span_range_error(frame, start, end):
         []
     ),
 ])
-def test_range(frame, start, end, expected):
+def test_datetime_range(frame, start, end, expected):
     time_range = list(DateTime.range(frame, start, end))
 
     assert time_range == expected
@@ -1061,6 +1061,6 @@ def test_range(frame, start, end, expected):
     ('century', '1', DateTime(2015, 4, 4, 12, 30, 0)),
     ('year', DateTime(2015, 4, 4, 12, 30, 0), '1')
 ])
-def test_range_error(frame, start, end):
+def test_datetime_range_error(frame, start, end):
     with pytest.raises(ParseError):
         list(DateTime.range(frame, start, end))
