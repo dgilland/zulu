@@ -90,3 +90,12 @@ def test_timedelta_parse_invalid(obj, exception):
 ])
 def test_timedelta_format(delta, opts, expected):
     assert delta.format(**opts) == expected
+
+
+@parametrize('opts,exception', [
+    ({'granularity': 'invalid'}, ValueError),
+    ({'format': 'invalid'}, ValueError),
+])
+def test_timedelta_format_exception(opts, exception):
+    with pytest.raises(exception):
+        TimeDelta(1).format(**opts)

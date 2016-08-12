@@ -114,6 +114,17 @@ PATTERN_DATETIME_FORMATTERS = {
 }
 
 
+TIMEDELTA_GRANULARITIES = ('second',
+                           'minute',
+                           'hour',
+                           'day',
+                           'week',
+                           'month',
+                           'year')
+
+TIMEDELTA_FORMATS = ('long', 'short', 'narrow')
+
+
 class ParseError(Exception):
     """Exception raised when an object cannot be parsed as a datetime."""
     pass
@@ -329,6 +340,19 @@ def format_timedelta(delta,
         locale (str|Locale, optional): A ``Locale`` object or locale
             identifer. Defaults to system default.
     """
+    if granularity not in TIMEDELTA_GRANULARITIES:
+        grans = ', '.join('"{0}"'.format(gra)
+                          for gra in TIMEDELTA_GRANULARITIES)
+        raise ValueError('Time delta format granularity must be one of {0}, '
+                         'not "{1}"'
+                         .format(grans, granularity))
+
+    if format not in TIMEDELTA_FORMATS:
+        formats = ', '.join('"{0}"'.format(fmt)
+                            for fmt in TIMEDELTA_FORMATS)
+        raise ValueError('Time delta format must be one of {0}, not "{1}"'
+                         .format(formats, format))
+
     return _format_timedelta(delta,
                              granularity=granularity,
                              threshold=threshold,
