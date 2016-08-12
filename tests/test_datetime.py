@@ -621,13 +621,13 @@ def test_datetime_subtraction(dt, offset, expected):
      DateTime(2000, 1, 1, 0, 0, 0, 0),
      '1 second ago'),
 ])
-def test_datetime_format_to(dt, other, expected):
-    assert dt.format_to(other) == expected
+def test_datetime_time_to(dt, other, expected):
+    assert dt.time_to(other) == expected
 
 
-def test_datetime_format_to_now():
-    assert DateTime.now().shift(minutes=1).format_to_now() == '1 minute ago'
-    assert DateTime.now().shift(minutes=-1).format_to_now() == 'in 1 minute'
+def test_datetime_time_to_now():
+    assert DateTime.now().shift(minutes=1).time_to_now() == '1 minute ago'
+    assert DateTime.now().shift(minutes=-1).time_to_now() == 'in 1 minute'
 
 
 @parametrize('dt,other,expected', [
@@ -652,13 +652,13 @@ def test_datetime_format_to_now():
      DateTime(2000, 1, 1, 0, 0, 0, 0),
      'in 0 seconds'),
 ])
-def test_datetime_format_from(dt, other, expected):
-    assert dt.format_from(other) == expected
+def test_datetime_time_from(dt, other, expected):
+    assert dt.time_from(other) == expected
 
 
-def test_datetime_format_from_now():
-    assert DateTime.now().shift(minutes=1).format_from_now() == 'in 1 minute'
-    assert DateTime.now().shift(minutes=-1).format_from_now() == '1 minute ago'
+def test_datetime_time_from_now():
+    assert DateTime.now().shift(minutes=1).time_from_now() == 'in 1 minute'
+    assert DateTime.now().shift(minutes=-1).time_from_now() == '1 minute ago'
 
 
 def test_datetime_hash():

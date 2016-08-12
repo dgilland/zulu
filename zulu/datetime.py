@@ -20,23 +20,23 @@ from ._compat import number_types, string_types
 
 LOCAL = 'local'
 
-TIME_FRAMES = ['century',
+TIME_FRAMES = ('century',
                'decade',
                'year',
                'month',
                'day',
                'hour',
                'minute',
-               'second']
+               'second')
 
-SHIFT_UNITS = ['years',
+SHIFT_UNITS = ('years',
                'months',
                'weeks',
                'days',
                'hours',
                'minutes',
                'seconds',
-               'microseconds']
+               'microseconds')
 
 
 def validate_frame(frame):
@@ -406,7 +406,7 @@ class DateTime(datetime):
         """
         return parser.format_datetime(self, format, tz=tz)
 
-    def format_from(self, dt, **options):
+    def time_from(self, dt, **options):
         """Return "time ago" difference between this datetime and another as a
         humanized string.
 
@@ -421,7 +421,7 @@ class DateTime(datetime):
         """
         return self._format_delta(self - dt)
 
-    def format_to(self, dt, **options):
+    def time_to(self, dt, **options):
         """Return "time to" difference between another datetime and this one as
         a humanized string.
 
@@ -436,7 +436,7 @@ class DateTime(datetime):
         """
         return self._format_delta(dt - self)
 
-    def format_from_now(self, **options):
+    def time_from_now(self, **options):
         """Return "time ago" difference between this datetime and now as a
         humanized string.
 
@@ -446,9 +446,9 @@ class DateTime(datetime):
         Returns:
             str
         """
-        return self.format_from(DateTime.now())
+        return self.time_from(DateTime.now())
 
-    def format_to_now(self, **options):
+    def time_to_now(self, **options):
         """Return "time to" difference between now and this datetime as a
         humanized string.
 
@@ -458,7 +458,7 @@ class DateTime(datetime):
         Returns:
             str
         """
-        return self.format_to(DateTime.now())
+        return self.time_to(DateTime.now())
 
     def _format_delta(self, delta, **options):
         """Return a humanized "time ago"/"time to" string from a timedelta."""
@@ -856,7 +856,7 @@ class DateTime(datetime):
 
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.DateTime`."""
-        return '<DateTime [{0}]>'.format(self.isoformat())
+        return '<{0} [{1}]>'.format(self.__class__.__name__, self)
 
     def __str__(self):
         """Return :class:`.DateTime` instance as an ISO 8601 string."""
