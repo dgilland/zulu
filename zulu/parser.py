@@ -138,7 +138,7 @@ def parse_datetime(obj, formats=None, default_tz=None):
     Args:
         obj (str|datetime): Object to parse.
         formats (list, optional): List of string formats to use when parsing.
-            Defaults to ``['ISO8601', 'timestamp']``.
+            Defaults to ``['ISO8601', 'X']``.
         default_tz (None|str|tzinfo, optional): Default timezone to use when
             parsed datetime object does not contain a timezone. Defaults to
             ``UTC``.
@@ -181,34 +181,34 @@ def _parse_datetime_formats(obj, formats):
     dt = None
     errors = {}
 
-    for fmt in formats:
+    for format in formats:
         try:
-            dt = _parse_datetime_format(obj, fmt)
+            dt = _parse_datetime_format(obj, format)
         except Exception as exc:
-            errors[fmt] = str(exc)
+            errors[format] = str(exc)
             dt = None
         else:
             break
 
     if dt is None:
-        err = ', '.join('"{0}" ({1})'.format(fmt, errors[fmt])
-                        for fmt in formats)
+        err = ', '.join('"{0}" ({1})'.format(format, errors[format])
+                        for format in formats)
         raise ParseError('Value "{0}" does not match any format in {1}'
                          .format(obj, err))
 
     return dt
 
 
-def _parse_datetime_format(obj, fmt):
-    """Parse `obj` as datetime using `fmt`."""
-    if fmt.upper() == ISO8601:
+def _parse_datetime_format(obj, format):
+    """Parse `obj` as datetime using `format`."""
+    if format.upper() == ISO8601:
         return iso8601.parse_date(obj, default_timezone=None)
-    elif fmt == TIMESTAMP:
+    elif format.upper() == TIMESTAMP:
         return datetime.fromtimestamp(obj, pytz.UTC)
     else:
-        if '%' not in fmt:
-            fmt = _date_pattern_to_directive(fmt)
-        return datetime.strptime(obj, fmt)
+        if '%' not in format:
+            format = _date_pattern_to_directive(format)
+        return datetime.strptime(obj, format)
 
 
 def parse_timedelta(obj):
@@ -239,15 +239,15 @@ def parse_timedelta(obj):
     return timedelta(seconds=seconds)
 
 
-def format_datetime(dt, fmt=None, tz=None):
+def format_datetime(dt, format=None, tz=None):
     """Return string formatted datetime, `dt`, using format directives or
-    pattern in `fmt`. If timezone, `tz`, is supplied, the datetime will be
+    pattern in `format`. If timezone, `tz`, is supplied, the datetime will be
     shifted to that timezone before being formatted.
 
     Args:
         dt (datetime): A datetime instance.
-        fmt (str, optional): Datetime format string. Defaults to ``None`` which
-            uses ISO-8601 format.
+        format (str, optional): Datetime format string. Defaults to ``None``
+            which uses ISO-8601 format.
         tz (None|str|tzinfo, optional): Timezone to shift `dt` to before
             formatting.
 
@@ -259,33 +259,33 @@ def format_datetime(dt, fmt=None, tz=None):
                         "datetime, not {0}"
                         .format(type(dt)))  # pragma: no cover
 
-    if fmt is not None and not isinstance(fmt, string_types):
+    if format is not None and not isinstance(format, string_types):
         raise TypeError("zulu.parser.format()'s second argument must be a "
                         "string or None, not {0}"
-                        .format(type(fmt)))  # pragma: no cover
+                        .format(type(format)))  # pragma: no cover
 
     if not is_valid_timezone(tz):  # pragma: no cover
         raise ValueError('Unrecognized timezone: {0}'.format(tz))
 
-    if fmt is None:
-        fmt = ISO8601
+    if format is None:
+        format = ISO8601
 
     if tz is not None:
         dt = dt.astimezone(tz)
 
-    if fmt == ISO8601:
+    if format == ISO8601:
         return dt.isoformat()
-    elif '%' not in fmt:
-        return _format_date_pattern(dt, fmt)
+    elif '%' not in format:
+        return _format_date_pattern(dt, format)
     else:
-        return dt.strftime(fmt)
+        return dt.strftime(format)
 
 
-def _format_date_pattern(dt, fmt):
-    """Format datetime, `dt`, using date-pattern format, `fmt`."""
+def _format_date_pattern(dt, format):
+    """Format datetime, `dt`, using date-pattern format, `format`."""
     formatted = ''
 
-    for token in _tokenize_date_pattern(fmt):
+    for token in _tokenize_date_pattern(format):
         if token in DATE_PATTERN_TO_DIRECTIVE:
             value = dt.strftime(DATE_PATTERN_TO_DIRECTIVE[token])
         else:
@@ -301,20 +301,20 @@ def _format_date_pattern(dt, fmt):
     return formatted
 
 
-def _date_pattern_to_directive(fmt):
+def _date_pattern_to_directive(format):
     """Convert date pattern format to strptime/strftime directives."""
     return ''.join(DATE_PATTERN_TO_DIRECTIVE.get(token, token)
-                   for token in _tokenize_date_pattern(fmt))
+                   for token in _tokenize_date_pattern(format))
 
 
-def _tokenize_date_pattern(fmt):
+def _tokenize_date_pattern(format):
     """Return list of date pattern tokens.
 
     This groups tokens by repeating characters so that each set of repeating
     characters is a list item (e.g. ``'YY-MM-dd'`` becomes
     ``['YY', '-', 'MM', '-', 'dd']``).
     """
-    return [''.join(group) for key, group in groupby(fmt)]
+    return [''.join(group) for key, group in groupby(format)]
 
 
 def format_timedelta(delta,
@@ -348,8 +348,8 @@ def format_timedelta(delta,
                          .format(grans, granularity))
 
     if format not in TIMEDELTA_FORMATS:
-        formats = ', '.join('"{0}"'.format(fmt)
-                            for fmt in TIMEDELTA_FORMATS)
+        formats = ', '.join('"{0}"'.format(format)
+                            for format in TIMEDELTA_FORMATS)
         raise ValueError('Time delta format must be one of {0}, not "{1}"'
                          .format(formats, format))
 
