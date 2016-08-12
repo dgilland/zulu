@@ -7,7 +7,7 @@ Zulu's main type is ``zulu.DateTime`` which represents a fixed UTC datetime obje
 
     import zulu
 
-    dt = zulu.parse('2016-07-25T19:33:18.137493+00:00')
+    dt = zulu.to_datetime('2016-07-25T19:33:18.137493+00:00')
     # <DateTime [2016-07-25T19:33:18.137493+00:00]>
 
     assert isinstance(dt, zulu.DateTime)
@@ -97,26 +97,26 @@ Along with a few new ones:
 Parsing and Formatting
 ----------------------
 
-By default, ``zulu.parse`` will look for either an ISO8601 formatted string or a POSIX timestamp while assuming a UTC timezone when no explicit timezone found in the string:
+By default, ``zulu.to_datetime`` will look for either an ISO8601 formatted string or a POSIX timestamp while assuming a UTC timezone when no explicit timezone found in the string:
 
 .. code-block:: python
 
-    zulu.parse('2016-07-25 15:33:18-0400')
+    zulu.to_datetime('2016-07-25 15:33:18-0400')
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
-    zulu.parse('2016-07-25 15:33:18-0400', zulu.ISO8601)
+    zulu.to_datetime('2016-07-25 15:33:18-0400', zulu.ISO8601)
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
-    zulu.parse('2016-07-25')
+    zulu.to_datetime('2016-07-25')
     # <DateTime [2016-07-25T00:00:00+00:00]>
 
-    zulu.parse('2016-07-25 19:33')
+    zulu.to_datetime('2016-07-25 19:33')
     # <DateTime [2016-07-25T19:33:00+00:00]>
 
-    zulu.parse(1469475198.0)
+    zulu.to_datetime(1469475198.0)
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
-    zulu.parse(1469475198.0, zulu.TIMESTAMP)
+    zulu.to_datetime(1469475198.0, zulu.TIMESTAMP)
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
 
@@ -126,10 +126,10 @@ Other time zones can be substituted for naive datetimes by setting ``default_tz`
 
 .. code-block:: python
 
-    zulu.parse('2016-07-25', default_tz='US/Eastern')
+    zulu.to_datetime('2016-07-25', default_tz='US/Eastern')
     # <DateTime [2016-07-25T04:00:00+00:00]>
 
-    zulu.parse('2016-07-25', default_tz='local')
+    zulu.to_datetime('2016-07-25', default_tz='local')
     # <DateTime [2016-07-25T04:00:00+00:00]>
 
 
@@ -137,7 +137,7 @@ The default timezone is ignored when the input has it set:
 
 .. code-block:: python
 
-    zulu.parse('2016-07-25T15:33:18-0700', default_tz='US/Eastern')
+    zulu.to_datetime('2016-07-25T15:33:18-0700', default_tz='US/Eastern')
     # <DateTime [2016-07-25T22:33:18+00:00]>
 
 
@@ -157,47 +157,49 @@ String parsing/formatting in ``DateTime`` supports both `strftime/strptime <http
     dt.format('%Y-%m-%d %H:%M:%S%z', tz='local')
     # '2016-07-25 15:33:18-0400'
 
-    zulu.parse('2016-07-25 15:33:18-0400', '%Y-%m-%d %H:%M:%S%z')
+    zulu.to_datetime('2016-07-25 15:33:18-0400', '%Y-%m-%d %H:%M:%S%z')
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
 
-You can even use ``zulu.format`` with native datetimes:
+You can even use ``zulu.parser.format_datetime`` with native datetimes:
 
 .. code-block:: python
+
+    from zulu.parser import format_datetime
 
     native = datetime(2016, 7, 25, 19, 33, 18, 137493, tzinfo=pytz.UTC)
 
-    zulu.format(native, '%Y-%m-%d %H:%M:%S%z')
+    format_datetime(native, '%Y-%m-%d %H:%M:%S%z')
     # '2016-07-25 19:33:18+0000'
 
-    zulu.format(native, 'YYYY-MM-dd HH:mm:ssZ')
+    format_datetime(native, 'YYYY-MM-dd HH:mm:ssZ')
     # '2016-07-25 19:33:18+0000'
 
     dt = DateTime.fromdatetime(native)
-    zulu.format(dt, 'YYYY-MM-dd HH:mm:ssZ')
+    format_datetime(dt, 'YYYY-MM-dd HH:mm:ssZ')
     # '2016-07-25 19:33:18+0000'
 
 
-Multiple formats can be supplied and ``zulu.parse`` will try them all:
+Multiple formats can be supplied and ``zulu.to_datetime`` will try them all:
 
 .. code-block:: python
 
-    zulu.parse('3/2/1992', 'ISO8601')
+    zulu.to_datetime('3/2/1992', 'ISO8601')
     # zulu.parser.ParseError: Value "3/2/1992" does not match any format in "ISO8601"
     # (Unable to parse date string '3/2/1992')
 
-    dt = zulu.parse('3/2/1992', ['ISO8601', 'MM/dd/YYYY'])
+    dt = zulu.to_datetime('3/2/1992', ['ISO8601', 'MM/dd/YYYY'])
     # <DateTime [1992-03-02T00:00:00+00:00]>
 
 
 Keyword Parse Formats
 +++++++++++++++++++++
 
-The following keywords can be supplied to ``zulu.parse`` in place of a format directive or pattern:
+The following keywords can be supplied to ``zulu.to_datetime`` in place of a format directive or pattern:
 
 .. code-block:: python
 
-    zulu.parse(1469475198, 'timestamp')
+    zulu.to_datetime(1469475198, 'timestamp')
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
 
@@ -227,10 +229,10 @@ Either style can be used during parsing:
 
 .. code-block:: python
 
-    dt = zulu.parse('07/25/16 15:33:18 -0400', '%m/%d/%y %H:%M:%S %z')
+    dt = zulu.to_datetime('07/25/16 15:33:18 -0400', '%m/%d/%y %H:%M:%S %z')
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
-    dt = zulu.parse('07/25/16 15:33:18 -0400', 'MM/dd/YY HH:mm:ss Z')
+    dt = zulu.to_datetime('07/25/16 15:33:18 -0400', 'MM/dd/YY HH:mm:ss Z')
     # <DateTime [2016-07-25T19:33:18+00:0
 
 

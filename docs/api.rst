@@ -7,7 +7,9 @@ API Reference
 .. autofunction:: zulu.now
 
 
-.. autofunction:: zulu.parse
+.. autofunction:: zulu.to_datetime
+
+.. autofunction:: zulu.to_timedelta
 
 
 .. autoclass:: zulu.DateTime
