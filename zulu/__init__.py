@@ -12,7 +12,7 @@ from .__pkg__ import (
 )
 
 
-from .api import now, parse
+from .api import now, to_datetime, to_timedelta
 from .datetime import DateTime
 from .parser import ParseError, ISO8601, TIMESTAMP
 from .timedelta import TimeDelta
