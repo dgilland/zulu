@@ -70,22 +70,37 @@ Install using pip:
     # <DateTime [2016-07-25T00:00:00+00:00]>
 
     dt.end_of('day')
-    #<DateTime [2016-07-25T23:59:59.999999+00:00]>
+    # <DateTime [2016-07-25T23:59:59.999999+00:00]>
 
     dt.span('hour')
     # (<DateTime [2016-07-25T19:00:00+00:00]>, <DateTime [2016-07-25T19:59:59.999999+00:00]>)
 
+    dt.time_from(dt.end_of('day'))
+    # '4 hours ago'
+
+    dt.time_to(dt.end_of('day'))
+    # 'in 4 hours'
+
     list(zulu.DateTime.range('hour', dt, dt.shift(hours=4)))
-    # [<DateTime [2016-07-25T19:33:18.137493+00:00]>,
-    #  <DateTime [2016-07-25T20:33:18.137493+00:00]>,
-    #  <DateTime [2016-07-25T21:33:18.137493+00:00]>,
-    #  <DateTime [2016-07-25T22:33:18.137493+00:00]>]
+    # [DateTime [2016-07-25T19:33:18.137493+00:00]>,
+    #  DateTime [2016-07-25T20:33:18.137493+00:00]>,
+    #  DateTime [2016-07-25T21:33:18.137493+00:00]>,
+    #  DateTime [2016-07-25T22:33:18.137493+00:00]>]
 
     list(zulu.DateTime.span_range('minute', dt, dt.shift(minutes=4)))
-    # [(<DateTime [2016-07-25T19:33:00+00:00]>, <DateTime [2016-07-25T19:33:59.999999+00:00]>),
-    #  (<DateTime [2016-07-25T19:34:00+00:00]>, <DateTime [2016-07-25T19:34:59.999999+00:00]>),
-    #  (<DateTime [2016-07-25T19:35:00+00:00]>, <DateTime [2016-07-25T19:35:59.999999+00:00]>),
-    #  (<DateTime [2016-07-25T19:36:00+00:00]>, <DateTime [2016-07-25T19:36:59.999999+00:00]>)]
+    # [(DateTime [2016-07-25T19:33:00+00:00]>, DateTime [2016-07-25T19:33:59.999999+00:00]>),
+    #  (DateTime [2016-07-25T19:34:00+00:00]>, DateTime [2016-07-25T19:34:59.999999+00:00]>),
+    #  (DateTime [2016-07-25T19:35:00+00:00]>, DateTime [2016-07-25T19:35:59.999999+00:00]>),
+    #  (DateTime [2016-07-25T19:36:00+00:00]>, DateTime [2016-07-25T19:36:59.999999+00:00]>)]
+
+    zulu.to_timedelta('1w 3d 2h 32m')
+    # <TimeDelta [10 days, 2:32:00]>
+
+    zulu.to_timedelta('2:04:13:02.266')
+    # <TimeDelta [2 days, 4:13:02.266000]>
+
+    zulu.to_timedelta('2 days, 5 hours, 34 minutes, 56 seconds')
+    # <TimeDelta [2 days, 5:34:56]>
 
 
 Why Zulu?
@@ -103,7 +118,7 @@ Why zulu instead of `native datetimes <https://docs.python.org/3.5/library/datet
 Why zulu instead of `Arrow <https://arrow.readthedocs.io>`_:
 
 - Zulu is a drop-in replacement for native datetimes (inherits from ``datetime.datetime``). No need to convert using ``arrow.datetime`` when you need a datetime (zulu is always a datetime).
-- Stricter parsing to avoid silent errors. For example, one might expect ``arrow.get('02/08/1987', 'MM/DD/YY')`` to fail (input does not match format) but it gladly returns ``<Arrow [2019-02-08T00:00:00+00:00]>`` whereas ``zulu.to_datetime('02/08/1987', '%m/%d/%y')`` throws ``zulu.parser.ParseError: Value "02/08/1987" does not match any format in ['%m/%d/%y']``.
+- Stricter parsing to avoid silent errors. For example, one might expect ``arrow.get('02/08/1987', 'MM/DD/YY')`` to fail (input does not match format) but it gladly returns ``<Arrow [2019-02-08T00:00:00+00:00)`` whereas ``zulu.to_datetime('02/08/1987', '%m/%d/%y')`` throws ``zulu.parser.ParseError: Value "02/08/1987" does not match any format in ['%m/%d/%y']``.
 - Avoids timezone/DST shifting bugs by only dealing with UTC datetimes when applying timedeltas or performing other calculations.
 - Supports ``strptime/strftime`` as well as Unicode date patterns for string parsing/formatting.
 

@@ -12,6 +12,9 @@ Zulu's main type is ``zulu.DateTime`` which represents a fixed UTC datetime obje
 
     assert isinstance(dt, zulu.DateTime)
 
+    from datetime import datetime
+    assert isinstance(dt, datetime)
+
 
 It's a drop-in replacement for native datetime objects (it inherits from ``datetime.datetime``) but deals only with UTC time zones internally.
 
@@ -90,6 +93,9 @@ Along with a few new ones:
     dt.is_leap_year()
     # True
 
+    dt.days_in_month()
+    # 31
+
     tuple(dt)
     # (2016, 7, 25, 19, 33, 18, 137493, <UTC>)
 
@@ -118,6 +124,18 @@ By default, ``zulu.to_datetime`` will look for either an ISO8601 formatted strin
 
     zulu.to_datetime(1469475198.0, zulu.TIMESTAMP)
     # <DateTime [2016-07-25T19:33:18+00:00]>
+
+
+Multiple formats can be supplied and ``zulu.to_datetime`` will try them all:
+
+.. code-block:: python
+
+    zulu.to_datetime('3/2/1992', 'ISO8601')
+    # zulu.parser.ParseError: Value "3/2/1992" does not match any format in "ISO8601"
+    # (Unable to parse date string '3/2/1992')
+
+    dt = zulu.to_datetime('3/2/1992', ['ISO8601', 'MM/dd/YYYY'])
+    # <DateTime [1992-03-02T00:00:00+00:00]>
 
 
 As shown above, special parse format keywords are supported. See `Keyword Parse Formats`_ for details.
@@ -180,18 +198,6 @@ You can even use ``zulu.parser.format_datetime`` with native datetimes:
     # '2016-07-25 19:33:18+0000'
 
 
-Multiple formats can be supplied and ``zulu.to_datetime`` will try them all:
-
-.. code-block:: python
-
-    zulu.to_datetime('3/2/1992', 'ISO8601')
-    # zulu.parser.ParseError: Value "3/2/1992" does not match any format in "ISO8601"
-    # (Unable to parse date string '3/2/1992')
-
-    dt = zulu.to_datetime('3/2/1992', ['ISO8601', 'MM/dd/YYYY'])
-    # <DateTime [1992-03-02T00:00:00+00:00]>
-
-
 Keyword Parse Formats
 +++++++++++++++++++++
 
@@ -199,7 +205,7 @@ The following keywords can be supplied to ``zulu.to_datetime`` in place of a for
 
 .. code-block:: python
 
-    zulu.to_datetime(1469475198, 'timestamp')
+    zulu.to_datetime(1469475198, 'X')
     # <DateTime [2016-07-25T19:33:18+00:00]>
 
 
@@ -210,10 +216,8 @@ ISO8601    Parse ISO8601 string      - 2016-07-25 15:33:18-0400
                                      - 2016-07-25 15:33
                                      - 2016-07-25
                                      - 2016-07
-iso8601    alias of ``'ISO8601'``
-timestamp  Parse POSIX timestamp     - 1469475198
+X          Parse POSIX timestamp     - 1469475198
                                      - 1469475198.314218
-X          alias of ``'timestamp'``
 ========== ========================= ===========================
 
 
@@ -300,6 +304,39 @@ Timezone      w/ separator     ZZ       -11:00, -10:00 ... +00:00 ... +11:00, +1
 Timestamp     float            XX       1470111298.690562
 Timestamp     int              X        1470111298
 ============= ================ ======== =============================================
+
+
+Humanization
+++++++++++++
+
+You can humanize the difference between two ``DateTime`` objects with ``DateTime.time_from`` and ``DateTime.time_to``:
+
+
+.. code-block:: python
+
+    dt
+    # <DateTime [2016-07-25T19:33:18.137493+00:00]>
+
+    dt.time_from(dt.end_of_day())
+    # '4 hours ago'
+
+    dt.time_to(dt.end_of_day())
+    # 'in 4 hours'
+
+    dt.time_from(dt.start_of_day())
+    # 'in 20 hours'
+
+    dt.time_to(dt.start_of_day())
+    # '20 hours ago'
+
+    zulu.now()
+    # <DateTime [2016-08-12T04:16:17.007335+00:00]>
+
+    dt.time_from_now()
+    # 2 weeks ago
+
+    dt.time_to_now()
+    # in 2 weeks
 
 
 Time Zone Handling
@@ -469,3 +506,116 @@ Or you can iterate over a range of datetimes:
 
 
 .. note:: Supported range/span time frames are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second``.
+
+
+
+Time Deltas
+-----------
+
+In addition to having a drop-in replacement for ``datetime``, zulu also has a drop-in replacement for ``timedelta``:
+
+.. code-block:: python
+
+    delta = zulu.to_timedelta('1w 3d 2h 32m')
+    # <TimeDelta [10 days, 2:32:00]>
+
+    assert isinstance(delta, zulu.TimeDelta)
+
+    from datetime import timedelta
+    assert isinstance(delta, timedelta)
+
+    zulu.to_timedelta('2:04:13:02.266')
+    # <TimeDelta [2 days, 4:13:02.266000]>
+
+    zulu.to_timedelta('2 days, 5 hours, 34 minutes, 56 seconds')
+    # <TimeDelta [2 days, 5:34:56]>
+
+
+Other formats that ``zulu.to_timedelta`` can parse are:
+
+- ``32m``
+- ``2h32m``
+- ``3d2h32m``
+- ``1w3d2h32m``
+- ``1w 3d 2h 32m``
+- ``1 w 3 d 2 h 32 m``
+- ``4:13``
+- ``4:13:02``
+- ``4:13:02.266``
+- ``2:04:13:02.266``
+- ``2 days,  4:13:02`` (``uptime`` format)
+- ``2 days,  4:13:02.266``
+- ``5hr34m56s``
+- ``5 hours, 34 minutes, 56 seconds``
+- ``5 hrs, 34 mins, 56 secs``
+- ``2 days, 5 hours, 34 minutes, 56 seconds``
+- ``1.2 m``
+- ``1.2 min``
+- ``1.2 mins``
+- ``1.2 minute``
+- ``1.2 minutes``
+- ``172 hours``
+- ``172 hr``
+- ``172 h``
+- ``172 hrs``
+- ``172 hour``
+- ``1.24 days``
+- ``5 d``
+- ``5 day``
+- ``5 days``
+- ``5.6 wk``
+- ``5.6 week``
+- ``5.6 weeks``
+
+
+Similar to ``DateTime.time_to/from``, ``TimeDelta`` objects can be humanized with the ``TimeDelta.format`` method:
+
+.. code-block:: python
+
+    delta = zulu.to_timedelta('2h 32m')
+    # <TimeDelta [2:32:00]>
+
+    delta.format()
+    # '3 hours'
+
+    delta.format(add_direction=True)
+    # 'in 3 hours'
+
+    zulu.to_timedelta('-2h 32m').format(add_direction=True)
+    # '3 hours ago'
+
+    delta.format(locale='de')
+    # '3 Stunden'
+
+    delta.format(locale='fr', add_direction=True)
+    # 'dans 3 heures'
+
+    delta.format(granularity='day')
+    # '1 day'
+
+    delta.format(threshold=0)
+    # '0 years'
+
+    delta.format(threshold=0.1)
+    # '0 days'
+
+    delta.format(threshold=0.2)
+    # '3 hours'
+
+    delta.format(threshold=5)
+    # '152 minutes'
+
+    delta.format(threshold=155)
+    # '9120 seconds'
+
+    delta.format(threshold=155, granularity='minute')
+    # '152 minutes'
+
+    delta.format(style='long')
+    # '3 hours'
+
+    delta.format(style='short')
+    # '3 hr'
+
+    delta.format(style='narrow')
+    # '3h'
