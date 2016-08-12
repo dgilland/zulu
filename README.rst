@@ -123,6 +123,19 @@ Why zulu instead of `Arrow <https://arrow.readthedocs.io>`_:
 - Supports ``strptime/strftime`` as well as `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_ for string parsing/formatting.
 
 
+Special Thanks
+==============
+
+Special thanks goes out to the authors/contributors of the following libraries that have made it possible for ``zulu`` to exist:
+
+- `Babel <https://github.com/python-babel/babel>`_
+- `iso8601 <https://bitbucket.org/micktwomey/pyiso8601>`_
+- `python-dateutil <https://github.com/dateutil/dateutil>`_
+- `pytimeparse <https://github.com/wroberts/pytimeparse>`_
+- `pytz <http://pythonhosted.org/pytz>`_
+- `tzlocal <https://github.com/regebro/tzlocal>`_
+
+
 For the full documentation, please visit https://zulu.readthedocs.io.
 
 
