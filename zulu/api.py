@@ -3,7 +3,6 @@
 """
 
 from .datetime import DateTime
-from .parser import format
 
 
 now = DateTime.now
