@@ -30,7 +30,7 @@ EPOCH = pytz.UTC.localize(datetime(1970, 1, 1), is_dst=None)
 
 ISO8601 = 'ISO8601'
 TIMESTAMP = 'X'
-DEFAULT_PARSE_FORMATS = (ISO8601, TIMESTAMP)
+DEFAULT_PARSE_DATETIME_FORMATS = (ISO8601, TIMESTAMP)
 
 
 # Subset of Unicode date field patterns from:
@@ -117,18 +117,25 @@ class ParseError(Exception):
     pass
 
 
-def parse(obj, fmts=None, default_tz=None):
+def parse_datetime(obj, fmts=None, default_tz=None):
     """Attempt to parse `obj` as a ``datetime`` using  a list of `fmts`. If
     no timezone information is found in `obj` and `default_tz` is set, then
     the naive datetime object will be shifted to the default timezone.
 
     Args:
-        obj (mixed): Object to parse.
+        obj (str|datetime): Object to parse.
         fmts (list, optional): List of string formats to use when parsing.
             Defaults to ``['ISO8601', 'timestamp']``.
         default_tz (None|str|tzinfo, optional): Default timezone to use when
             parsed datetime object does not contain a timezone. Defaults to
             ``UTC``.
+
+    Returns:
+        datetime
+
+    Raises:
+        ValueError: When `default_tz` is an unrecognized timezone.
+        ParseError: When `obj` can't be parsed as a datetime.
     """
     if default_tz is None:
         default_tz = iso8601.UTC
@@ -140,11 +147,11 @@ def parse(obj, fmts=None, default_tz=None):
         return obj
 
     if fmts is None:
-        fmts = DEFAULT_PARSE_FORMATS
+        fmts = DEFAULT_PARSE_DATETIME_FORMATS
     elif not isinstance(fmts, (list, tuple)):
         fmts = [fmts]
 
-    dt = _parse_formats(obj, fmts)
+    dt = _parse_datetime_formats(obj, fmts)
 
     if dt.tzinfo is None and default_tz is not None:
         dt = dt.replace(tzinfo=get_timezone(default_tz))
@@ -156,14 +163,14 @@ def parse(obj, fmts=None, default_tz=None):
     return dt
 
 
-def _parse_formats(obj, fmts):
+def _parse_datetime_formats(obj, fmts):
     """Parse `obj` as datetime using list of `fmts`."""
     dt = None
     errors = {}
 
     for fmt in fmts:
         try:
-            dt = _parse_format(obj, fmt)
+            dt = _parse_datetime_format(obj, fmt)
         except Exception as exc:
             errors[fmt] = str(exc)
             dt = None
@@ -179,7 +186,7 @@ def _parse_formats(obj, fmts):
     return dt
 
 
-def _parse_format(obj, fmt):
+def _parse_datetime_format(obj, fmt):
     """Parse `obj` as datetime using `fmt`."""
     if fmt.upper() == ISO8601:
         return iso8601.parse_date(obj, default_timezone=None)
@@ -191,7 +198,7 @@ def _parse_format(obj, fmt):
         return datetime.strptime(obj, fmt)
 
 
-def format(dt, fmt=None, tz=None):
+def format_datetime(dt, fmt=None, tz=None):
     """Return string formatted datetime, `dt`, using format directives or
     pattern in `fmt`. If timezone, `tz`, is supplied, the datetime will be
     shifted to that timezone before being formatted.

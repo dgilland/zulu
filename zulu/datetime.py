@@ -132,13 +132,12 @@ class DateTime(datetime):
         Returns:
             :class:`.DateTime`
         """
-        dt = parser.parse(obj, formats, default_tz=default_tz)
+        dt = parser.parse_datetime(obj, formats, default_tz=default_tz)
         return cls.fromdatetime(dt)
 
     @classmethod
     def fromdatetime(cls, dt):
-        """Return :class:`.DateTime` object from a native datetime
-        object.
+        """Return :class:`.DateTime` object from a native datetime object.
 
         Returns:
             :class:`.DateTime`
@@ -405,7 +404,7 @@ class DateTime(datetime):
         Returns:
             :class:`str`
         """
-        return parser.format(self, format, tz=tz)
+        return parser.format_datetime(self, format, tz=tz)
 
     def format_from(self, dt, **options):
         """Return "time ago" difference between this datetime and another as a
