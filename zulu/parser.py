@@ -6,9 +6,10 @@ from __future__ import absolute_import
 
 from functools import partial
 from itertools import groupby
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import iso8601
+import pytimeparse
 import pytz
 import tzlocal
 
@@ -196,6 +197,34 @@ def _parse_datetime_format(obj, fmt):
         if '%' not in fmt:
             fmt = _date_pattern_to_directive(fmt)
         return datetime.strptime(obj, fmt)
+
+
+def parse_timedelta(obj):
+    """Attempt to parse `obj` as a ``timedelta`` from a string formatted
+    duration.
+
+    Args:
+        obj (str|timedelta): Object to parse.
+
+    Returns:
+        timedelta
+
+    Raises:
+        TypeError: When `obj` is not a string or timedelta.
+        ParseError: When `obj` can't be parsed as a timedelta.
+    """
+    if isinstance(obj, timedelta):
+        return obj
+
+    if not isinstance(obj, string_types):
+        raise TypeError('Expected string object, not {0}'.format(type(obj)))
+
+    seconds = pytimeparse.parse(obj)
+
+    if seconds is None:
+        raise ParseError('Value "{0}" is not a recognized duration format')
+
+    return timedelta(seconds=seconds)
 
 
 def format_datetime(dt, fmt=None, tz=None):

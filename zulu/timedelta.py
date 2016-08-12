@@ -8,11 +8,35 @@ from datetime import timedelta
 
 from babel.dates import LC_TIME, format_timedelta
 
+from . import parser
+
 
 class TimeDelta(timedelta):
     """An extension of ``datetime.timedelta`` that provides additional
     functionality.
     """
+    @classmethod
+    def parse(cls, obj):
+        """Return :class:`.TimeDelta` object parsed from `obj`.
+
+        Args:
+            obj (str|timedelta): Object to parse into a :class:`.TimeDelta`
+                object.
+
+        Returns:
+            :class:`.TimeDelta`
+        """
+        return cls.fromtimedelta(parser.parse_timedelta(obj))
+
+    @classmethod
+    def fromtimedelta(cls, delta):
+        """Return :class:`.TimeDelta` object from a native timedelta object.
+
+        Returns:
+            :class:`.TimeDelta`
+        """
+        return cls(seconds=delta.total_seconds())
+
     def format(self,
                granularity='second',
                threshold=0.85,

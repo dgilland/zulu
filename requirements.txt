@@ -1,5 +1,6 @@
 Babel>=2.3.4
 iso8601>=0.1.11
 python-dateutil>=2.5.3
+pytimeparse>=1.1.5
 pytz>=2016.6.1
 tzlocal>=1.2.2
