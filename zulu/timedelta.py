@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 from datetime import timedelta
 
-from babel.dates import LC_TIME, format_timedelta
+from babel.dates import LC_TIME
 
 from . import parser
 
@@ -41,7 +41,7 @@ class TimeDelta(timedelta):
                granularity='second',
                threshold=0.85,
                add_direction=False,
-               style='long',
+               format='long',
                locale=LC_TIME):
         """Return timedelta as a formatted string.
 
@@ -55,14 +55,18 @@ class TimeDelta(timedelta):
             add_direction (bool, optional): If ``True`` the return value will
                 include directional information (e.g. `'1 hour ago'`,
                 `'in 1 hour'`). Defaults to ``False``.
-            style (str, optional): Can be one of "long", "short", or "narrow".
+            format (str, optional): Can be one of "long", "short", or "narrow".
                 Defaults to `'long`'.
             locale (str|Locale, optional): A ``Locale`` object or locale
                 identifer. Defaults to system default.
         """
-        return format_timedelta(self,
-                                granularity=granularity,
-                                threshold=threshold,
-                                add_direction=add_direction,
-                                format=style,
-                                locale=locale)
+        return parser.format_timedelta(self,
+                                       granularity=granularity,
+                                       threshold=threshold,
+                                       add_direction=add_direction,
+                                       format=format,
+                                       locale=locale)
+
+    def __repr__(self):  # pragma: no cover
+        """Return representation of :class:`.TimeDelta`."""
+        return '<{0} [{1}]>'.format(self.__class__.__name__, self)

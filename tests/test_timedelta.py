@@ -77,8 +77,8 @@ def test_timedelta_parse_invalid(obj, exception):
 
 @parametrize('delta,opts,expected', [
     (TimeDelta(seconds=5), {}, '5 seconds'),
-    (TimeDelta(seconds=5), {'style': 'short'}, '5 sec'),
-    (TimeDelta(seconds=5), {'style': 'narrow'}, '5s'),
+    (TimeDelta(seconds=5), {'format': 'short'}, '5 sec'),
+    (TimeDelta(seconds=5), {'format': 'narrow'}, '5s'),
     (TimeDelta(seconds=5), {'add_direction': True}, 'in 5 seconds'),
     (TimeDelta(seconds=-5), {'add_direction': True}, '5 seconds ago'),
     (TimeDelta(days=1, hours=10), {}, '1 day'),

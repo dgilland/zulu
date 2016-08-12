@@ -8,6 +8,7 @@ from functools import partial
 from itertools import groupby
 from datetime import datetime, timedelta
 
+from babel.dates import LC_TIME, format_timedelta as _format_timedelta
 import iso8601
 import pytimeparse
 import pytz
@@ -303,6 +304,37 @@ def _tokenize_date_pattern(fmt):
     ``['YY', '-', 'MM', '-', 'dd']``).
     """
     return [''.join(group) for key, group in groupby(fmt)]
+
+
+def format_timedelta(delta,
+                     granularity='second',
+                     threshold=0.85,
+                     add_direction=False,
+                     format='long',
+                     locale=LC_TIME):
+    """Return timedelta as a formatted string.
+
+    Args:
+        granularity (str, optional): The smallest unit that should be
+            displayed. The value can be one of "year", "month", "week",
+            "day", "hour", "minute" or "second". Defaults to `'second'`.
+        threshold (float, optional): Factor that determines at which point
+            the presentation switches to the next higher unit. Defaults to
+            `0.85`.
+        add_direction (bool, optional): If ``True`` the return value will
+            include directional information (e.g. `'1 hour ago'`,
+            `'in 1 hour'`). Defaults to ``False``.
+        format (str, optional): Can be one of "long", "short", or "narrow".
+            Defaults to `'long`'.
+        locale (str|Locale, optional): A ``Locale`` object or locale
+            identifer. Defaults to system default.
+    """
+    return _format_timedelta(delta,
+                             granularity=granularity,
+                             threshold=threshold,
+                             add_direction=add_direction,
+                             format=format,
+                             locale=locale)
 
 
 def get_timezone(tz):
