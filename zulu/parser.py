@@ -130,14 +130,14 @@ class ParseError(Exception):
     pass
 
 
-def parse_datetime(obj, fmts=None, default_tz=None):
-    """Attempt to parse `obj` as a ``datetime`` using  a list of `fmts`. If
+def parse_datetime(obj, formats=None, default_tz=None):
+    """Attempt to parse `obj` as a ``datetime`` using  a list of `formats`. If
     no timezone information is found in `obj` and `default_tz` is set, then
     the naive datetime object will be shifted to the default timezone.
 
     Args:
         obj (str|datetime): Object to parse.
-        fmts (list, optional): List of string formats to use when parsing.
+        formats (list, optional): List of string formats to use when parsing.
             Defaults to ``['ISO8601', 'timestamp']``.
         default_tz (None|str|tzinfo, optional): Default timezone to use when
             parsed datetime object does not contain a timezone. Defaults to
@@ -159,12 +159,12 @@ def parse_datetime(obj, fmts=None, default_tz=None):
     if is_valid_datetime(obj):
         return obj
 
-    if fmts is None:
-        fmts = DEFAULT_PARSE_DATETIME_FORMATS
-    elif not isinstance(fmts, (list, tuple)):
-        fmts = [fmts]
+    if formats is None:
+        formats = DEFAULT_PARSE_DATETIME_FORMATS
+    elif not isinstance(formats, (list, tuple)):
+        formats = [formats]
 
-    dt = _parse_datetime_formats(obj, fmts)
+    dt = _parse_datetime_formats(obj, formats)
 
     if dt.tzinfo is None and default_tz is not None:
         dt = dt.replace(tzinfo=get_timezone(default_tz))
@@ -176,12 +176,12 @@ def parse_datetime(obj, fmts=None, default_tz=None):
     return dt
 
 
-def _parse_datetime_formats(obj, fmts):
-    """Parse `obj` as datetime using list of `fmts`."""
+def _parse_datetime_formats(obj, formats):
+    """Parse `obj` as datetime using list of `formats`."""
     dt = None
     errors = {}
 
-    for fmt in fmts:
+    for fmt in formats:
         try:
             dt = _parse_datetime_format(obj, fmt)
         except Exception as exc:
@@ -192,7 +192,7 @@ def _parse_datetime_formats(obj, fmts):
 
     if dt is None:
         err = ', '.join('"{0}" ({1})'.format(fmt, errors[fmt])
-                        for fmt in fmts)
+                        for fmt in formats)
         raise ParseError('Value "{0}" does not match any format in {1}'
                          .format(obj, err))
 
