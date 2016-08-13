@@ -9,6 +9,10 @@ API Reference
 
 .. autofunction:: zulu.parse
 
+.. autofunction:: zulu.range
+
+.. autofunction:: zulu.span_range
+
 .. autofunction:: zulu.delta
 
 

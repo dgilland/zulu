@@ -483,7 +483,7 @@ You can get a range of time spans:
     start = Zulu(2015, 4, 4, 12, 30)
     end = Zulu(2015, 4, 4, 16, 30)
 
-    for span in Datetime.span_range('hour', start, end):
+    for span in zulu.span_range('hour', start, end):
         print(span)
     # (<Zulu [2015-04-04T12:00:00+00:00]>, <Zulu [2015-04-04T12:59:59.999999+00:00]>)
     # (<Zulu [2015-04-04T13:00:00+00:00]>, <Zulu [2015-04-04T13:59:59.999999+00:00]>)
@@ -498,7 +498,7 @@ Or you can iterate over a range of datetimes:
     start = Zulu(2015, 4, 4, 12, 30)
     end = Zulu(2015, 4, 4, 16, 30)
 
-    for dt in Datetime.range('hour', start, end):
+    for dt in zulu.range('hour', start, end):
         print(dt)
     # <Zulu [2015-04-04T12:30:00+00:00]>
     # <Zulu [2015-04-04T13:30:00+00:00]>

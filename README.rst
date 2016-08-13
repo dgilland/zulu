@@ -81,13 +81,13 @@ Install using pip:
     dt.time_to(dt.end_of('day'))
     # 'in 4 hours'
 
-    list(zulu.Zulu.range('hour', dt, dt.shift(hours=4)))
+    list(zulu.range('hour', dt, dt.shift(hours=4)))
     # [Zulu [2016-07-25T19:33:18.137493+00:00]>,
     #  Zulu [2016-07-25T20:33:18.137493+00:00]>,
     #  Zulu [2016-07-25T21:33:18.137493+00:00]>,
     #  Zulu [2016-07-25T22:33:18.137493+00:00]>]
 
-    list(zulu.Zulu.span_range('minute', dt, dt.shift(minutes=4)))
+    list(zulu.span_range('minute', dt, dt.shift(minutes=4)))
     # [(Zulu [2016-07-25T19:33:00+00:00]>, Zulu [2016-07-25T19:33:59.999999+00:00]>),
     #  (Zulu [2016-07-25T19:34:00+00:00]>, Zulu [2016-07-25T19:34:59.999999+00:00]>),
     #  (Zulu [2016-07-25T19:35:00+00:00]>, Zulu [2016-07-25T19:35:59.999999+00:00]>),

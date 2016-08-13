@@ -13,6 +13,8 @@ vX.X.X (XXXX-XX-XX)
 - Add ``zulu.Delta`` class that inherits from ``datetime.timedelta``.
 - Add ``zulu.delta`` as alias to ``zulu.Delta.parse``.
 - Add ``Zulu.time_from``, ``Zulu.time_to``, ``Zulu.time_from_now``, and ``Zulu.time_to_now`` that return "time ago" or "time to" humanized strings.
+- Add ``zulu.range`` as alias to ``Zulu.range``.
+- Add ``zulu.span_range`` as alias to ``Zulu.span_range``.
 - Make time units (years, months, weeks, days, hours, minutes, seconds, microseconds) keyword arguments only for ``Zulu.add/subtract``, but allow positional argument to be an addable/subtractable object (datetime, timedelta, dateutil.relativedelta). **breaking change**
 
 
