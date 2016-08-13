@@ -86,7 +86,6 @@ def test_timedelta_parse_invalid(obj, exception):
     (Delta(minutes=15), {'threshold': 0.15}, '0 hours'),
     (Delta(hours=23), {'threshold': 0.85}, '1 day'),
     (Delta(hours=23), {'threshold': 1.00}, '23 hours'),
-    (Delta(hours=23), {'threshold': 1.00, 'locale': 'de'}, '23 Stunden'),
 ])
 def test_timedelta_format(delta, opts, expected):
     assert delta.format(**opts) == expected

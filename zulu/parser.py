@@ -8,7 +8,7 @@ from functools import partial
 from itertools import groupby
 from datetime import datetime, timedelta
 
-from babel.dates import LC_TIME, format_timedelta as _format_timedelta
+from babel.dates import format_timedelta as _format_timedelta
 import iso8601
 import pytimeparse
 import pytz
@@ -321,8 +321,7 @@ def format_timedelta(delta,
                      granularity='second',
                      threshold=0.85,
                      add_direction=False,
-                     format='long',
-                     locale=LC_TIME):
+                     format='long'):
     """Return timedelta as a formatted string.
 
     Args:
@@ -337,8 +336,6 @@ def format_timedelta(delta,
             `'in 1 hour'`). Defaults to ``False``.
         format (str, optional): Can be one of "long", "short", or "narrow".
             Defaults to `'long`'.
-        locale (str|Locale, optional): A ``Locale`` object or locale
-            identifer. Defaults to system default.
     """
     if granularity not in TIMEDELTA_GRANULARITIES:
         grans = ', '.join('"{0}"'.format(gra)
@@ -357,8 +354,7 @@ def format_timedelta(delta,
                              granularity=granularity,
                              threshold=threshold,
                              add_direction=add_direction,
-                             format=format,
-                             locale=locale)
+                             format=format)
 
 
 def get_timezone(tz):

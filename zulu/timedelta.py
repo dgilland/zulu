@@ -6,8 +6,6 @@ from __future__ import absolute_import
 
 from datetime import timedelta
 
-from babel.dates import LC_TIME
-
 from . import parser
 
 
@@ -41,8 +39,7 @@ class Delta(timedelta):
                granularity='second',
                threshold=0.85,
                add_direction=False,
-               format='long',
-               locale=LC_TIME):
+               format='long'):
         """Return timedelta as a formatted string.
 
         Args:
@@ -57,15 +54,12 @@ class Delta(timedelta):
                 `'in 1 hour'`). Defaults to ``False``.
             format (str, optional): Can be one of "long", "short", or "narrow".
                 Defaults to `'long`'.
-            locale (str|Locale, optional): A ``Locale`` object or locale
-                identifer. Defaults to system default.
         """
         return parser.format_timedelta(self,
                                        granularity=granularity,
                                        threshold=threshold,
                                        add_direction=add_direction,
-                                       format=format,
-                                       locale=locale)
+                                       format=format)
 
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.Delta`."""
