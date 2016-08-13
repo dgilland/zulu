@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v0.5.0 (2016-08-13)
+-------------------
+
 - Remove locale support from ``Delta.format``. Locale is currently not supported in ``Zulu.format`` so decided to disable it in ``Delta.format`` until both can have it. **breaking change**
 
 
