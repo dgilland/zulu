@@ -275,10 +275,10 @@ def format_datetime(dt, format=None, tz=None):
 
     if format == ISO8601:
         return dt.isoformat()
-    elif '%' not in format:
-        return _format_date_pattern(dt, format)
-    else:
+    elif '%' in format:
         return dt.strftime(format)
+    else:
+        return _format_date_pattern(dt, format)
 
 
 def _format_date_pattern(dt, format):
