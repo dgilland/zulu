@@ -11,29 +11,29 @@ from babel.dates import LC_TIME
 from . import parser
 
 
-class TimeDelta(timedelta):
+class Delta(timedelta):
     """An extension of ``datetime.timedelta`` that provides additional
     functionality.
     """
     @classmethod
     def parse(cls, obj):
-        """Return :class:`.TimeDelta` object parsed from `obj`.
+        """Return :class:`.Delta` object parsed from `obj`.
 
         Args:
-            obj (str|timedelta): Object to parse into a :class:`.TimeDelta`
+            obj (str|timedelta): Object to parse into a :class:`.Delta`
                 object.
 
         Returns:
-            :class:`.TimeDelta`
+            :class:`.Delta`
         """
         return cls.fromtimedelta(parser.parse_timedelta(obj))
 
     @classmethod
     def fromtimedelta(cls, delta):
-        """Return :class:`.TimeDelta` object from a native timedelta object.
+        """Return :class:`.Delta` object from a native timedelta object.
 
         Returns:
-            :class:`.TimeDelta`
+            :class:`.Delta`
         """
         return cls(seconds=delta.total_seconds())
 
@@ -68,5 +68,5 @@ class TimeDelta(timedelta):
                                        locale=locale)
 
     def __repr__(self):  # pragma: no cover
-        """Return representation of :class:`.TimeDelta`."""
+        """Return representation of :class:`.Delta`."""
         return '<{0} [{1}]>'.format(self.__class__.__name__, self)

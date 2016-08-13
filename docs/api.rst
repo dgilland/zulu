@@ -7,17 +7,17 @@ API Reference
 .. autofunction:: zulu.now
 
 
-.. autofunction:: zulu.to_datetime
+.. autofunction:: zulu.parse
 
-.. autofunction:: zulu.to_timedelta
+.. autofunction:: zulu.delta
 
 
-.. autoclass:: zulu.DateTime
+.. autoclass:: zulu.Zulu
     :members:
     :inherited-members:
 
 
-.. autoclass:: zulu.TimeDelta
+.. autoclass:: zulu.Delta
     :members:
     :inherited-members:
 

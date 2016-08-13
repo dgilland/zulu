@@ -2,10 +2,10 @@
 """The api module.
 """
 
-from .datetime import DateTime
-from .timedelta import TimeDelta
+from .datetime import Zulu
+from .timedelta import Delta
 
 
-now = DateTime.now
-to_datetime = DateTime.parse
-to_timedelta = TimeDelta.parse
+now = Zulu.now
+parse = Zulu.parse
+delta = Delta.parse

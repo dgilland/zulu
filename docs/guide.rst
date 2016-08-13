@@ -1,16 +1,16 @@
 User's Guide
 ============
 
-Zulu's main type is ``zulu.DateTime`` which represents a fixed UTC datetime object.
+Zulu's main type is ``zulu.Zulu`` which represents a fixed UTC datetime object.
 
 .. code-block:: python
 
     import zulu
 
-    dt = zulu.to_datetime('2016-07-25T19:33:18.137493+00:00')
-    # <DateTime [2016-07-25T19:33:18.137493+00:00]>
+    dt = zulu.parse('2016-07-25T19:33:18.137493+00:00')
+    # <Zulu [2016-07-25T19:33:18.137493+00:00]>
 
-    assert isinstance(dt, zulu.DateTime)
+    assert isinstance(dt, zulu.Zulu)
 
     from datetime import datetime
     assert isinstance(dt, datetime)
@@ -103,39 +103,39 @@ Along with a few new ones:
 Parsing and Formatting
 ----------------------
 
-By default, ``zulu.to_datetime`` will look for either an ISO8601 formatted string or a POSIX timestamp while assuming a UTC timezone when no explicit timezone found in the string:
+By default, ``zulu.parse`` will look for either an ISO8601 formatted string or a POSIX timestamp while assuming a UTC timezone when no explicit timezone found in the string:
 
 .. code-block:: python
 
-    zulu.to_datetime('2016-07-25 15:33:18-0400')
-    # <DateTime [2016-07-25T19:33:18+00:00]>
+    zulu.parse('2016-07-25 15:33:18-0400')
+    # <Zulu [2016-07-25T19:33:18+00:00]>
 
-    zulu.to_datetime('2016-07-25 15:33:18-0400', zulu.ISO8601)
-    # <DateTime [2016-07-25T19:33:18+00:00]>
+    zulu.parse('2016-07-25 15:33:18-0400', zulu.ISO8601)
+    # <Zulu [2016-07-25T19:33:18+00:00]>
 
-    zulu.to_datetime('2016-07-25')
-    # <DateTime [2016-07-25T00:00:00+00:00]>
+    zulu.parse('2016-07-25')
+    # <Zulu [2016-07-25T00:00:00+00:00]>
 
-    zulu.to_datetime('2016-07-25 19:33')
-    # <DateTime [2016-07-25T19:33:00+00:00]>
+    zulu.parse('2016-07-25 19:33')
+    # <Zulu [2016-07-25T19:33:00+00:00]>
 
-    zulu.to_datetime(1469475198.0)
-    # <DateTime [2016-07-25T19:33:18+00:00]>
+    zulu.parse(1469475198.0)
+    # <Zulu [2016-07-25T19:33:18+00:00]>
 
-    zulu.to_datetime(1469475198.0, zulu.TIMESTAMP)
-    # <DateTime [2016-07-25T19:33:18+00:00]>
+    zulu.parse(1469475198.0, zulu.TIMESTAMP)
+    # <Zulu [2016-07-25T19:33:18+00:00]>
 
 
-Multiple formats can be supplied and ``zulu.to_datetime`` will try them all:
+Multiple formats can be supplied and ``zulu.parse`` will try them all:
 
 .. code-block:: python
 
-    zulu.to_datetime('3/2/1992', 'ISO8601')
+    zulu.parse('3/2/1992', 'ISO8601')
     # zulu.parser.ParseError: Value "3/2/1992" does not match any format in "ISO8601"
     # (Unable to parse date string '3/2/1992')
 
-    dt = zulu.to_datetime('3/2/1992', ['ISO8601', 'MM/dd/YYYY'])
-    # <DateTime [1992-03-02T00:00:00+00:00]>
+    dt = zulu.parse('3/2/1992', ['ISO8601', 'MM/dd/YYYY'])
+    # <Zulu [1992-03-02T00:00:00+00:00]>
 
 
 As shown above, special parse format keywords are supported. See `Keyword Parse Formats`_ for details.
@@ -144,22 +144,22 @@ Other time zones can be substituted for naive datetimes by setting ``default_tz`
 
 .. code-block:: python
 
-    zulu.to_datetime('2016-07-25', default_tz='US/Eastern')
-    # <DateTime [2016-07-25T04:00:00+00:00]>
+    zulu.parse('2016-07-25', default_tz='US/Eastern')
+    # <Zulu [2016-07-25T04:00:00+00:00]>
 
-    zulu.to_datetime('2016-07-25', default_tz='local')
-    # <DateTime [2016-07-25T04:00:00+00:00]>
+    zulu.parse('2016-07-25', default_tz='local')
+    # <Zulu [2016-07-25T04:00:00+00:00]>
 
 
 The default timezone is ignored when the input has it set:
 
 .. code-block:: python
 
-    zulu.to_datetime('2016-07-25T15:33:18-0700', default_tz='US/Eastern')
-    # <DateTime [2016-07-25T22:33:18+00:00]>
+    zulu.parse('2016-07-25T15:33:18-0700', default_tz='US/Eastern')
+    # <Zulu [2016-07-25T22:33:18+00:00]>
 
 
-String parsing/formatting in ``DateTime`` supports both `strftime/strptime <https://docs.python.org/3.5/library/datetime.html#strftime-and-strptime-behavior>`_ directives and `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_.
+String parsing/formatting in ``Zulu`` supports both `strftime/strptime <https://docs.python.org/3.5/library/datetime.html#strftime-and-strptime-behavior>`_ directives and `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_.
 
 .. code-block:: python
 
@@ -175,8 +175,8 @@ String parsing/formatting in ``DateTime`` supports both `strftime/strptime <http
     dt.format('%Y-%m-%d %H:%M:%S%z', tz='local')
     # '2016-07-25 15:33:18-0400'
 
-    zulu.to_datetime('2016-07-25 15:33:18-0400', '%Y-%m-%d %H:%M:%S%z')
-    # <DateTime [2016-07-25T19:33:18+00:00]>
+    zulu.parse('2016-07-25 15:33:18-0400', '%Y-%m-%d %H:%M:%S%z')
+    # <Zulu [2016-07-25T19:33:18+00:00]>
 
 
 You can even use ``zulu.parser.format_datetime`` with native datetimes:
@@ -193,7 +193,7 @@ You can even use ``zulu.parser.format_datetime`` with native datetimes:
     format_datetime(native, 'YYYY-MM-dd HH:mm:ssZ')
     # '2016-07-25 19:33:18+0000'
 
-    dt = DateTime.fromdatetime(native)
+    dt = Zulu.fromdatetime(native)
     format_datetime(dt, 'YYYY-MM-dd HH:mm:ssZ')
     # '2016-07-25 19:33:18+0000'
 
@@ -201,12 +201,12 @@ You can even use ``zulu.parser.format_datetime`` with native datetimes:
 Keyword Parse Formats
 +++++++++++++++++++++
 
-The following keywords can be supplied to ``zulu.to_datetime`` in place of a format directive or pattern:
+The following keywords can be supplied to ``zulu.parse`` in place of a format directive or pattern:
 
 .. code-block:: python
 
-    zulu.to_datetime(1469475198, 'X')
-    # <DateTime [2016-07-25T19:33:18+00:00]>
+    zulu.parse(1469475198, 'X')
+    # <Zulu [2016-07-25T19:33:18+00:00]>
 
 
 ========== ========================= ===========================
@@ -233,11 +233,11 @@ Either style can be used during parsing:
 
 .. code-block:: python
 
-    dt = zulu.to_datetime('07/25/16 15:33:18 -0400', '%m/%d/%y %H:%M:%S %z')
-    # <DateTime [2016-07-25T19:33:18+00:00]>
+    dt = zulu.parse('07/25/16 15:33:18 -0400', '%m/%d/%y %H:%M:%S %z')
+    # <Zulu [2016-07-25T19:33:18+00:00]>
 
-    dt = zulu.to_datetime('07/25/16 15:33:18 -0400', 'MM/dd/YY HH:mm:ss Z')
-    # <DateTime [2016-07-25T19:33:18+00:0
+    dt = zulu.parse('07/25/16 15:33:18 -0400', 'MM/dd/YY HH:mm:ss Z')
+    # <Zulu [2016-07-25T19:33:18+00:0
 
 
 and formatting:
@@ -309,13 +309,13 @@ Timestamp     int              X        1470111298
 Humanization
 ++++++++++++
 
-You can humanize the difference between two ``DateTime`` objects with ``DateTime.time_from`` and ``DateTime.time_to``:
+You can humanize the difference between two ``Zulu`` objects with ``Zulu.time_from`` and ``Zulu.time_to``:
 
 
 .. code-block:: python
 
     dt
-    # <DateTime [2016-07-25T19:33:18.137493+00:00]>
+    # <Zulu [2016-07-25T19:33:18.137493+00:00]>
 
     dt.time_from(dt.end_of_day())
     # '4 hours ago'
@@ -330,7 +330,7 @@ You can humanize the difference between two ``DateTime`` objects with ``DateTime
     # '20 hours ago'
 
     zulu.now()
-    # <DateTime [2016-08-12T04:16:17.007335+00:00]>
+    # <Zulu [2016-08-12T04:16:17.007335+00:00]>
 
     dt.time_from_now()
     # 2 weeks ago
@@ -342,7 +342,7 @@ You can humanize the difference between two ``DateTime`` objects with ``DateTime
 Time Zone Handling
 ------------------
 
-Time zones other than UTC are not expressable within a ``DateTime`` instance. Other time zones are only ever applied when either converting a ``DateTime`` object to a native datetime (via ``DateTime.astimezone``) or during string formatting (via ``DateTime.format``). ``DateTime`` understands both ``tzinfo`` objects and ``pytz.timezone`` string names.
+Time zones other than UTC are not expressable within a ``Zulu`` instance. Other time zones are only ever applied when either converting a ``Zulu`` object to a native datetime (via ``Zulu.astimezone``) or during string formatting (via ``Zulu.format``). ``Zulu`` understands both ``tzinfo`` objects and ``pytz.timezone`` string names.
 
 
 .. code-block:: python
@@ -370,7 +370,7 @@ Zulu can easily apply timedelta's using the ``shift`` method:
 .. code-block:: python
 
     shifted = dt.shift(hours=-5, minutes=10)
-    # <DateTime [2016-07-25T14:43:18.137493+00:00]>
+    # <Zulu [2016-07-25T14:43:18.137493+00:00]>
 
     assert shifted is not dt
 
@@ -380,11 +380,11 @@ And add and subtract with the ``add`` and ``subtract`` methods:
 .. code-block:: python
 
     shifted = dt.subtract(hours=5).add(minutes=10)
-    # <DateTime [2016-07-25T14:43:18.137493+00:00]>
+    # <Zulu [2016-07-25T14:43:18.137493+00:00]>
 
     # First argument to subtract() can be a timedelta or dateutil.relativedelta
     shifted = dt.subtract(timedelta(hours=5))
-    # <DateTime [2016-07-25T14:33:18+00:00]>
+    # <Zulu [2016-07-25T14:33:18+00:00]>
 
     # First argument to subtract() can also be another datetime object
     dt.subtract(shifted)
@@ -392,7 +392,7 @@ And add and subtract with the ``add`` and ``subtract`` methods:
 
     # First argument to add() can be a timedelta or dateutil.relativedelta
     dt.add(timedelta(minutes=10))
-    # <DateTime [2016-07-25T19:43:18+00:00]>
+    # <Zulu [2016-07-25T19:43:18+00:00]>
 
 
 Or replace datetime attributes:
@@ -400,7 +400,7 @@ Or replace datetime attributes:
 .. code-block:: python
 
     replaced = dt.replace(hour=14, minute=43)
-    # <DateTime [2016-07-25T14:43:18.137493+00:00]>
+    # <Zulu [2016-07-25T14:43:18.137493+00:00]>
 
     assert replaced is not dt
 
@@ -410,13 +410,13 @@ Or even make a copy:
 .. code-block:: python
 
     copied = dt.copy()
-    # <DateTime [2016-07-25T19:33:18.137493+00:00]>
+    # <Zulu [2016-07-25T19:33:18.137493+00:00]>
 
     assert copied is not dt
     assert copied == dt
 
 
-.. note:: Since ``DateTime`` is meant to be immutable, both ``shift``, ``replace``, and ``copy`` return new ``DateTime`` instances while leaving the original instance unchanged.
+.. note:: Since ``Zulu`` is meant to be immutable, both ``shift``, ``replace``, and ``copy`` return new ``Zulu`` instances while leaving the original instance unchanged.
 
 
 Spans, Ranges, Starts, and Ends
@@ -426,37 +426,37 @@ You can get the span across a time frame:
 
 .. code-block:: python
 
-    dt = DateTime(2015, 4, 4, 12, 30, 37, 651839)
+    dt = Zulu(2015, 4, 4, 12, 30, 37, 651839)
 
     dt.span('century')
-    # (<DateTime [2000-01-01T00:00:00+00:00]>, <DateTime [2099-12-31T23:59:59.999999+00:00]>)
+    # (<Zulu [2000-01-01T00:00:00+00:00]>, <Zulu [2099-12-31T23:59:59.999999+00:00]>)
 
     dt.span('decade')
-    # (<DateTime [2010-01-01T00:00:00+00:00]>, <DateTime [2019-12-31T23:59:59.999999+00:00]>)
+    # (<Zulu [2010-01-01T00:00:00+00:00]>, <Zulu [2019-12-31T23:59:59.999999+00:00]>)
 
     dt.span('year')
-    # (<DateTime [2015-01-01T00:00:00+00:00]>, <DateTime [2015-12-31T23:59:59.999999+00:00]>)
+    # (<Zulu [2015-01-01T00:00:00+00:00]>, <Zulu [2015-12-31T23:59:59.999999+00:00]>)
 
     dt.span('month')
-    # (<DateTime [2015-04-01T00:00:00+00:00]>, <DateTime [2015-04-30T23:59:59.999999+00:00]>)
+    # (<Zulu [2015-04-01T00:00:00+00:00]>, <Zulu [2015-04-30T23:59:59.999999+00:00]>)
 
     dt.span('day')
-    # (<DateTime [2015-04-04T00:00:00+00:00]>, <DateTime [2015-04-04T23:59:59.999999+00:00]>)
+    # (<Zulu [2015-04-04T00:00:00+00:00]>, <Zulu [2015-04-04T23:59:59.999999+00:00]>)
 
     dt.span('hour')
-    # (<DateTime [2015-04-04T12:00:00+00:00]>, <DateTime [2015-04-04T12:59:59.999999+00:00]>)
+    # (<Zulu [2015-04-04T12:00:00+00:00]>, <Zulu [2015-04-04T12:59:59.999999+00:00]>)
 
     dt.span('minute')
-    # (<DateTime [2015-04-04T12:30:00+00:00]>, <DateTime [2015-04-04T12:30:59.999999+00:00]>)
+    # (<Zulu [2015-04-04T12:30:00+00:00]>, <Zulu [2015-04-04T12:30:59.999999+00:00]>)
 
     dt.span('second')
-    # (<DateTime [2015-04-04T12:30:37+00:00]>, <DateTime [2015-04-04T12:30:37.999999+00:00]>)
+    # (<Zulu [2015-04-04T12:30:37+00:00]>, <Zulu [2015-04-04T12:30:37.999999+00:00]>)
 
     dt.span('century', count=3)
-    # (<DateTime [2000-01-01T00:00:00+00:00]>, <DateTime [2299-12-31T23:59:59.999999+00:00]>)
+    # (<Zulu [2000-01-01T00:00:00+00:00]>, <Zulu [2299-12-31T23:59:59.999999+00:00]>)
 
     dt.span('decade', count=3)
-    # (<DateTime [2010-01-01T00:00:00+00:00]>, <DateTime [2039-12-31T23:59:59.999999+00:00]>)
+    # (<Zulu [2010-01-01T00:00:00+00:00]>, <Zulu [2039-12-31T23:59:59.999999+00:00]>)
 
 
 Or you can get just the start or end of a time frame:
@@ -464,13 +464,13 @@ Or you can get just the start or end of a time frame:
 .. code-block:: python
 
     dt.start_of('day')  # OR dt.start_of_day()
-    # <DateTime [2015-04-04T00:00:00+00:00]>
+    # <Zulu [2015-04-04T00:00:00+00:00]>
 
     dt.end_of('day')  # OR dt.end_of_day()
-    # <DateTime [2015-04-04T23:59:59.999999+00:00]>
+    # <Zulu [2015-04-04T23:59:59.999999+00:00]>
 
     dt.end_of('year', count=3)  # OR dt.end_of_year()
-    # <DateTime [2017-12-31T23:59:59.999999+00:00]>
+    # <Zulu [2017-12-31T23:59:59.999999+00:00]>
 
 
 .. note:: Supported time frames are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second`` and are accessible both from ``start_of(frame)``/``end_of(frame)`` and ``start_of_<frame>()``/``end_of_<frame>``.
@@ -480,29 +480,29 @@ You can get a range of time spans:
 
 .. code-block:: python
 
-    start = DateTime(2015, 4, 4, 12, 30)
-    end = DateTime(2015, 4, 4, 16, 30)
+    start = Zulu(2015, 4, 4, 12, 30)
+    end = Zulu(2015, 4, 4, 16, 30)
 
     for span in Datetime.span_range('hour', start, end):
         print(span)
-    # (<DateTime [2015-04-04T12:00:00+00:00]>, <DateTime [2015-04-04T12:59:59.999999+00:00]>)
-    # (<DateTime [2015-04-04T13:00:00+00:00]>, <DateTime [2015-04-04T13:59:59.999999+00:00]>)
-    # (<DateTime [2015-04-04T14:00:00+00:00]>, <DateTime [2015-04-04T14:59:59.999999+00:00]>)
-    # (<DateTime [2015-04-04T15:00:00+00:00]>, <DateTime [2015-04-04T15:59:59.999999+00:00]>)
+    # (<Zulu [2015-04-04T12:00:00+00:00]>, <Zulu [2015-04-04T12:59:59.999999+00:00]>)
+    # (<Zulu [2015-04-04T13:00:00+00:00]>, <Zulu [2015-04-04T13:59:59.999999+00:00]>)
+    # (<Zulu [2015-04-04T14:00:00+00:00]>, <Zulu [2015-04-04T14:59:59.999999+00:00]>)
+    # (<Zulu [2015-04-04T15:00:00+00:00]>, <Zulu [2015-04-04T15:59:59.999999+00:00]>)
 
 
 Or you can iterate over a range of datetimes:
 
 .. code-block:: python
 
-    start = DateTime(2015, 4, 4, 12, 30)
-    end = DateTime(2015, 4, 4, 16, 30)
+    start = Zulu(2015, 4, 4, 12, 30)
+    end = Zulu(2015, 4, 4, 16, 30)
 
     for dt in Datetime.range('hour', start, end):
         print(dt)
-    # <DateTime [2015-04-04T12:30:00+00:00]>
-    # <DateTime [2015-04-04T13:30:00+00:00]>
-    # <DateTime [2015-04-04T14:30:00+00:00]>
+    # <Zulu [2015-04-04T12:30:00+00:00]>
+    # <Zulu [2015-04-04T13:30:00+00:00]>
+    # <Zulu [2015-04-04T14:30:00+00:00]>
 
 
 .. note:: Supported range/span time frames are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second``.
@@ -516,22 +516,22 @@ In addition to having a drop-in replacement for ``datetime``, zulu also has a dr
 
 .. code-block:: python
 
-    delta = zulu.to_timedelta('1w 3d 2h 32m')
-    # <TimeDelta [10 days, 2:32:00]>
+    delta = zulu.delta('1w 3d 2h 32m')
+    # <Delta [10 days, 2:32:00]>
 
-    assert isinstance(delta, zulu.TimeDelta)
+    assert isinstance(delta, zulu.Delta)
 
     from datetime import timedelta
     assert isinstance(delta, timedelta)
 
-    zulu.to_timedelta('2:04:13:02.266')
-    # <TimeDelta [2 days, 4:13:02.266000]>
+    zulu.delta('2:04:13:02.266')
+    # <Delta [2 days, 4:13:02.266000]>
 
-    zulu.to_timedelta('2 days, 5 hours, 34 minutes, 56 seconds')
-    # <TimeDelta [2 days, 5:34:56]>
+    zulu.delta('2 days, 5 hours, 34 minutes, 56 seconds')
+    # <Delta [2 days, 5:34:56]>
 
 
-Other formats that ``zulu.to_timedelta`` can parse are:
+Other formats that ``zulu.delta`` can parse are:
 
 - ``32m``
 - ``2h32m``
@@ -568,12 +568,12 @@ Other formats that ``zulu.to_timedelta`` can parse are:
 - ``5.6 weeks``
 
 
-Similar to ``DateTime.time_to/from``, ``TimeDelta`` objects can be humanized with the ``TimeDelta.format`` method:
+Similar to ``Zulu.time_to/from``, ``Delta`` objects can be humanized with the ``Delta.format`` method:
 
 .. code-block:: python
 
-    delta = zulu.to_timedelta('2h 32m')
-    # <TimeDelta [2:32:00]>
+    delta = zulu.delta('2h 32m')
+    # <Delta [2:32:00]>
 
     delta.format()
     # '3 hours'
@@ -581,7 +581,7 @@ Similar to ``DateTime.time_to/from``, ``TimeDelta`` objects can be humanized wit
     delta.format(add_direction=True)
     # 'in 3 hours'
 
-    zulu.to_timedelta('-2h 32m').format(add_direction=True)
+    zulu.delta('-2h 32m').format(add_direction=True)
     # '3 hours ago'
 
     delta.format(locale='de')

@@ -14,7 +14,7 @@ import pytz
 import tzlocal
 
 from . import parser
-from .timedelta import TimeDelta
+from .timedelta import Delta
 from ._compat import number_types, string_types
 
 
@@ -46,16 +46,16 @@ def validate_frame(frame):
                          .format('|'.join(TIME_FRAMES), frame))
 
 
-class DateTime(datetime):
-    """The DateTime class represents an immutable UTC datetime object. Any
+class Zulu(datetime):
+    """The Zulu class represents an immutable UTC datetime object. Any
     timezone information given to it during instantiation results in the
     datetime object being converted from that timezone to UTC. If timezone
     information is not given, then it's assumed the datetime is a UTC value.
-    All arthimetic is perform on the underlying UTC datetime object. DateTime
+    All arthimetic is perform on the underlying UTC datetime object. Zulu
     has no concept of timezone shifting in this regard. Instead, localization
-    occurs only when formatting a DateTime object as a string.
+    occurs only when formatting a Zulu object as a string.
 
-    The DateTime class is a drop-in replacement for a native datetime object,
+    The Zulu class is a drop-in replacement for a native datetime object,
     but does not represent itself in any time zone other than UTC.
 
     Args:
@@ -110,19 +110,19 @@ class DateTime(datetime):
 
     @classmethod
     def now(cls):
-        """Return the current UTC date and time as :class:`.DateTime` object.
+        """Return the current UTC date and time as :class:`.Zulu` object.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return cls.utcnow()
 
     @classmethod
     def parse(cls, obj, formats=None, default_tz=None):
-        """Return :class:`.DateTime` object parsed from `obj`.
+        """Return :class:`.Zulu` object parsed from `obj`.
 
         Args:
-            obj (mixed): Object to parse into a :class:`.DateTime` object.
+            obj (mixed): Object to parse into a :class:`.Zulu` object.
             formats (list, optional): List of string formats to use when
                 parsing. Defaults to ``['ISO8601', 'timestamp']``.
             default_tz (None|str|tzinfo, optional): Default timezone to use
@@ -130,17 +130,17 @@ class DateTime(datetime):
                 Defaults to ``UTC``.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         dt = parser.parse_datetime(obj, formats, default_tz=default_tz)
         return cls.fromdatetime(dt)
 
     @classmethod
     def fromdatetime(cls, dt):
-        """Return :class:`.DateTime` object from a native datetime object.
+        """Return :class:`.Zulu` object from a native datetime object.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return cls(dt.year,
                    dt.month,
@@ -153,7 +153,7 @@ class DateTime(datetime):
 
     @classmethod
     def fromtimestamp(cls, timestamp, tz=pytz.UTC):
-        """Return :class:`.DateTime` object from a POSIX timestamp.
+        """Return :class:`.Zulu` object from a POSIX timestamp.
 
         Args:
             timestamp (int): POSIX timestamp such as is returned by
@@ -162,75 +162,75 @@ class DateTime(datetime):
                 present only for datetime class compatibility.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return cls.utcfromtimestamp(timestamp)
 
     @classmethod
     def utcfromtimestamp(cls, timestamp):
-        """Return :class:`.DateTime` object from a POSIX timestamp.
+        """Return :class:`.Zulu` object from a POSIX timestamp.
 
         Args:
             timestamp (int): POSIX timestamp such as is returned by
                 ``time.time()``.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return cls.fromdatetime(datetime.utcfromtimestamp(timestamp))
 
     @classmethod
     def fromordinal(cls, ordinal):
-        """Return :class:`.DateTime` object from a proleptic Gregorian ordinal,
+        """Return :class:`.Zulu` object from a proleptic Gregorian ordinal,
         where January 1 of year 1 has ordinal 1.
 
         Args:
             ordinal (int): A proleptic Gregorian ordinal.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return cls.fromdatetime(datetime.fromordinal(ordinal))
 
     @classmethod
     def fromgmtime(cls, struct):
-        """Return :class:`.DateTime` object from a ``tuple`` like that returned
+        """Return :class:`.Zulu` object from a ``tuple`` like that returned
         by ``time.gmtime`` that represents a UTC datetime.
 
         Args:
             struct (tuple): Tuple like that returned by ``time.gmtime``.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return cls.fromtimestamp(calendar.timegm(struct))
 
     @classmethod
     def fromlocaltime(cls, struct):
-        """Return :class:`.DateTime` object from a ``tuple`` like that returned
+        """Return :class:`.Zulu` object from a ``tuple`` like that returned
         by ``time.localtime`` that represents a local datetime.
 
         Args:
             struct (tuple): Tuple like that returned by ``time.localtime``.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return cls.fromtimestamp(time.mktime(struct))
 
     @classmethod
     def combine(cls, date, time):
-        """Return :class:`.DateTime` object by combining the date part from
-        `date` and the time part from `time`.
+        """Return :class:`.Zulu` object by combining the date part from `date`
+        and the time part from `time`.
 
         Args:
-            date (mixed): Either a :class:`.DateTime`, ``datetime.date``,
-                or ``datetime.datetime`` object to use as the date part.
-            date (mixed): Either a :class:`.DateTime` or ``datetime.time``
-                object to use as the time part.
+            date (mixed): Either a :class:`.Zulu`, ``datetime.date``, or
+                ``datetime.datetime`` object to use as the date part.
+            date (mixed): Either a :class:`.Zulu` or ``datetime.time`` object
+                to use as the time part.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         if callable(getattr(date, 'date', None)):
             date = date.date()
@@ -253,10 +253,10 @@ class DateTime(datetime):
         Returns:
             list: List of all time spans
         """
-        if not isinstance(start, DateTime):
+        if not isinstance(start, cls):
             start = cls.parse(start)
 
-        if not isinstance(end, DateTime):
+        if not isinstance(end, cls):
             end = cls.parse(end)
 
         if start > end:
@@ -283,8 +283,8 @@ class DateTime(datetime):
 
     @classmethod
     def range(cls, frame, start, end):
-        """Return a range of :class:`.DateTime` instances from `start` to `end`
-        in steps of time frame, `frame`.
+        """Return a range of :class:`.Zulu` instances from `start` to `end` in
+        steps of time frame, `frame`.
 
         Args:
             frame (str): A time frame (e.g. year, month, day, minute, etc).
@@ -295,10 +295,10 @@ class DateTime(datetime):
             list: A list of datetime values ranging from the given start and
                 end datetimes.
         """
-        if not isinstance(start, DateTime):
+        if not isinstance(start, cls):
             start = cls.parse(start)
 
-        if not isinstance(end, DateTime):
+        if not isinstance(end, cls):
             end = cls.parse(end)
 
         validate_frame(frame)
@@ -344,13 +344,13 @@ class DateTime(datetime):
         .. note:: This returns a native datetime object.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.datetime.replace(tzinfo=None)
 
     @property
     def datetime(self):
-        """The DateTime object as a native datetime.
+        """The Zulu object as a native datetime.
 
         .. note:: This returns a native datetime object.
 
@@ -368,12 +368,12 @@ class DateTime(datetime):
         return (self - self.epoch).total_seconds()
 
     def copy(self):
-        """Return a new :class`DateTime` instance with the same datetime value.
+        """Return a new :class`Zulu` instance with the same datetime value.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
-        return DateTime(*tuple(self))
+        return self.__class__(*tuple(self))
 
     def is_leap_year(self):
         """Return whether this datetime's :attr:`year` is a leap year.
@@ -414,7 +414,7 @@ class DateTime(datetime):
             dt (datetime): A datetime object.
 
         Keyword Args:
-            See :meth:`.TimeDelta.format` for listing.
+            See :meth:`.Delta.format` for listing.
 
         Returns:
             str
@@ -429,7 +429,7 @@ class DateTime(datetime):
             dt (datetime): A datetime object.
 
         Keyword Args:
-            See :meth:`.TimeDelta.format` for listing.
+            See :meth:`.Delta.format` for listing.
 
         Returns:
             str
@@ -441,31 +441,31 @@ class DateTime(datetime):
         humanized string.
 
         Keyword Args:
-            See :meth:`.TimeDelta.format` for listing.
+            See :meth:`.Delta.format` for listing.
 
         Returns:
             str
         """
-        return self.time_from(DateTime.now())
+        return self.time_from(self.now())
 
     def time_to_now(self, **options):
         """Return "time to" difference between now and this datetime as a
         humanized string.
 
         Keyword Args:
-            See :meth:`.TimeDelta.format` for listing.
+            See :meth:`.Delta.format` for listing.
 
         Returns:
             str
         """
-        return self.time_to(DateTime.now())
+        return self.time_to(self.now())
 
     def _format_delta(self, delta, **options):
         """Return a humanized "time ago"/"time to" string from a timedelta."""
         options.setdefault('add_direction', True)
-        delta = TimeDelta(days=delta.days,
-                          seconds=delta.seconds,
-                          microseconds=delta.microseconds)
+        delta = Delta(days=delta.days,
+                      seconds=delta.seconds,
+                      microseconds=delta.microseconds)
         return delta.format(**options)
 
     def astimezone(self, tz=LOCAL):
@@ -478,12 +478,12 @@ class DateTime(datetime):
                 `'local'` which uses the local timezone.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         if tz is None:
             tz = LOCAL
         tz = parser.get_timezone(tz)
-        return super(DateTime, self).astimezone(tz)
+        return super(self.__class__, self).astimezone(tz)
 
     def shift(self,
               years=0,
@@ -495,7 +495,7 @@ class DateTime(datetime):
               seconds=0,
               microseconds=0):
         """Shift datetime forward or backward using a timedelta created from
-        the supplied arguments and return a new :class:`.DateTime` instance.
+        the supplied arguments and return a new :class:`.Zulu` instance.
 
         Args:
             years (int, optional): Years to shift.
@@ -508,7 +508,7 @@ class DateTime(datetime):
             microseconds (int, optional): Microseconds to shift.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         dt = self + relativedelta(years=years,
                                   months=months,
@@ -523,7 +523,7 @@ class DateTime(datetime):
 
     def add(self, other=None, **units):
         """Add time using a timedelta created from the supplied arguments and
-        return a new :class:`.DateTime` instance. The first argument can be a
+        return a new :class:`.Zulu` instance. The first argument can be a
         `:class:`timedelta` or :class:`dateutil.relativedelta` object in which
         case all other arguments are ignored and the object is added to this
         datetime.
@@ -543,7 +543,7 @@ class DateTime(datetime):
             microseconds (int, optional): Microseconds to add.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         if isinstance(other, (timedelta, relativedelta)):
             return self + other
@@ -554,8 +554,8 @@ class DateTime(datetime):
 
     def subtract(self, other=None, **units):
         """Subtract time using a timedelta created from the supplied arguments
-        and return a new :class:`.DateTime` instance. The first argument can be
-        a :class:`.DateTime`, :class:`datetime`, :class:`timedelta`, or
+        and return a new :class:`.Zulu` instance. The first argument can be
+        a :class:`.Zulu`, :class:`datetime`, :class:`timedelta`, or
         :class:`dateutil.relativedelta` object in which case all other
         arguments are ignored and the object is subtracted from this datetime.
 
@@ -575,10 +575,10 @@ class DateTime(datetime):
             microseconds (int, optional): Microseconds to subtract.
 
         Returns:
-            :class:`.DateTime`: if subtracting :class:`timedelta` or
+            :class:`.Zulu`: if subtracting :class:`timedelta` or
                 :class:`timedelta` arguments.
             :class:`timedelta`: if subtracting a :class:`datetime` or
-                :class:`.DateTime`
+                :class:`.Zulu`
         """
         if isinstance(other, (datetime, timedelta, relativedelta)):
             return self - other
@@ -596,11 +596,11 @@ class DateTime(datetime):
                 second=None,
                 microsecond=None,
                 tzinfo=None):
-        """Replace datetime attributes and return a new
-        :class:`.DateTime` instance.
+        """Replace datetime attributes and return a new :class:`.Zulu`
+        instance.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         args = list(self)
 
@@ -628,14 +628,14 @@ class DateTime(datetime):
         if tzinfo is not None:
             args[7] = tzinfo
 
-        return DateTime(*args)
+        return self.__class__(*args)
 
     def start_of_century(self):
-        """Return a new :class:`.DateTime` set to the start of the century of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the start of the century of this
+        datetime.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.replace(year=self.year - (self.year % 100),
                             month=1,
@@ -646,11 +646,11 @@ class DateTime(datetime):
                             microsecond=0)
 
     def start_of_decade(self):
-        """Return a new :class:`.DateTime` set to the start of the decade of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the start of the decade of this
+        datetime.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.replace(year=self.year - (self.year % 10),
                             month=1,
@@ -661,11 +661,11 @@ class DateTime(datetime):
                             microsecond=0)
 
     def start_of_year(self):
-        """Return a new :class:`.DateTime` set to the start of the year of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the start of the year of this
+        datetime.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.replace(month=1,
                             day=1,
@@ -675,144 +675,144 @@ class DateTime(datetime):
                             microsecond=0)
 
     def start_of_month(self):
-        """Return a new :class:`.DateTime` set to the start of the month of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the start of the month of this
+        datetime.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     def start_of_day(self):
-        """Return a new :class:`.DateTime` set to the start of the day of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the start of the day of this
+        datetime.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.replace(hour=0, minute=0, second=0, microsecond=0)
 
     def start_of_hour(self):
-        """Return a new :class:`.DateTime` set to the start of the hour of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the start of the hour of this
+        datetime.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.replace(minute=0, second=0, microsecond=0)
 
     def start_of_minute(self):
-        """Return a new :class:`.DateTime` set to the start of the minute of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the start of the minute of this
+        datetime.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.replace(second=0, microsecond=0)
 
     def start_of_second(self):
-        """Return a new :class:`.DateTime` set to the start of the second of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the start of the second of this
+        datetime.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.replace(microsecond=0)
 
     def end_of_century(self, count=1):
-        """Return a new :class:`.DateTime` set to the end of the century of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the end of the century of this
+        datetime.
 
         Args:
             count (int): Number of frames to span.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.start_of_century().shift(years=count * 100,
                                              microseconds=-1)
 
     def end_of_decade(self, count=1):
-        """Return a new :class:`.DateTime` set to the end of the decade of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the end of the decade of this
+        datetime.
 
         Args:
             count (int): Number of frames to span.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.start_of_decade().shift(years=count * 10, microseconds=-1)
 
     def end_of_year(self, count=1):
-        """Return a new :class:`.DateTime` set to the end of the year of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the end of the year of this
+        datetime.
 
         Args:
             count (int): Number of frames to span.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.start_of_year().shift(years=count, microseconds=-1)
 
     def end_of_month(self, count=1):
-        """Return a new :class:`.DateTime` set to the end of the month of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the end of the month of this
+        datetime.
 
         Args:
             count (int): Number of frames to span.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.start_of_month().shift(months=count, microseconds=-1)
 
     def end_of_day(self, count=1):
-        """Return a new :class:`.DateTime` set to the end of the day of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the end of the day of this
+        datetime.
 
         Args:
             count (int): Number of frames to span.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.start_of_day().shift(days=count, microseconds=-1)
 
     def end_of_hour(self, count=1):
-        """Return a new :class:`.DateTime` set to the end of the hour of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the end of the hour of this
+        datetime.
 
         Args:
             count (int): Number of frames to span.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.start_of_hour().shift(hours=count, microseconds=-1)
 
     def end_of_minute(self, count=1):
-        """Return a new :class:`.DateTime` set to the end of the minute of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the end of the minute of this
+        datetime.
 
         Args:
             count (int): Number of frames to span.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.start_of_minute().shift(minutes=count, microseconds=-1)
 
     def end_of_second(self, count=1):
-        """Return a new :class:`.DateTime` set to the end of the second of
-        this datetime.
+        """Return a new :class:`.Zulu` set to the end of the second of this
+        datetime.
 
         Args:
             count (int): Number of frames to span.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         return self.start_of_second().shift(seconds=count, microseconds=-1)
 
@@ -823,7 +823,7 @@ class DateTime(datetime):
             frame (str): A time frame (e.g. year, month, day, minute, etc).
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         validate_frame(frame)
         return getattr(self, 'start_of_{0}'.format(frame))()
@@ -836,13 +836,13 @@ class DateTime(datetime):
             count (int): Number of frames to span.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         validate_frame(frame)
         return getattr(self, 'end_of_{0}'.format(frame))(count)
 
     def span(self, frame, count=1):
-        """Returns two new :class:`.DateTime` objects corresponding to the time
+        """Returns two new :class:`.Zulu` objects corresponding to the time
         span between this object and the given time frame.
 
         Args
@@ -855,15 +855,15 @@ class DateTime(datetime):
         return (self.start_of(frame), self.end_of(frame, count))
 
     def __repr__(self):  # pragma: no cover
-        """Return representation of :class:`.DateTime`."""
+        """Return representation of :class:`.Zulu`."""
         return '<{0} [{1}]>'.format(self.__class__.__name__, self)
 
     def __str__(self):
-        """Return :class:`.DateTime` instance as an ISO 8601 string."""
+        """Return :class:`.Zulu` instance as an ISO 8601 string."""
         return self.isoformat()
 
     def __iter__(self):
-        """Return :class:`.DateTime` instance as an iterator that yields a
+        """Return :class:`.Zulu` instance as an iterator that yields a
         tuple corresponding to
         ``(year, month, day, hour, minute, second, microsecond, tzinfo)``.
         """
@@ -880,7 +880,7 @@ class DateTime(datetime):
         """Add a ``timedelta`` and return the result.
 
         Returns:
-            :class:`.DateTime`
+            :class:`.Zulu`
         """
         if not isinstance(other, (timedelta, relativedelta, number_types)):
             return NotImplemented
@@ -889,7 +889,7 @@ class DateTime(datetime):
             other = timedelta(seconds=other)
 
         if isinstance(other, timedelta):
-            result = super(DateTime, self).__add__(other)
+            result = super(Zulu, self).__add__(other)
         else:
             result = other.__add__(self)
 
@@ -899,28 +899,29 @@ class DateTime(datetime):
 
     def __sub__(self, other):
         """Subtract a ``timedelta``, ``dateutil.relativedelta``, ``datetime``,
-        or :class:`.DateTime` and return the result.
+        or :class:`.Zulu` and return the result.
 
         Returns:
-            :class:`.DateTime`: if subtracting a :class:`timedelta`
+            :class:`.Zulu`: if subtracting a :class:`timedelta`
             :class:`timedelta`: if subtracting a :class:`datetime` or
-                :class:`.DateTime`
+                :class:`.Zulu`
         """
-        if not isinstance(other, DateTime) and isinstance(other, datetime):
+        if (not isinstance(other, self.__class__) and
+                isinstance(other, datetime)):
             other = self.fromdatetime(other)
 
-        result = super(DateTime, self).__sub__(other)
+        result = super(self.__class__, self).__sub__(other)
 
         if isinstance(result, datetime):
             return self.fromdatetime(result)
         else:
             return result
 
-#: Minimum DateTime value.
-DateTime.min = DateTime(1, 1, 1)
+#: Minimum Zulu value.
+Zulu.min = Zulu(1, 1, 1)
 
-#: Maximum DateTime value.
-DateTime.max = DateTime(9999, 12, 31, 23, 59, 59, 999999)
+#: Maximum Zulu value.
+Zulu.max = Zulu(9999, 12, 31, 23, 59, 59, 999999)
 
-#: DateTime value of EPOCH.
-DateTime.epoch = DateTime.fromdatetime(parser.EPOCH)
+#: Zulu value of EPOCH.
+Zulu.epoch = Zulu.fromdatetime(parser.EPOCH)

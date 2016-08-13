@@ -5,15 +5,15 @@ Changelog
 vX.X.X (XXXX-XX-XX)
 -------------------
 
-- Rename ``zulu.parse`` to ``zulu.to_datetime``. **breaking change**
-- Rename ``DateTime.isleap`` to ``DateTime.is_leap_year``. **breaking change**
+- Rename ``zulu.DateTime`` to ``zulu.Zulu``. **breaking change**
+- Rename ``Zulu.isleap`` to ``Zulu.is_leap_year``. **breaking change**
 - Remove ``zulu.format`` alias (function can be accessed at ``zulu.parser.format_datetime``). **breaking change**
-- Remove ``DateTime.leapdays``. **breaking change**
-- Add ``DateTime.days_in_month``.
-- Add ``zulu.TimeDelta`` class that inherits from ``datetime.timedelta``.
-- Add ``zulu.to_timedelta`` as alias to ``zulu.TimeDelta.parse``.
-- Add ``DateTime.time_from``, ``DateTime.time_to``, ``DateTime.time_from_now``, and ``DateTime.time_to_now`` that return "time ago" or "time to" humanized strings.
-- Make time units (years, months, weeks, days, hours, minutes, seconds, microseconds) keyword arguments only for ``DateTime.add/subtract``, but allow positional argument to be an addable/subtractable object (datetime, timedelta, dateutil.relativedelta). **breaking change**
+- Remove ``Zulu.leapdays``. **breaking change**
+- Add ``Zulu.days_in_month``.
+- Add ``zulu.Delta`` class that inherits from ``datetime.timedelta``.
+- Add ``zulu.delta`` as alias to ``zulu.Delta.parse``.
+- Add ``Zulu.time_from``, ``Zulu.time_to``, ``Zulu.time_from_now``, and ``Zulu.time_to_now`` that return "time ago" or "time to" humanized strings.
+- Make time units (years, months, weeks, days, hours, minutes, seconds, microseconds) keyword arguments only for ``Zulu.add/subtract``, but allow positional argument to be an addable/subtractable object (datetime, timedelta, dateutil.relativedelta). **breaking change**
 
 
 v0.3.0 (2016-08-03)

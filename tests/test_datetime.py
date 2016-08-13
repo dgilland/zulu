@@ -9,7 +9,7 @@ import pytest
 import pytz
 from tzlocal import get_localzone
 
-from zulu import DateTime, ParseError
+from zulu import Zulu, ParseError
 from zulu.parser import DATE_PATTERN_TO_DIRECTIVE
 
 
@@ -20,15 +20,15 @@ eastern = pytz.timezone('US/Eastern')
 
 
 def test_datetime_defaults():
-    assert DateTime() == DateTime.fromtimestamp(0)
+    assert Zulu() == Zulu.fromtimestamp(0)
 
 
 @parametrize('factory', [
-    DateTime.utcnow,
+    Zulu.utcnow,
     datetime.utcnow
 ])
 def test_datetime_now_is_utcnow(factory):
-    dt = DateTime.now()
+    dt = Zulu.now()
     expected = factory()
 
     # NOTE: Intentionally skip comparison to microsecond since they will almost
@@ -66,11 +66,11 @@ def test_datetime_now_is_utcnow(factory):
      datetime(1970, 1, 1, tzinfo=UTC)),
     (datetime(2000, 1, 1, tzinfo=UTC),
      datetime(2000, 1, 1, tzinfo=UTC)),
-    (DateTime(2000, 1, 1),
+    (Zulu(2000, 1, 1),
      datetime(2000, 1, 1, tzinfo=UTC)),
 ])
 def test_datetime_parse(string, expected):
-    assert DateTime.parse(string) == expected
+    assert Zulu.parse(string) == expected
 
 
 @parametrize('string,kargs,exception', [
@@ -87,7 +87,7 @@ def test_datetime_parse(string, expected):
 ])
 def test_datetime_parse_invalid(string, kargs, exception):
     with pytest.raises(exception):
-        DateTime.parse(string, **kargs)
+        Zulu.parse(string, **kargs)
 
 
 @parametrize('string,kargs,expected', [
@@ -121,51 +121,51 @@ def test_datetime_parse_invalid(string, kargs, exception):
      datetime(2016, 7, 27, 4, 34, 22, 479776, tzinfo=UTC)),
 ])
 def test_datetime_parse_format(string, kargs, expected):
-    assert DateTime.parse(string, **kargs) == expected
+    assert Zulu.parse(string, **kargs) == expected
 
 
 @parametrize('dt,pattern,expected', [
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'YYYY', '2000'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'YY', '00'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'MMMM', 'January'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'MMM', 'Jan'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'MM', '01'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'M', '1'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'DDD', '005'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'DD', '05'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'D', '5'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'dd', '05'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'd', '5'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'EEEE', 'Wednesday'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'EEE', 'Wed'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'EE', 'Wed'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'E', 'Wed'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'eee', 'Wed'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'ee', '03'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'e', '3'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'HH', '13'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'H', '13'),
-    (DateTime(2000, 1, 5, 9, 7, 8, 123456), 'HH', '09'),
-    (DateTime(2000, 1, 5, 9, 7, 8, 123456), 'H', '9'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'hh', '01'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'h', '1'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'mm', '07'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'm', '7'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'ss', '08'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 's', '8'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'SSSSSS', '123456'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'SSSSS', '12345'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'SSSS', '1234'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'SSS', '123'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'SS', '12'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'S', '1'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'A', 'PM'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'a', 'pm'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'Z', '+0000'),
-    (DateTime(2000, 1, 5, 13, 7, 8, 123456), 'ZZ', '+00:00'),
-    (DateTime(1970, 1, 1, 0, 17, 30), 'XX', '1050.0'),
-    (DateTime(1970, 1, 1, 0, 17, 30, 123456), 'X', '1050'),
-    (DateTime(), ' ', ' '),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'YYYY', '2000'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'YY', '00'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'MMMM', 'January'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'MMM', 'Jan'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'MM', '01'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'M', '1'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'DDD', '005'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'DD', '05'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'D', '5'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'dd', '05'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'd', '5'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'EEEE', 'Wednesday'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'EEE', 'Wed'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'EE', 'Wed'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'E', 'Wed'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'eee', 'Wed'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'ee', '03'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'e', '3'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'HH', '13'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'H', '13'),
+    (Zulu(2000, 1, 5, 9, 7, 8, 123456), 'HH', '09'),
+    (Zulu(2000, 1, 5, 9, 7, 8, 123456), 'H', '9'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'hh', '01'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'h', '1'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'mm', '07'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'm', '7'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'ss', '08'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 's', '8'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SSSSSS', '123456'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SSSSS', '12345'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SSSS', '1234'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SSS', '123'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SS', '12'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'S', '1'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'A', 'PM'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'a', 'pm'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'Z', '+0000'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'ZZ', '+00:00'),
+    (Zulu(1970, 1, 1, 0, 17, 30), 'XX', '1050.0'),
+    (Zulu(1970, 1, 1, 0, 17, 30, 123456), 'X', '1050'),
+    (Zulu(), ' ', ' '),
 ])
 def test_datetime_format_pattern(dt, pattern, expected):
     assert dt.format(pattern) == expected
@@ -204,20 +204,20 @@ def test_datetime_format_pattern(dt, pattern, expected):
     ('AM', 'a'),
 ])
 def test_datetime_parse_pattern_mapping(string, pattern):
-    pat_dt = DateTime.parse(string, DATE_PATTERN_TO_DIRECTIVE[pattern])
-    dt = DateTime.parse(string, pattern)
+    pat_dt = Zulu.parse(string, DATE_PATTERN_TO_DIRECTIVE[pattern])
+    dt = Zulu.parse(string, pattern)
 
     assert pat_dt == dt
 
 
 @parametrize('dt,args,expected', [
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
      {},
      '2000-01-01T12:30:45.000015+00:00'),
-    (DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
      {'tz': 'US/Eastern'},
      '2000-01-01T07:30:00-05:00'),
-    (DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
      {'format': '%a %b %d'},
      'Sat Jan 01')
 ])
@@ -226,10 +226,10 @@ def test_datetime_format(dt, args, expected):
 
 
 @parametrize('dt,fmt,expected', [
-    (DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
      '%Y-%m-%dT%H:%M:%S%z',
      '2000-01-01T12:30:00+0000'),
-    (DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
      '%a %b %d',
      'Sat Jan 01')
 ])
@@ -240,25 +240,25 @@ def test_datetime_strftime(dt, fmt, expected):
 @parametrize('string,fmt,expected', [
     ('2000-01-01T12:30:00',
      '%Y-%m-%dT%H:%M:%S',
-     DateTime(2000, 1, 1, 12, 30)),
+     Zulu(2000, 1, 1, 12, 30)),
 ])
 def test_datetime_strptime(string, fmt, expected):
-    assert DateTime.strptime(string, fmt) == expected
+    assert Zulu.strptime(string, fmt) == expected
 
 
 @parametrize('dt,expected', [
     (eastern.localize(datetime(2000, 1, 1)),
      datetime(2000, 1, 1, 5, tzinfo=pytz.UTC)),
-    (DateTime(2000, 1, 1, tzinfo='UTC'),
+    (Zulu(2000, 1, 1, tzinfo='UTC'),
      datetime(2000, 1, 1, tzinfo=pytz.UTC))
 ])
 def test_datetime_fromdatetime(dt, expected):
-    assert DateTime.fromdatetime(dt) == expected
+    assert Zulu.fromdatetime(dt) == expected
 
 
 @parametrize('factory,timestamp,expected', [
-    (DateTime.fromtimestamp, 0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
-    (DateTime.utcfromtimestamp, 0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
+    (Zulu.fromtimestamp, 0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
+    (Zulu.utcfromtimestamp, 0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
 ])
 def test_datetime_fromtimestamp(factory, timestamp, expected):
     assert factory(timestamp) == expected
@@ -266,36 +266,36 @@ def test_datetime_fromtimestamp(factory, timestamp, expected):
 
 @parametrize('struct,expected', [
     (struct_time((2016, 7, 29, 21, 23, 50, 4, 211, 0)),
-     DateTime(2016, 7, 29, 21, 23, 50))
+     Zulu(2016, 7, 29, 21, 23, 50))
 ])
 def test_datetime_fromgmtime(struct, expected):
-    assert DateTime.fromgmtime(struct) == expected
+    assert Zulu.fromgmtime(struct) == expected
 
 
 def test_datetime_fromordinal():
-    assert DateTime.fromordinal(730120) == DateTime(2000, 1, 1)
+    assert Zulu.fromordinal(730120) == Zulu(2000, 1, 1)
 
 
 def test_datetime_fromlocaltime():
     now = localtime()
-    assert DateTime.fromlocaltime(now).timestamp() == mktime(now)
+    assert Zulu.fromlocaltime(now).timestamp() == mktime(now)
 
 
 @parametrize('date,time,expected', [
     (datetime(2000, 1, 1), time(12, 30),
-     DateTime(2000, 1, 1, 12, 30)),
+     Zulu(2000, 1, 1, 12, 30)),
     (date(2000, 1, 1), time(12, 30),
-     DateTime(2000, 1, 1, 12, 30)),
-    (DateTime(2000, 1, 1), DateTime(1990, 12, 3, 12, 30),
-     DateTime(2000, 1, 1, 12, 30))
+     Zulu(2000, 1, 1, 12, 30)),
+    (Zulu(2000, 1, 1), Zulu(1990, 12, 3, 12, 30),
+     Zulu(2000, 1, 1, 12, 30))
 ])
 def test_datetime_combine(date, time, expected):
-    dt = DateTime.combine(date, time)
+    dt = Zulu.combine(date, time)
     assert dt == expected
 
 
 @parametrize('dt,properties', [
-    (DateTime(2000, 1, 2, 3, 4, 5, 6),
+    (Zulu(2000, 1, 2, 3, 4, 5, 6),
      {'year': 2000,
       'month': 1,
       'day': 2,
@@ -303,9 +303,9 @@ def test_datetime_combine(date, time, expected):
       'minute': 4,
       'second': 5,
       'microsecond': 6,
-      'min': DateTime(1, 1, 1),
-      'max': DateTime(9999, 12, 31, 23, 59, 59, 999999),
-      'epoch': DateTime(1970, 1, 1),
+      'min': Zulu(1, 1, 1),
+      'max': Zulu(9999, 12, 31, 23, 59, 59, 999999),
+      'epoch': Zulu(1970, 1, 1),
       'resolution': timedelta(microseconds=1),
       'naive': datetime(2000, 1, 2, 3, 4, 5, 6),
       'datetime': datetime(2000, 1, 2, 3, 4, 5, 6, pytz.UTC)}),
@@ -319,7 +319,7 @@ def test_datetime_basic_properties(dt, properties):
 
 
 @parametrize('dt,methods', [
-    (DateTime(2000, 1, 2, 3, 4, 5, 6),
+    (Zulu(2000, 1, 2, 3, 4, 5, 6),
      {'utcoffset': timedelta(0),
       'tzname': 'UTC',
       'dst': timedelta(0),
@@ -350,30 +350,30 @@ def test_datetime_basic_property_methods(dt, methods):
     (2004, True),
 ])
 def test_datetime_is_leap_year(year, expected):
-    assert DateTime(year).is_leap_year() == expected
+    assert Zulu(year).is_leap_year() == expected
 
 
 @parametrize('dt,expected', [
-    (DateTime(2001, 1, 1), 31),
-    (DateTime(2001, 2, 1), 28),
-    (DateTime(2001, 3, 1), 31),
-    (DateTime(2001, 4, 1), 30),
-    (DateTime(2001, 5, 1), 31),
-    (DateTime(2001, 6, 1), 30),
-    (DateTime(2001, 7, 1), 31),
-    (DateTime(2001, 8, 1), 31),
-    (DateTime(2001, 9, 1), 30),
-    (DateTime(2001, 10, 1), 31),
-    (DateTime(2001, 11, 1), 30),
-    (DateTime(2001, 12, 1), 31),
-    (DateTime(2004, 2, 1), 29),
+    (Zulu(2001, 1, 1), 31),
+    (Zulu(2001, 2, 1), 28),
+    (Zulu(2001, 3, 1), 31),
+    (Zulu(2001, 4, 1), 30),
+    (Zulu(2001, 5, 1), 31),
+    (Zulu(2001, 6, 1), 30),
+    (Zulu(2001, 7, 1), 31),
+    (Zulu(2001, 8, 1), 31),
+    (Zulu(2001, 9, 1), 30),
+    (Zulu(2001, 10, 1), 31),
+    (Zulu(2001, 11, 1), 30),
+    (Zulu(2001, 12, 1), 31),
+    (Zulu(2004, 2, 1), 29),
 ])
 def test_datetime_days_in_month(dt, expected):
     assert dt.days_in_month() == expected
 
 
 def test_datetime_copy():
-    dt = DateTime(2000, 1, 1)
+    dt = Zulu(2000, 1, 1)
     copy = dt.copy()
 
     assert copy is not dt
@@ -381,7 +381,7 @@ def test_datetime_copy():
 
 
 @parametrize('dt,replace,expected', [
-    (DateTime(2000, 1, 1),
+    (Zulu(2000, 1, 1),
      {'year': 1999,
       'month': 12,
       'day': 31,
@@ -389,8 +389,8 @@ def test_datetime_copy():
       'minute': 30,
       'second': 15,
       'microsecond': 10},
-     DateTime(1999, 12, 31, 12, 30, 15, 10)),
-    (DateTime(2000, 1, 1),
+     Zulu(1999, 12, 31, 12, 30, 15, 10)),
+    (Zulu(2000, 1, 1),
      {'year': 1999,
       'month': 12,
       'day': 31,
@@ -399,14 +399,14 @@ def test_datetime_copy():
       'second': 15,
       'microsecond': 10,
       'tzinfo': 'US/Eastern'},
-     DateTime(1999, 12, 31, 17, 30, 15, 10)),
+     Zulu(1999, 12, 31, 17, 30, 15, 10)),
 ])
 def test_datetime_replace(dt, replace, expected):
     assert dt.replace(**replace) == expected
 
 
 def test_datetime_as_iter():
-    dt = DateTime(2000, 1, 1)
+    dt = Zulu(2000, 1, 1)
     expected = (2000, 1, 1, 0, 0, 0, 0, pytz.UTC)
 
     assert tuple(dt) == expected
@@ -414,37 +414,37 @@ def test_datetime_as_iter():
 
 
 @parametrize('dt,expected', [
-    (DateTime(2000, 1, 1, 12, 30, 45, 15), '2000-01-01T12:30:45.000015+00:00'),
-    (DateTime(2000, 1, 1, 12, 30, 45), '2000-01-01T12:30:45+00:00'),
-    (DateTime(2000, 1, 1, 12), '2000-01-01T12:00:00+00:00'),
-    (DateTime(2000, 1, 1), '2000-01-01T00:00:00+00:00'),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15), '2000-01-01T12:30:45.000015+00:00'),
+    (Zulu(2000, 1, 1, 12, 30, 45), '2000-01-01T12:30:45+00:00'),
+    (Zulu(2000, 1, 1, 12), '2000-01-01T12:00:00+00:00'),
+    (Zulu(2000, 1, 1), '2000-01-01T00:00:00+00:00'),
 ])
 def test_datetime_isoformat(dt, expected):
     assert dt.isoformat() == expected
 
 
 def test_datetime_as_string():
-    dt = DateTime(2000, 1, 1)
+    dt = Zulu(2000, 1, 1)
     assert str(dt) == dt.isoformat()
 
 
 def test_datetime_string_format():
-    dt = DateTime(2000, 1, 1)
+    dt = Zulu(2000, 1, 1)
     assert '{0}'.format(dt) == dt.isoformat()
     assert '{0:%Y-%m-%dT%H:%M:%S}'.format(dt) == dt.format('%Y-%m-%dT%H:%M:%S')
 
 
 @parametrize('dt,tzinfo,expected', [
-    (DateTime(2000, 1, 1, 10),
+    (Zulu(2000, 1, 1, 10),
      None,
      datetime(2000, 1, 1, 10, tzinfo=pytz.UTC).astimezone(get_localzone())),
-    (DateTime(2000, 1, 1, 10),
+    (Zulu(2000, 1, 1, 10),
      'local',
      datetime(2000, 1, 1, 10, tzinfo=pytz.UTC).astimezone(get_localzone())),
-    (DateTime(2000, 1, 1, 10),
+    (Zulu(2000, 1, 1, 10),
      'US/Eastern',
      eastern.localize(datetime(2000, 1, 1, 5, 0))),
-    (DateTime(2000, 1, 1, 10),
+    (Zulu(2000, 1, 1, 10),
      pytz.timezone('US/Eastern'),
      eastern.localize(datetime(2000, 1, 1, 5, 0)))
 ])
@@ -463,51 +463,51 @@ def test_datetime_astimezone(dt, tzinfo, expected):
 
 
 @parametrize('method,dt,delta,expected', [
-    ('shift', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
-    ('add', DateTime(2000, 1, 1), {'days': 1}, DateTime(2000, 1, 2)),
+    ('shift', Zulu(2000, 1, 1), {'days': 1}, Zulu(2000, 1, 2)),
+    ('add', Zulu(2000, 1, 1), {'days': 1}, Zulu(2000, 1, 2)),
     ('add',
-     DateTime(2000, 1, 1),
+     Zulu(2000, 1, 1),
      timedelta(days=1),
-     DateTime(2000, 1, 2)),
+     Zulu(2000, 1, 2)),
     ('add',
-     DateTime(2000, 1, 1),
+     Zulu(2000, 1, 1),
      relativedelta(days=1),
-     DateTime(2000, 1, 2)),
-    ('subtract', DateTime(2000, 1, 1), {'days': 1}, DateTime(1999, 12, 31)),
-    ('subtract', DateTime(2000, 1, 1),
+     Zulu(2000, 1, 2)),
+    ('subtract', Zulu(2000, 1, 1), {'days': 1}, Zulu(1999, 12, 31)),
+    ('subtract', Zulu(2000, 1, 1),
      timedelta(days=1),
-     DateTime(1999, 12, 31)),
-    ('subtract', DateTime(2000, 1, 1),
+     Zulu(1999, 12, 31)),
+    ('subtract', Zulu(2000, 1, 1),
      relativedelta(days=1),
-     DateTime(1999, 12, 31)),
+     Zulu(1999, 12, 31)),
     ('subtract',
-     DateTime(2000, 1, 1),
+     Zulu(2000, 1, 1),
      timedelta(days=1),
-     DateTime(1999, 12, 31)),
+     Zulu(1999, 12, 31)),
     ('subtract',
-     DateTime(2000, 1, 1),
-     DateTime(1999, 12, 31),
+     Zulu(2000, 1, 1),
+     Zulu(1999, 12, 31),
      timedelta(days=1)),
     ('subtract',
-     DateTime(1999, 12, 31),
-     DateTime(2000, 1, 1),
+     Zulu(1999, 12, 31),
+     Zulu(2000, 1, 1),
      timedelta(days=-1)),
     ('subtract',
-     DateTime(2000, 1, 1),
+     Zulu(2000, 1, 1),
      datetime(1999, 12, 31),
      timedelta(days=1)),
-    ('shift', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
-    ('add', DateTime(2000, 1, 1), {'days': -1}, DateTime(1999, 12, 31)),
-    ('subtract', DateTime(2000, 1, 1), {'days': -1}, DateTime(2000, 1, 2)),
-    ('shift', DateTime(2000, 1, 1), {'years': 1}, DateTime(2001, 1, 1)),
-    ('shift', DateTime(2000, 1, 1), {'years': -1}, DateTime(1999, 1, 1)),
-    ('shift', DateTime(2000, 1, 1), {'weeks': 1}, DateTime(2000, 1, 8)),
-    ('shift', DateTime(2000, 1, 1), {'weeks': -1}, DateTime(1999, 12, 25)),
-    ('shift', DateTime(2000, 1, 1), {'months': 1}, DateTime(2000, 2, 1)),
-    ('shift', DateTime(2000, 1, 1), {'months': -1}, DateTime(1999, 12, 1)),
-    ('shift', DateTime(2000, 1, 1),
+    ('shift', Zulu(2000, 1, 1), {'days': -1}, Zulu(1999, 12, 31)),
+    ('add', Zulu(2000, 1, 1), {'days': -1}, Zulu(1999, 12, 31)),
+    ('subtract', Zulu(2000, 1, 1), {'days': -1}, Zulu(2000, 1, 2)),
+    ('shift', Zulu(2000, 1, 1), {'years': 1}, Zulu(2001, 1, 1)),
+    ('shift', Zulu(2000, 1, 1), {'years': -1}, Zulu(1999, 1, 1)),
+    ('shift', Zulu(2000, 1, 1), {'weeks': 1}, Zulu(2000, 1, 8)),
+    ('shift', Zulu(2000, 1, 1), {'weeks': -1}, Zulu(1999, 12, 25)),
+    ('shift', Zulu(2000, 1, 1), {'months': 1}, Zulu(2000, 2, 1)),
+    ('shift', Zulu(2000, 1, 1), {'months': -1}, Zulu(1999, 12, 1)),
+    ('shift', Zulu(2000, 1, 1),
      {'years': 2, 'months': 7, 'weeks': 13, 'days': 400},
-     DateTime(2003, 12, 5)),
+     Zulu(2003, 12, 5)),
 ])
 def test_datetime_shift(method, dt, delta, expected):
     meth = getattr(dt, method)
@@ -522,52 +522,52 @@ def test_datetime_shift(method, dt, delta, expected):
 
 
 @parametrize('dt,delta,expected', [
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
      timedelta(days=1,
                hours=1,
                minutes=1,
                seconds=1,
                milliseconds=1,
                microseconds=1),
-     DateTime(2000, 1, 2, 13, 31, 46, 1016)),
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+     Zulu(2000, 1, 2, 13, 31, 46, 1016)),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
      timedelta(weeks=1),
-     DateTime(2000, 1, 8, 12, 30, 45, 15)),
-    (DateTime(2000, 1, 1, 12, 30, 45, 0),
+     Zulu(2000, 1, 8, 12, 30, 45, 15)),
+    (Zulu(2000, 1, 1, 12, 30, 45, 0),
      60.123456,
-     DateTime(2000, 1, 1, 12, 31, 45, 123456)),
+     Zulu(2000, 1, 1, 12, 31, 45, 123456)),
 ])
 def test_datetime_addition(dt, delta, expected):
     dt1 = (dt + delta)
     dt2 = (delta + dt)
 
     assert dt1 == dt2 == expected
-    assert type(dt1) == type(dt2) == DateTime
+    assert type(dt1) == type(dt2) == Zulu
 
 
 def test_datetime_addition_invalid_type():
     with pytest.raises(TypeError):
-        DateTime() + 'string'
+        Zulu() + 'string'
 
 
 @parametrize('dt,offset,expected', [
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
      timedelta(days=1,
                hours=1,
                minutes=1,
                seconds=1,
                milliseconds=1,
                microseconds=1),
-     DateTime(1999, 12, 31, 11, 29, 43, 999014)),
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     DateTime(1999, 12, 31, 11, 29, 43, 999014),
+     Zulu(1999, 12, 31, 11, 29, 43, 999014)),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
+     Zulu(1999, 12, 31, 11, 29, 43, 999014),
      timedelta(days=1,
                hours=1,
                minutes=1,
                seconds=1,
                milliseconds=1,
                microseconds=1)),
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
      datetime(1999, 12, 31, 11, 29, 43, 999014),
      timedelta(days=1,
                hours=1,
@@ -575,22 +575,22 @@ def test_datetime_addition_invalid_type():
                seconds=1,
                milliseconds=1,
                microseconds=1)),
-    (DateTime(1999, 12, 31, 11, 29, 43, 999014),
-     DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(1999, 12, 31, 11, 29, 43, 999014),
+     Zulu(2000, 1, 1, 12, 30, 45, 15),
      timedelta(days=-1,
                hours=-1,
                minutes=-1,
                seconds=-1,
                milliseconds=-1,
                microseconds=-1)),
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
      timedelta(weeks=1),
-     DateTime(1999, 12, 25, 12, 30, 45, 15)),
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     DateTime(1999, 12, 25, 12, 30, 45, 15),
+     Zulu(1999, 12, 25, 12, 30, 45, 15)),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
+     Zulu(1999, 12, 25, 12, 30, 45, 15),
      timedelta(weeks=1)),
-    (DateTime(1999, 12, 25, 12, 30, 45, 15),
-     DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(1999, 12, 25, 12, 30, 45, 15),
+     Zulu(2000, 1, 1, 12, 30, 45, 15),
      timedelta(weeks=-1)),
 ])
 def test_datetime_subtraction(dt, offset, expected):
@@ -600,25 +600,25 @@ def test_datetime_subtraction(dt, offset, expected):
 
 
 @parametrize('dt,other,expected', [
-    (DateTime(2000, 1, 1), DateTime(2000, 1, 2), 'in 1 day'),
-    (DateTime(2000, 1, 2), DateTime(2000, 1, 1), '1 day ago'),
-    (DateTime(2000, 1, 1, 0), DateTime(2000, 1, 1, 1), 'in 1 hour'),
-    (DateTime(2000, 1, 1, 1), DateTime(2000, 1, 1, 0), '1 hour ago'),
-    (DateTime(2000, 1, 1, 0), DateTime(2000, 1, 1, 2), 'in 2 hours'),
-    (DateTime(2000, 1, 1, 2), DateTime(2000, 1, 1, 0), '2 hours ago'),
-    (DateTime(2000, 1, 1, 0, 0), DateTime(2000, 1, 1, 0, 1), 'in 1 minute'),
-    (DateTime(2000, 1, 1, 0, 1), DateTime(2000, 1, 1, 0, 0), '1 minute ago'),
-    (DateTime(2000, 1, 1, 0, 0, 0),
-     DateTime(2000, 1, 1, 0, 0, 1),
+    (Zulu(2000, 1, 1), Zulu(2000, 1, 2), 'in 1 day'),
+    (Zulu(2000, 1, 2), Zulu(2000, 1, 1), '1 day ago'),
+    (Zulu(2000, 1, 1, 0), Zulu(2000, 1, 1, 1), 'in 1 hour'),
+    (Zulu(2000, 1, 1, 1), Zulu(2000, 1, 1, 0), '1 hour ago'),
+    (Zulu(2000, 1, 1, 0), Zulu(2000, 1, 1, 2), 'in 2 hours'),
+    (Zulu(2000, 1, 1, 2), Zulu(2000, 1, 1, 0), '2 hours ago'),
+    (Zulu(2000, 1, 1, 0, 0), Zulu(2000, 1, 1, 0, 1), 'in 1 minute'),
+    (Zulu(2000, 1, 1, 0, 1), Zulu(2000, 1, 1, 0, 0), '1 minute ago'),
+    (Zulu(2000, 1, 1, 0, 0, 0),
+     Zulu(2000, 1, 1, 0, 0, 1),
      'in 1 second'),
-    (DateTime(2000, 1, 1, 0, 0, 1),
-     DateTime(2000, 1, 1, 0, 0, 0),
+    (Zulu(2000, 1, 1, 0, 0, 1),
+     Zulu(2000, 1, 1, 0, 0, 0),
      '1 second ago'),
-    (DateTime(2000, 1, 1, 0, 0, 0, 0),
-     DateTime(2000, 1, 1, 0, 0, 0, 1),
+    (Zulu(2000, 1, 1, 0, 0, 0, 0),
+     Zulu(2000, 1, 1, 0, 0, 0, 1),
      'in 0 seconds'),
-    (DateTime(2000, 1, 1, 0, 0, 0, 1),
-     DateTime(2000, 1, 1, 0, 0, 0, 0),
+    (Zulu(2000, 1, 1, 0, 0, 0, 1),
+     Zulu(2000, 1, 1, 0, 0, 0, 0),
      '1 second ago'),
 ])
 def test_datetime_time_to(dt, other, expected):
@@ -626,30 +626,30 @@ def test_datetime_time_to(dt, other, expected):
 
 
 def test_datetime_time_to_now():
-    assert DateTime.now().shift(minutes=1).time_to_now() == '1 minute ago'
-    assert DateTime.now().shift(minutes=-1).time_to_now() == 'in 1 minute'
+    assert Zulu.now().shift(minutes=1).time_to_now() == '1 minute ago'
+    assert Zulu.now().shift(minutes=-1).time_to_now() == 'in 1 minute'
 
 
 @parametrize('dt,other,expected', [
-    (DateTime(2000, 1, 1), DateTime(2000, 1, 2), '1 day ago'),
-    (DateTime(2000, 1, 2), DateTime(2000, 1, 1), 'in 1 day'),
-    (DateTime(2000, 1, 1, 0), DateTime(2000, 1, 1, 1), '1 hour ago'),
-    (DateTime(2000, 1, 1, 1), DateTime(2000, 1, 1, 0), 'in 1 hour'),
-    (DateTime(2000, 1, 1, 0), DateTime(2000, 1, 1, 2), '2 hours ago'),
-    (DateTime(2000, 1, 1, 2), DateTime(2000, 1, 1, 0), 'in 2 hours'),
-    (DateTime(2000, 1, 1, 0, 0), DateTime(2000, 1, 1, 0, 1), '1 minute ago'),
-    (DateTime(2000, 1, 1, 0, 1), DateTime(2000, 1, 1, 0, 0), 'in 1 minute'),
-    (DateTime(2000, 1, 1, 0, 0, 0),
-     DateTime(2000, 1, 1, 0, 0, 1),
+    (Zulu(2000, 1, 1), Zulu(2000, 1, 2), '1 day ago'),
+    (Zulu(2000, 1, 2), Zulu(2000, 1, 1), 'in 1 day'),
+    (Zulu(2000, 1, 1, 0), Zulu(2000, 1, 1, 1), '1 hour ago'),
+    (Zulu(2000, 1, 1, 1), Zulu(2000, 1, 1, 0), 'in 1 hour'),
+    (Zulu(2000, 1, 1, 0), Zulu(2000, 1, 1, 2), '2 hours ago'),
+    (Zulu(2000, 1, 1, 2), Zulu(2000, 1, 1, 0), 'in 2 hours'),
+    (Zulu(2000, 1, 1, 0, 0), Zulu(2000, 1, 1, 0, 1), '1 minute ago'),
+    (Zulu(2000, 1, 1, 0, 1), Zulu(2000, 1, 1, 0, 0), 'in 1 minute'),
+    (Zulu(2000, 1, 1, 0, 0, 0),
+     Zulu(2000, 1, 1, 0, 0, 1),
      '1 second ago'),
-    (DateTime(2000, 1, 1, 0, 0, 1),
-     DateTime(2000, 1, 1, 0, 0, 0),
+    (Zulu(2000, 1, 1, 0, 0, 1),
+     Zulu(2000, 1, 1, 0, 0, 0),
      'in 1 second'),
-    (DateTime(2000, 1, 1, 0, 0, 0, 0),
-     DateTime(2000, 1, 1, 0, 0, 0, 1),
+    (Zulu(2000, 1, 1, 0, 0, 0, 0),
+     Zulu(2000, 1, 1, 0, 0, 0, 1),
      '1 second ago'),
-    (DateTime(2000, 1, 1, 0, 0, 0, 1),
-     DateTime(2000, 1, 1, 0, 0, 0, 0),
+    (Zulu(2000, 1, 1, 0, 0, 0, 1),
+     Zulu(2000, 1, 1, 0, 0, 0, 0),
      'in 0 seconds'),
 ])
 def test_datetime_time_from(dt, other, expected):
@@ -657,26 +657,26 @@ def test_datetime_time_from(dt, other, expected):
 
 
 def test_datetime_time_from_now():
-    assert DateTime.now().shift(minutes=1).time_from_now() == 'in 1 minute'
-    assert DateTime.now().shift(minutes=-1).time_from_now() == '1 minute ago'
+    assert Zulu.now().shift(minutes=1).time_from_now() == 'in 1 minute'
+    assert Zulu.now().shift(minutes=-1).time_from_now() == '1 minute ago'
 
 
 def test_datetime_hash():
-    dt = DateTime(2000, 1, 1)
+    dt = Zulu(2000, 1, 1)
     assert hash(dt) == hash(datetime(2000, 1, 1, tzinfo=UTC))
 
 
 @parametrize('dt,other,expected', [
-    (DateTime(2000, 1, 1),
-     DateTime(2000, 1, 1),
+    (Zulu(2000, 1, 1),
+     Zulu(2000, 1, 1),
      True),
-    (DateTime(2000, 1, 1),
+    (Zulu(2000, 1, 1),
      datetime(2000, 1, 1, tzinfo=UTC),
      True),
-    (DateTime(2000, 1, 2),
-     DateTime(2000, 1, 1),
+    (Zulu(2000, 1, 2),
+     Zulu(2000, 1, 1),
      False),
-    (DateTime(2000, 1, 2),
+    (Zulu(2000, 1, 2),
      datetime(2000, 1, 1, tzinfo=UTC),
      False),
 ])
@@ -685,16 +685,16 @@ def test_datetime_compare_equal(dt, other, expected):
 
 
 @parametrize('dt,other,expected', [
-    (DateTime(2000, 1, 1),
-     DateTime(2000, 1, 1),
+    (Zulu(2000, 1, 1),
+     Zulu(2000, 1, 1),
      False),
-    (DateTime(2000, 1, 1),
+    (Zulu(2000, 1, 1),
      datetime(2000, 1, 1, tzinfo=UTC),
      False),
-    (DateTime(2000, 1, 2),
-     DateTime(2000, 1, 1),
+    (Zulu(2000, 1, 2),
+     Zulu(2000, 1, 1),
      True),
-    (DateTime(2000, 1, 2),
+    (Zulu(2000, 1, 2),
      datetime(2000, 1, 1, tzinfo=UTC),
      True),
 ])
@@ -703,16 +703,16 @@ def test_datetime_compare_not_equal(dt, other, expected):
 
 
 @parametrize('dt,other,expected', [
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
+     Zulu(2000, 1, 1, 12, 30),
      False),
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      False),
-    (DateTime(2000, 1, 1, 12, 30),
-     DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30),
+     Zulu(2000, 1, 1, 12, 30, 45, 15),
      True),
-    (DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
      datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      True),
 ])
@@ -721,22 +721,22 @@ def test_datetime_compare_less_than(dt, other, expected):
 
 
 @parametrize('dt,other,expected', [
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
+     Zulu(2000, 1, 1, 12, 30),
      False),
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      False),
-    (DateTime(2000, 1, 1, 12, 30),
-     DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30),
+     Zulu(2000, 1, 1, 12, 30, 45, 15),
      True),
-    (DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
      datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      True),
-    (DateTime(2000, 1, 1, 12, 30),
-     DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
+     Zulu(2000, 1, 1, 12, 30),
      True),
-    (DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
 ])
@@ -745,16 +745,16 @@ def test_datetime_compare_less_than_equal(dt, other, expected):
 
 
 @parametrize('dt,other,expected', [
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
+     Zulu(2000, 1, 1, 12, 30),
      True),
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
-    (DateTime(2000, 1, 1, 12, 30),
-     DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30),
+     Zulu(2000, 1, 1, 12, 30, 45, 15),
      False),
-    (DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
      datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      False),
 ])
@@ -763,22 +763,22 @@ def test_datetime_compare_greater_than(dt, other, expected):
 
 
 @parametrize('dt,other,expected', [
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
-     DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
+     Zulu(2000, 1, 1, 12, 30),
      True),
-    (DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30, 45, 15),
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
-    (DateTime(2000, 1, 1, 12, 30),
-     DateTime(2000, 1, 1, 12, 30, 45, 15),
+    (Zulu(2000, 1, 1, 12, 30),
+     Zulu(2000, 1, 1, 12, 30, 45, 15),
      False),
-    (DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
      datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      False),
-    (DateTime(2000, 1, 1, 12, 30),
-     DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
+     Zulu(2000, 1, 1, 12, 30),
      True),
-    (DateTime(2000, 1, 1, 12, 30),
+    (Zulu(2000, 1, 1, 12, 30),
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
 ])
@@ -787,116 +787,116 @@ def test_datetime_compare_greater_than_equal(dt, other, expected):
 
 
 @parametrize('dt,frame,expected', [
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'second',
-     DateTime(2015, 2, 5, 12, 30, 15)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 2, 5, 12, 30, 15)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'minute',
-     DateTime(2015, 2, 5, 12, 30)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 2, 5, 12, 30)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'hour',
-     DateTime(2015, 2, 5, 12)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 2, 5, 12)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'day',
-     DateTime(2015, 2, 5)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 2, 5)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'month',
-     DateTime(2015, 2, 1)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 2, 1)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'year',
-     DateTime(2015, 1, 1)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 1, 1)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'decade',
-     DateTime(2010, 1, 1)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2010, 1, 1)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'century',
-     DateTime(2000, 1, 1)),
+     Zulu(2000, 1, 1)),
 ])
 def test_datetime_start_of_frame(dt, frame, expected):
     assert dt.start_of(frame) == expected
 
 
 @parametrize('dt,frame,expected', [
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'second',
-     DateTime(2015, 2, 5, 12, 30, 15, 999999)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 2, 5, 12, 30, 15, 999999)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'minute',
-     DateTime(2015, 2, 5, 12, 30, 59, 999999)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 2, 5, 12, 30, 59, 999999)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'hour',
-     DateTime(2015, 2, 5, 12, 59, 59, 999999)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 2, 5, 12, 59, 59, 999999)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'day',
-     DateTime(2015, 2, 5, 23, 59, 59, 999999)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 2, 5, 23, 59, 59, 999999)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'month',
-     DateTime(2015, 2, 28, 23, 59, 59, 999999)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 2, 28, 23, 59, 59, 999999)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'year',
-     DateTime(2015, 12, 31, 23, 59, 59, 999999)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2015, 12, 31, 23, 59, 59, 999999)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'decade',
-     DateTime(2019, 12, 31, 23, 59, 59, 999999)),
-    (DateTime(2015, 2, 5, 12, 30, 15, 123456),
+     Zulu(2019, 12, 31, 23, 59, 59, 999999)),
+    (Zulu(2015, 2, 5, 12, 30, 15, 123456),
      'century',
-     DateTime(2099, 12, 31, 23, 59, 59, 999999)),
+     Zulu(2099, 12, 31, 23, 59, 59, 999999)),
 ])
 def test_datetime_end_of_frame(dt, frame, expected):
     assert dt.end_of(frame) == expected
 
 
 @parametrize('dt,span,count,expected', [
-    (DateTime(2015, 4, 4, 12, 30),
+    (Zulu(2015, 4, 4, 12, 30),
      'century',
      1,
-     (DateTime(2000, 1, 1, 0, 0),
-      DateTime(2099, 12, 31, 23, 59, 59, 999999))),
-    (DateTime(2015, 4, 4, 12, 30),
+     (Zulu(2000, 1, 1, 0, 0),
+      Zulu(2099, 12, 31, 23, 59, 59, 999999))),
+    (Zulu(2015, 4, 4, 12, 30),
      'decade',
      1,
-     (DateTime(2010, 1, 1, 0, 0),
-      DateTime(2019, 12, 31, 23, 59, 59, 999999))),
-    (DateTime(2015, 4, 4, 12, 30),
+     (Zulu(2010, 1, 1, 0, 0),
+      Zulu(2019, 12, 31, 23, 59, 59, 999999))),
+    (Zulu(2015, 4, 4, 12, 30),
      'century',
      3,
-     (DateTime(2000, 1, 1, 0, 0),
-      DateTime(2299, 12, 31, 23, 59, 59, 999999))),
-    (DateTime(2015, 4, 4, 12, 30),
+     (Zulu(2000, 1, 1, 0, 0),
+      Zulu(2299, 12, 31, 23, 59, 59, 999999))),
+    (Zulu(2015, 4, 4, 12, 30),
      'decade',
      3,
-     (DateTime(2010, 1, 1, 0, 0),
-      DateTime(2039, 12, 31, 23, 59, 59, 999999))),
-    (DateTime(2015, 4, 4, 12, 30),
+     (Zulu(2010, 1, 1, 0, 0),
+      Zulu(2039, 12, 31, 23, 59, 59, 999999))),
+    (Zulu(2015, 4, 4, 12, 30),
      'year',
      1,
-     (DateTime(2015, 1, 1, 0, 0),
-      DateTime(2015, 12, 31, 23, 59, 59, 999999))),
-    (DateTime(2015, 4, 4, 12, 30),
+     (Zulu(2015, 1, 1, 0, 0),
+      Zulu(2015, 12, 31, 23, 59, 59, 999999))),
+    (Zulu(2015, 4, 4, 12, 30),
      'month',
      1,
-     (DateTime(2015, 4, 1, 0, 0),
-      DateTime(2015, 4, 30, 23, 59, 59, 999999))),
-    (DateTime(2015, 4, 4, 12, 30),
+     (Zulu(2015, 4, 1, 0, 0),
+      Zulu(2015, 4, 30, 23, 59, 59, 999999))),
+    (Zulu(2015, 4, 4, 12, 30),
      'day',
      3,
-     (DateTime(2015, 4, 4, 0, 0),
-      DateTime(2015, 4, 6, 23, 59, 59, 999999))),
-    (DateTime(2015, 4, 4, 12, 30),
+     (Zulu(2015, 4, 4, 0, 0),
+      Zulu(2015, 4, 6, 23, 59, 59, 999999))),
+    (Zulu(2015, 4, 4, 12, 30),
      'hour',
      2,
-     (DateTime(2015, 4, 4, 12, 0),
-      DateTime(2015, 4, 4, 13, 59, 59, 999999))),
-    (DateTime(2015, 4, 4, 12, 30),
+     (Zulu(2015, 4, 4, 12, 0),
+      Zulu(2015, 4, 4, 13, 59, 59, 999999))),
+    (Zulu(2015, 4, 4, 12, 30),
      'minute',
      5,
-     (DateTime(2015, 4, 4, 12, 30, 0),
-      DateTime(2015, 4, 4, 12, 34, 59, 999999))),
-    (DateTime(2015, 4, 4, 12, 30, 47),
+     (Zulu(2015, 4, 4, 12, 30, 0),
+      Zulu(2015, 4, 4, 12, 34, 59, 999999))),
+    (Zulu(2015, 4, 4, 12, 30, 47),
      'second',
      20,
-     (DateTime(2015, 4, 4, 12, 30, 47, 0),
-      DateTime(2015, 4, 4, 12, 31, 6, 999999)))
+     (Zulu(2015, 4, 4, 12, 30, 47, 0),
+      Zulu(2015, 4, 4, 12, 31, 6, 999999)))
 ])
 def test_datetime_span(dt, span, count, expected):
     time_span_tuple = dt.span(span, count)
@@ -905,7 +905,7 @@ def test_datetime_span(dt, span, count, expected):
 
 def test_datetime_span_frame_error():
     frame = 'temp'
-    dt = DateTime(2015, 4, 4, 12, 30)
+    dt = Zulu(2015, 4, 4, 12, 30)
 
     with pytest.raises(ValueError) as exc:
         dt.span(frame)
@@ -917,212 +917,212 @@ def test_datetime_span_frame_error():
 @parametrize('frame,start,end,expected', [
     (
         'century',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2215, 4, 4, 12, 30),
-        [(DateTime(2000, 1, 1, 0, 0),
-          DateTime(2099, 12, 31, 23, 59, 59, 999999)),
-         (DateTime(2100, 1, 1, 0, 0),
-          DateTime(2199, 12, 31, 23, 59, 59, 999999))]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2215, 4, 4, 12, 30),
+        [(Zulu(2000, 1, 1, 0, 0),
+          Zulu(2099, 12, 31, 23, 59, 59, 999999)),
+         (Zulu(2100, 1, 1, 0, 0),
+          Zulu(2199, 12, 31, 23, 59, 59, 999999))]
     ),
     (
         'decade',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2049, 4, 4, 12, 30),
-        [(DateTime(2010, 1, 1, 0, 0),
-          DateTime(2019, 12, 31, 23, 59, 59, 999999)),
-         (DateTime(2020, 1, 1, 0, 0),
-          DateTime(2029, 12, 31, 23, 59, 59, 999999)),
-         (DateTime(2030, 1, 1, 0, 0),
-          DateTime(2039, 12, 31, 23, 59, 59, 999999))]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2049, 4, 4, 12, 30),
+        [(Zulu(2010, 1, 1, 0, 0),
+          Zulu(2019, 12, 31, 23, 59, 59, 999999)),
+         (Zulu(2020, 1, 1, 0, 0),
+          Zulu(2029, 12, 31, 23, 59, 59, 999999)),
+         (Zulu(2030, 1, 1, 0, 0),
+          Zulu(2039, 12, 31, 23, 59, 59, 999999))]
     ),
     (
         'year',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2018, 4, 4, 12, 30),
-        [(DateTime(2015, 1, 1, 0, 0),
-          DateTime(2015, 12, 31, 23, 59, 59, 999999)),
-         (DateTime(2016, 1, 1, 0, 0),
-          DateTime(2016, 12, 31, 23, 59, 59, 999999)),
-         (DateTime(2017, 1, 1, 0, 0),
-          DateTime(2017, 12, 31, 23, 59, 59, 999999))]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2018, 4, 4, 12, 30),
+        [(Zulu(2015, 1, 1, 0, 0),
+          Zulu(2015, 12, 31, 23, 59, 59, 999999)),
+         (Zulu(2016, 1, 1, 0, 0),
+          Zulu(2016, 12, 31, 23, 59, 59, 999999)),
+         (Zulu(2017, 1, 1, 0, 0),
+          Zulu(2017, 12, 31, 23, 59, 59, 999999))]
     ),
     (
         'month',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2015, 8, 4, 12, 30),
-        [(DateTime(2015, 4, 1, 0, 0),
-          DateTime(2015, 4, 30, 23, 59, 59, 999999)),
-         (DateTime(2015, 5, 1, 0, 0),
-          DateTime(2015, 5, 31, 23, 59, 59, 999999)),
-         (DateTime(2015, 6, 1, 0, 0),
-          DateTime(2015, 6, 30, 23, 59, 59, 999999)),
-         (DateTime(2015, 7, 1, 0, 0),
-          DateTime(2015, 7, 31, 23, 59, 59, 999999))]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2015, 8, 4, 12, 30),
+        [(Zulu(2015, 4, 1, 0, 0),
+          Zulu(2015, 4, 30, 23, 59, 59, 999999)),
+         (Zulu(2015, 5, 1, 0, 0),
+          Zulu(2015, 5, 31, 23, 59, 59, 999999)),
+         (Zulu(2015, 6, 1, 0, 0),
+          Zulu(2015, 6, 30, 23, 59, 59, 999999)),
+         (Zulu(2015, 7, 1, 0, 0),
+          Zulu(2015, 7, 31, 23, 59, 59, 999999))]
     ),
     (
         'day',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2015, 4, 8, 12, 30),
-        [(DateTime(2015, 4, 4, 0, 0),
-          DateTime(2015, 4, 4, 23, 59, 59, 999999)),
-         (DateTime(2015, 4, 5, 0, 0),
-          DateTime(2015, 4, 5, 23, 59, 59, 999999)),
-         (DateTime(2015, 4, 6, 0, 0),
-          DateTime(2015, 4, 6, 23, 59, 59, 999999)),
-         (DateTime(2015, 4, 7, 0, 0),
-          DateTime(2015, 4, 7, 23, 59, 59, 999999))]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2015, 4, 8, 12, 30),
+        [(Zulu(2015, 4, 4, 0, 0),
+          Zulu(2015, 4, 4, 23, 59, 59, 999999)),
+         (Zulu(2015, 4, 5, 0, 0),
+          Zulu(2015, 4, 5, 23, 59, 59, 999999)),
+         (Zulu(2015, 4, 6, 0, 0),
+          Zulu(2015, 4, 6, 23, 59, 59, 999999)),
+         (Zulu(2015, 4, 7, 0, 0),
+          Zulu(2015, 4, 7, 23, 59, 59, 999999))]
     ),
     (
         'hour',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2015, 4, 4, 16, 30),
-        [(DateTime(2015, 4, 4, 12, 0),
-          DateTime(2015, 4, 4, 12, 59, 59, 999999)),
-         (DateTime(2015, 4, 4, 13, 0),
-          DateTime(2015, 4, 4, 13, 59, 59, 999999)),
-         (DateTime(2015, 4, 4, 14, 0),
-          DateTime(2015, 4, 4, 14, 59, 59, 999999)),
-         (DateTime(2015, 4, 4, 15, 0),
-          DateTime(2015, 4, 4, 15, 59, 59, 999999))]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2015, 4, 4, 16, 30),
+        [(Zulu(2015, 4, 4, 12, 0),
+          Zulu(2015, 4, 4, 12, 59, 59, 999999)),
+         (Zulu(2015, 4, 4, 13, 0),
+          Zulu(2015, 4, 4, 13, 59, 59, 999999)),
+         (Zulu(2015, 4, 4, 14, 0),
+          Zulu(2015, 4, 4, 14, 59, 59, 999999)),
+         (Zulu(2015, 4, 4, 15, 0),
+          Zulu(2015, 4, 4, 15, 59, 59, 999999))]
     ),
     (
         'minute',
-        DateTime(2015, 4, 4, 12, 30, 0),
-        DateTime(2015, 4, 4, 12, 34, 0),
-        [(DateTime(2015, 4, 4, 12, 30, 0),
-          DateTime(2015, 4, 4, 12, 30, 59, 999999)),
-         (DateTime(2015, 4, 4, 12, 31, 0),
-          DateTime(2015, 4, 4, 12, 31, 59, 999999)),
-         (DateTime(2015, 4, 4, 12, 32, 0),
-          DateTime(2015, 4, 4, 12, 32, 59, 999999)),
-         (DateTime(2015, 4, 4, 12, 33, 0),
-          DateTime(2015, 4, 4, 12, 33, 59, 999999))]
+        Zulu(2015, 4, 4, 12, 30, 0),
+        Zulu(2015, 4, 4, 12, 34, 0),
+        [(Zulu(2015, 4, 4, 12, 30, 0),
+          Zulu(2015, 4, 4, 12, 30, 59, 999999)),
+         (Zulu(2015, 4, 4, 12, 31, 0),
+          Zulu(2015, 4, 4, 12, 31, 59, 999999)),
+         (Zulu(2015, 4, 4, 12, 32, 0),
+          Zulu(2015, 4, 4, 12, 32, 59, 999999)),
+         (Zulu(2015, 4, 4, 12, 33, 0),
+          Zulu(2015, 4, 4, 12, 33, 59, 999999))]
     ),
     (
         'second',
-        DateTime(2015, 4, 4, 12, 30, 1),
-        DateTime(2015, 4, 4, 12, 30, 5),
-        [(DateTime(2015, 4, 4, 12, 30, 1, 0),
-          DateTime(2015, 4, 4, 12, 30, 1, 999999)),
-         (DateTime(2015, 4, 4, 12, 30, 2, 0),
-          DateTime(2015, 4, 4, 12, 30, 2, 999999)),
-         (DateTime(2015, 4, 4, 12, 30, 3, 0),
-          DateTime(2015, 4, 4, 12, 30, 3, 999999)),
-         (DateTime(2015, 4, 4, 12, 30, 4, 0),
-          DateTime(2015, 4, 4, 12, 30, 4, 999999))]
+        Zulu(2015, 4, 4, 12, 30, 1),
+        Zulu(2015, 4, 4, 12, 30, 5),
+        [(Zulu(2015, 4, 4, 12, 30, 1, 0),
+          Zulu(2015, 4, 4, 12, 30, 1, 999999)),
+         (Zulu(2015, 4, 4, 12, 30, 2, 0),
+          Zulu(2015, 4, 4, 12, 30, 2, 999999)),
+         (Zulu(2015, 4, 4, 12, 30, 3, 0),
+          Zulu(2015, 4, 4, 12, 30, 3, 999999)),
+         (Zulu(2015, 4, 4, 12, 30, 4, 0),
+          Zulu(2015, 4, 4, 12, 30, 4, 999999))]
     ),
     (
         'second',
-        DateTime(2015, 4, 4, 12, 30, 5),
-        DateTime(2015, 4, 4, 12, 30, 1),
+        Zulu(2015, 4, 4, 12, 30, 5),
+        Zulu(2015, 4, 4, 12, 30, 1),
         []
     ),
 ])
 def test_datetime_span_range(frame, start, end, expected):
     span_range = []
-    for time_span in DateTime.span_range(frame, start, end):
+    for time_span in Zulu.span_range(frame, start, end):
         span_range.append(time_span)
 
     assert span_range == expected
 
 
 @parametrize('frame,start,end', [
-    ('century', '1', DateTime(2015, 4, 4, 12, 30, 0)),
-    ('year', DateTime(2015, 4, 4, 12, 30, 0), '1')
+    ('century', '1', Zulu(2015, 4, 4, 12, 30, 0)),
+    ('year', Zulu(2015, 4, 4, 12, 30, 0), '1')
 ])
 def test_datetime_span_range_error(frame, start, end):
     with pytest.raises(ParseError):
-        list(DateTime.span_range(frame, start, end))
+        list(Zulu.span_range(frame, start, end))
 
 
 @parametrize('frame,start,end,expected', [
     (
         'century',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2215, 4, 4, 12, 30),
-        [DateTime(2015, 4, 4, 12, 30),
-         DateTime(2115, 4, 4, 12, 30)]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2215, 4, 4, 12, 30),
+        [Zulu(2015, 4, 4, 12, 30),
+         Zulu(2115, 4, 4, 12, 30)]
     ),
     (
         'decade',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2045, 4, 4, 12, 30),
-        [DateTime(2015, 4, 4, 12, 30),
-         DateTime(2025, 4, 4, 12, 30),
-         DateTime(2035, 4, 4, 12, 30)]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2045, 4, 4, 12, 30),
+        [Zulu(2015, 4, 4, 12, 30),
+         Zulu(2025, 4, 4, 12, 30),
+         Zulu(2035, 4, 4, 12, 30)]
     ),
     (
         'year',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2018, 4, 4, 12, 30),
-        [DateTime(2015, 4, 4, 12, 30),
-         DateTime(2016, 4, 4, 12, 30),
-         DateTime(2017, 4, 4, 12, 30)]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2018, 4, 4, 12, 30),
+        [Zulu(2015, 4, 4, 12, 30),
+         Zulu(2016, 4, 4, 12, 30),
+         Zulu(2017, 4, 4, 12, 30)]
     ),
     (
         'month',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2015, 7, 4, 12, 30),
-        [DateTime(2015, 4, 4, 12, 30),
-         DateTime(2015, 5, 4, 12, 30),
-         DateTime(2015, 6, 4, 12, 30)]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2015, 7, 4, 12, 30),
+        [Zulu(2015, 4, 4, 12, 30),
+         Zulu(2015, 5, 4, 12, 30),
+         Zulu(2015, 6, 4, 12, 30)]
     ),
     (
         'day',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2015, 4, 7, 12, 30),
-        [DateTime(2015, 4, 4, 12, 30),
-         DateTime(2015, 4, 5, 12, 30),
-         DateTime(2015, 4, 6, 12, 30)]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2015, 4, 7, 12, 30),
+        [Zulu(2015, 4, 4, 12, 30),
+         Zulu(2015, 4, 5, 12, 30),
+         Zulu(2015, 4, 6, 12, 30)]
     ),
     (
         'hour',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2015, 4, 4, 15, 30),
-        [DateTime(2015, 4, 4, 12, 30),
-         DateTime(2015, 4, 4, 13, 30),
-         DateTime(2015, 4, 4, 14, 30)]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2015, 4, 4, 15, 30),
+        [Zulu(2015, 4, 4, 12, 30),
+         Zulu(2015, 4, 4, 13, 30),
+         Zulu(2015, 4, 4, 14, 30)]
     ),
     (
         'hour',
-        DateTime(2015, 4, 4, 12, 30, 15, 123456),
-        DateTime(2015, 4, 4, 15, 30),
-        [DateTime(2015, 4, 4, 12, 30, 15, 123456),
-         DateTime(2015, 4, 4, 13, 30, 15, 123456)]
+        Zulu(2015, 4, 4, 12, 30, 15, 123456),
+        Zulu(2015, 4, 4, 15, 30),
+        [Zulu(2015, 4, 4, 12, 30, 15, 123456),
+         Zulu(2015, 4, 4, 13, 30, 15, 123456)]
     ),
     (
         'minute',
-        DateTime(2015, 4, 4, 12, 30),
-        DateTime(2015, 4, 4, 12, 33),
-        [DateTime(2015, 4, 4, 12, 30),
-         DateTime(2015, 4, 4, 12, 31),
-         DateTime(2015, 4, 4, 12, 32)]
+        Zulu(2015, 4, 4, 12, 30),
+        Zulu(2015, 4, 4, 12, 33),
+        [Zulu(2015, 4, 4, 12, 30),
+         Zulu(2015, 4, 4, 12, 31),
+         Zulu(2015, 4, 4, 12, 32)]
     ),
     (
         'second',
-        DateTime(2015, 4, 4, 12, 30, 0),
-        DateTime(2015, 4, 4, 12, 30, 3),
-        [DateTime(2015, 4, 4, 12, 30, 0),
-         DateTime(2015, 4, 4, 12, 30, 1),
-         DateTime(2015, 4, 4, 12, 30, 2)]
+        Zulu(2015, 4, 4, 12, 30, 0),
+        Zulu(2015, 4, 4, 12, 30, 3),
+        [Zulu(2015, 4, 4, 12, 30, 0),
+         Zulu(2015, 4, 4, 12, 30, 1),
+         Zulu(2015, 4, 4, 12, 30, 2)]
     ),
     (
         'second',
-        DateTime(2015, 4, 4, 12, 30, 3),
-        DateTime(2015, 4, 4, 12, 30, 0),
+        Zulu(2015, 4, 4, 12, 30, 3),
+        Zulu(2015, 4, 4, 12, 30, 0),
         []
     ),
 ])
 def test_datetime_range(frame, start, end, expected):
-    time_range = list(DateTime.range(frame, start, end))
+    time_range = list(Zulu.range(frame, start, end))
 
     assert time_range == expected
 
 
 @parametrize('frame,start,end', [
-    ('century', '1', DateTime(2015, 4, 4, 12, 30, 0)),
-    ('year', DateTime(2015, 4, 4, 12, 30, 0), '1')
+    ('century', '1', Zulu(2015, 4, 4, 12, 30, 0)),
+    ('year', Zulu(2015, 4, 4, 12, 30, 0), '1')
 ])
 def test_datetime_range_error(frame, start, end):
     with pytest.raises(ParseError):
-        list(DateTime.range(frame, start, end))
+        list(Zulu.range(frame, start, end))
