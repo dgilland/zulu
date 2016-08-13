@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-vX.X.X (XXXX-XX-XX)
+v0.4.0 (2016-08-13)
 -------------------
 
 - Rename ``zulu.DateTime`` to ``zulu.Zulu``. **breaking change**
