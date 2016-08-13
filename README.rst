@@ -108,19 +108,19 @@ Why Zulu?
 
 Why zulu instead of `native datetimes <https://docs.python.org/3.5/library/datetime.html#datetime-objects>`_:
 
-- Zulu has extended datetime features such as ``parse()``, ``format()``, ``shift()``, and `pytz <http://pytz.sourceforge.net/>`_ timezone support.
+- Zulu has extended datetime features such as ``parse()``, ``format()``, ``shift()``, and `pytz`_ timezone support.
 - Parses ISO8601 and timestamps by default without any extra arguments.
 - Easier to reason about ``Zulu`` objects since they are only ever UTC datetimes.
 - Clear delineation between UTC and other time zones where timezone representation is only applicable for display or conversion to native datetime.
-- Supports more string parsing/formatting options using `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_ as well as ``strptime/strftime`` directives.
+- Supports more string parsing/formatting options using `Unicode date patterns`_ as well as ``strptime/strftime`` directives.
 
 
-Why zulu instead of `Arrow <https://arrow.readthedocs.io>`_:
+Why zulu instead of `Arrow`_:
 
 - Zulu is a drop-in replacement for native datetimes (inherits from ``datetime.datetime``). No need to convert using ``arrow.datetime`` when you need a datetime (zulu is always a datetime).
 - Stricter parsing to avoid silent errors. For example, one might expect ``arrow.get('02/08/1987', 'MM/DD/YY')`` to fail (input does not match format) but it gladly returns ``<Arrow [2019-02-08T00:00:00+00:00)`` whereas ``zulu.parse('02/08/1987', '%m/%d/%y')`` throws ``zulu.parser.ParseError: Value "02/08/1987" does not match any format in ['%m/%d/%y']``.
 - Avoids timezone/DST shifting bugs by only dealing with UTC datetimes when applying timedeltas or performing other calculations.
-- Supports ``strptime/strftime`` as well as `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_ for string parsing/formatting.
+- Supports ``strptime/strftime`` as well as `Unicode date patterns`_ for string parsing/formatting.
 
 
 Special Thanks
@@ -128,17 +128,26 @@ Special Thanks
 
 Special thanks goes out to the authors/contributors of the following libraries that have made it possible for ``zulu`` to exist:
 
-- `Babel <https://github.com/python-babel/babel>`_
-- `iso8601 <https://bitbucket.org/micktwomey/pyiso8601>`_
-- `python-dateutil <https://github.com/dateutil/dateutil>`_
-- `pytimeparse <https://github.com/wroberts/pytimeparse>`_
-- `pytz <http://pythonhosted.org/pytz>`_
-- `tzlocal <https://github.com/regebro/tzlocal>`_
+- `Babel`_
+- `iso8601`_
+- `python-dateutil`_
+- `pytimeparse`_
+- `pytz`_
+- `tzlocal`_
 
 
 For the full documentation, please visit https://zulu.readthedocs.io.
 
 
+
+.. _Unicode date patterns: http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table
+.. _Arrow: https://arrow.readthedocs.io
+.. _Babel: https://github.com/python-babel/babel
+.. _iso8601: https://bitbucket.org/micktwomey/pyiso8601
+.. _python-dateutil: https://github.com/dateutil/dateutil>
+.. _pytimeparse: https://github.com/wroberts/pytimeparse>
+.. _pytz: http://pythonhosted.org/pytz
+.. _tzlocal: <https://github.com/regebro/tzlocal>
 
 .. |version| image:: https://img.shields.io/pypi/v/zulu.svg?style=flat-square
     :target: https://pypi.python.org/pypi/zulu/

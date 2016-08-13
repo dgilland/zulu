@@ -159,7 +159,7 @@ The default timezone is ignored when the input has it set:
     # <Zulu [2016-07-25T22:33:18+00:00]>
 
 
-String parsing/formatting in ``Zulu`` supports both `strftime/strptime <https://docs.python.org/3.5/library/datetime.html#strftime-and-strptime-behavior>`_ directives and `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_.
+String parsing/formatting in ``Zulu`` supports both `strftime/strptime <https://docs.python.org/3.5/library/datetime.html#strftime-and-strptime-behavior>`_ directives and `Unicode date patterns`_.
 
 .. code-block:: python
 
@@ -227,7 +227,7 @@ Format Tokens
 Zulu supports two different styles of string parsing/formatting tokens:
 
 - All `Python strptime/strftime directives <https://docs.python.org/3.5/library/datetime.html#strftime-and-strptime-behavior>`_
-- A subset of `Unicode date patterns <http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table>`_
+- A subset of `Unicode date patterns`_
 
 Either style can be used during parsing:
 
@@ -613,3 +613,6 @@ Similar to ``Zulu.time_to/from``, ``Delta`` objects can be humanized with the ``
 
     delta.format(style='narrow')
     # '3h'
+
+
+.. _Unicode date patterns: http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table
