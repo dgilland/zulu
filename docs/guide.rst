@@ -583,6 +583,12 @@ Similar to ``Zulu.time_to/from``, ``Delta`` objects can be humanized with the ``
     delta.format(granularity='day')
     # '1 day'
 
+    delta.format(locale='de')
+    # '3 Stunden'
+
+    delta.format(locale='fr', add_direction=True)
+    # 'dans 3 heures'
+
     delta.format(threshold=0)
     # '0 years'
 

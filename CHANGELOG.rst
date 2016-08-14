@@ -7,6 +7,7 @@ Changelog
 - Rename parse-from-timestamp token from ``X`` to ``timestamp``. **breaking change**
 - Add ``zulu.create`` as factory function to create a ``zulu.Zulu`` instance.
 - Add locale support to ``Zulu.format`` when using Unicode date pattern format tokens.
+- Restore locale support to ``Delta.format``.
 
 
 v0.5.0 (2016-08-13)
