@@ -4,6 +4,7 @@ Changelog
 
 - Replace internal implementation of Unicode date pattern formatting with Babel's ``format_datetime``. **breaking change**
 - Remove support for formatting to timestamp using ``X`` and ``XX``. **breaking change**
+- Rename parse-from-timestamp token from ``X`` to ``timestamp``. **breaking change**
 - Add ``zulu.create`` as factory function to create a ``zulu.Zulu`` instance.
 - Add locale support to ``Zulu.format`` when using Unicode date pattern format tokens.
 

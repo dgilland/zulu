@@ -205,7 +205,7 @@ The following keywords can be supplied to ``zulu.parse`` in place of a format di
 
 .. code-block:: python
 
-    zulu.parse(1469475198, 'X')
+    zulu.parse(1469475198, 'timestamp')
     # <Zulu [2016-07-25T19:33:18+00:00]>
 
 

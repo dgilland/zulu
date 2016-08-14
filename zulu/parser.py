@@ -24,7 +24,7 @@ from ._compat import string_types
 EPOCH = pytz.UTC.localize(datetime(1970, 1, 1), is_dst=None)
 
 ISO8601 = 'ISO8601'
-TIMESTAMP = 'X'
+TIMESTAMP = 'timestamp'
 DEFAULT_PARSE_DATETIME_FORMATS = (ISO8601, TIMESTAMP)
 
 
@@ -163,7 +163,7 @@ def _parse_datetime_format(obj, format):
     """Parse `obj` as datetime using `format`."""
     if format.upper() == ISO8601:
         return iso8601.parse_date(obj, default_timezone=None)
-    elif format.upper() == TIMESTAMP:
+    elif format.lower() == TIMESTAMP:
         return datetime.fromtimestamp(obj, pytz.UTC)
     else:
         if '%' not in format:
