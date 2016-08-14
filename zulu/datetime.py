@@ -365,7 +365,7 @@ class Zulu(datetime):
         Returns:
             :class:`float`
         """
-        return (self - self.epoch).total_seconds()
+        return parser.get_timestamp(self)
 
     def copy(self):
         """Return a new :class`Zulu` instance with the same datetime value.
