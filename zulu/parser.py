@@ -8,24 +8,17 @@ from functools import partial
 from itertools import groupby
 from datetime import datetime, timedelta
 
-from babel.dates import format_timedelta as _format_timedelta
+from babel.dates import (
+    LC_TIME,
+    format_timedelta as _format_timedelta,
+    format_datetime as _format_datetime
+)
 import iso8601
 import pytimeparse
 import pytz
 import tzlocal
 
 from ._compat import string_types
-
-
-def _truncate(value, length):
-    return value[:length]
-
-
-def _remove_leading_zero(value, count=1):
-    for _ in range(count):
-        if value.startswith('0'):
-            value = value[1:]
-    return value
 
 
 EPOCH = pytz.UTC.localize(datetime(1970, 1, 1), is_dst=None)
@@ -76,43 +69,10 @@ DATE_PATTERN_TO_DIRECTIVE = {
     'SSS': '%f',     # Microsecond padded
     'SS': '%f',      # Microsecond padded
     'S': '%f',       # Microsecond not padded
-    'A': '%p',       # AM or PM
     'a': '%p',       # am or pm
+    'z': '%z',       # UTC offset without separator
     'Z': '%z',       # UTC offset without separator
-    'ZZ': '%z',      # UTC offset with separator
 }
-
-# Transform functions to apply to strftime() output from these date patterns.
-# These are use to modify strftime() output for cases where strftime() cannot
-# produce the desired output but can produce something that can be transformed
-# in the what's expected.
-PATTERN_FORMAT_TRANSFORMS = {
-    'M': _remove_leading_zero,
-    'DD': partial(_remove_leading_zero, count=1),
-    'D': partial(_remove_leading_zero, count=2),
-    'd': _remove_leading_zero,
-    'ee': lambda value: '0{0}'.format(value),
-    'H': _remove_leading_zero,
-    'h': _remove_leading_zero,
-    'm': _remove_leading_zero,
-    's': _remove_leading_zero,
-    'SSSSS': partial(_truncate, length=5),
-    'SSSS': partial(_truncate, length=4),
-    'SSS': partial(_truncate, length=3),
-    'SS': partial(_truncate, length=2),
-    'S': partial(_truncate, length=1),
-    'A': lambda value: value.upper(),
-    'a': lambda value: value.lower(),
-    'ZZ': lambda value: value[:-2] + ':' + value[-2:],
-}
-
-# Pattern formatter functions that operate on the datetime object. These
-# correspond to patterns that are not supported by stftime().
-PATTERN_DATETIME_FORMATTERS = {
-    'XX': lambda dt: str(get_timestamp(dt)),      # Timestamp float
-    'X': lambda dt: str(int(get_timestamp(dt))),  # Timestamp integer
-}
-
 
 TIMEDELTA_GRANULARITIES = ('second',
                            'minute',
@@ -193,7 +153,7 @@ def _parse_datetime_formats(obj, formats):
     if dt is None:
         err = ', '.join('"{0}" ({1})'.format(format, errors[format])
                         for format in formats)
-        raise ParseError('Value "{0}" does not match any format in {1}'
+        raise ParseError('Value "{0}" does not match any format in [{1}]'
                          .format(obj, err))
 
     return dt
@@ -239,7 +199,7 @@ def parse_timedelta(obj):
     return timedelta(seconds=seconds)
 
 
-def format_datetime(dt, format=None, tz=None):
+def format_datetime(dt, format=None, tz=None, locale=LC_TIME):
     """Return string formatted datetime, `dt`, using format directives or
     pattern in `format`. If timezone, `tz`, is supplied, the datetime will be
     shifted to that timezone before being formatted.
@@ -250,6 +210,8 @@ def format_datetime(dt, format=None, tz=None):
             which uses ISO-8601 format.
         tz (None|str|tzinfo, optional): Timezone to shift `dt` to before
             formatting.
+        locale (str|Locale, optional): A ``Locale`` object or locale
+            identifer. Defaults to system default.
 
     Returns:
         str
@@ -278,27 +240,7 @@ def format_datetime(dt, format=None, tz=None):
     elif '%' in format:
         return dt.strftime(format)
     else:
-        return _format_date_pattern(dt, format)
-
-
-def _format_date_pattern(dt, format):
-    """Format datetime, `dt`, using date-pattern format, `format`."""
-    formatted = ''
-
-    for token in _tokenize_date_pattern(format):
-        if token in DATE_PATTERN_TO_DIRECTIVE:
-            value = dt.strftime(DATE_PATTERN_TO_DIRECTIVE[token])
-        else:
-            value = token
-
-        if token in PATTERN_FORMAT_TRANSFORMS:
-            value = PATTERN_FORMAT_TRANSFORMS[token](value)
-        elif token in PATTERN_DATETIME_FORMATTERS:
-            value = PATTERN_DATETIME_FORMATTERS[token](dt)
-
-        formatted += value
-
-    return formatted
+        return _format_datetime(dt, format, locale=locale)
 
 
 def _date_pattern_to_directive(format):

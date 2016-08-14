@@ -63,6 +63,21 @@ Install using pip:
     dt.datetime
     # datetime.datetime(2016, 7, 25, 19, 33, 18, 137493, tzinfo=<UTC>)
 
+    dt.format('%Y-%m-%d')
+    # 2016-07-25
+
+    dt.format('YYYY-MM-dd')
+    # 2016-07-25
+
+    dt.format("E, MMM d, ''YY")
+    # "Mon, Jul 25, '16"
+
+    dt.format("E, MMM d, ''YY", locale='de')
+    # "Mo., Juli 25, '16"
+
+    dt.format("E, MMM d, ''YY", locale='fr')
+    # "lun., juil. 25, '16"
+
     dt.shift(hours=-5, minutes=10)
     # <Zulu [2016-07-25T14:43:18.137493+00:00]>
 

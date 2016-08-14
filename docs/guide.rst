@@ -216,7 +216,7 @@ ISO8601    Parse ISO8601 string      - 2016-07-25 15:33:18-0400
                                      - 2016-07-25 15:33
                                      - 2016-07-25
                                      - 2016-07
-X          Parse POSIX timestamp     - 1469475198
+timestamp  Parse POSIX timestamp     - 1469475198
                                      - 1469475198.314218
 ========== ========================= ===========================
 
@@ -260,10 +260,10 @@ All directives from https://docs.python.org/3.5/library/datetime.html#strftime-a
 Date Patterns
 +++++++++++++
 
-A subset of patterns from http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table are supported:
+A subset of patterns from http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table are supported for parsing while _all_ patterns are supported for formatting:
 
 ============= ================ ======== =============================================
-Attribute     Style            Pattern  Sample Output
+Attribute     Style            Pattern  Examples
 ============= ================ ======== =============================================
 Year          4-digit          YYYY     2000, 2001, 2002 ... 2015, 2016
 Year          2-digit          YY       00, 01, 02 ... 15, 16
@@ -276,19 +276,18 @@ Day of Month  int, no padding  d        1, 2, 3 ... 30, 31
 Day of Year   int, padded      DDD      001, 002, 003 ... 054, 055 ... 364, 365
 Day of Year   int, padded      DD       01, 02, 03 ... 54, 55 ... 364, 365
 Day of Year   int, no padding  D        1, 2, 3 ... 54, 55 ... 364, 365
-Weekday       full name        EEEE     Monday, Tuesday, Wednesday
-Weekday       abbr name        EEE      Mon, Tue, Wed
-Weekday       abbr name        EE       Mon, Tue, Wed
-Weekday       abbr name        E        Mon, Tue, Wed
-Weekday       abbr name        eee      Mon, Tue, Wed
+Weekday       full name        EEEE     Sunday, Monday, Tuesday ... Friday, Saturday
+Weekday       abbr name        EEE      Sun, Mon, Tue ... Fri, Sat
+Weekday       abbr name        EE       Sun, Mon, Tue ... Fri, Sat
+Weekday       abbr name        E        Sun, Mon, Tue ... Fri, Sat
+Weekday       abbr name        eee      Sun, Mon, Tue ... Fri, Sat
 Weekday       int, padded      ee       01, 02, 03 ... 06, 07
 Weekday       int, no padding  e        1, 2, 3 ... 6, 7
 Hour          24h, padded      HH       00, 01, 02 ... 22, 23
 Hour          24h, no padding  H        0, 1, 2 ... 22, 23
 Hour          12h, padded      hh       00, 01, 02 ... 11, 12
 Hour          12h, no padding  h        0, 1, 2, ... 11, 12
-AM / PM       upper case       A        AM, PM
-AM / PM       lower case       a        am, pm
+AM / PM       upper case       a        AM, PM
 Minute        int, padded      mm       00, 01, 02 ... 58, 59
 Minute        int, no padding  m        0, 1, 2 ... 58, 59
 Second        int, padded      ss       00, 01, 02 ... 58, 59
@@ -300,9 +299,6 @@ Microsecond   int, truncated   SSS      000, 001 ... 998, 999
 Microsecond   int, truncated   SS       00, 01 ... 98, 99
 Microsecond   int, truncated   S        0, 1 ... 8, 9
 Timezone      w/o separator    Z        -1100, -1000 ... +0000 ... +1100, +1200
-Timezone      w/ separator     ZZ       -11:00, -10:00 ... +00:00 ... +11:00, +12:00
-Timestamp     float            XX       1470111298.690562
-Timestamp     int              X        1470111298
 ============= ================ ======== =============================================
 
 

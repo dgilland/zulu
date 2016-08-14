@@ -125,11 +125,17 @@ def test_datetime_parse_format(string, kargs, expected):
     assert Zulu.parse(string, **kargs) == expected
 
 
-@parametrize('dt,pattern,expected', [
+@parametrize('dt,opts,expected', [
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'YYYY', '2000'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'YY', '00'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'MMMM', 'January'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456),
+     {'format': 'MMMM', 'locale': 'fr'},
+     'janvier'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'MMM', 'Jan'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456),
+     {'format': 'MMM', 'locale': 'fr'},
+     'janv.'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'MM', '01'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'M', '1'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'DDD', '005'),
@@ -138,12 +144,18 @@ def test_datetime_parse_format(string, kargs, expected):
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'dd', '05'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'd', '5'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'EEEE', 'Wednesday'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456),
+     {'format': 'EEEE', 'locale': 'fr'},
+     'mercredi'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'EEE', 'Wed'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456),
+     {'format': 'EEE', 'locale': 'fr'},
+     'mer.'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'EE', 'Wed'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'E', 'Wed'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'eee', 'Wed'),
-    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'ee', '03'),
-    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'e', '3'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'ee', '04'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'e', '4'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'HH', '13'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'H', '13'),
     (Zulu(2000, 1, 5, 9, 7, 8, 123456), 'HH', '09'),
@@ -155,21 +167,19 @@ def test_datetime_parse_format(string, kargs, expected):
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'ss', '08'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 's', '8'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SSSSSS', '123456'),
-    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SSSSS', '12345'),
-    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SSSS', '1234'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SSSSS', '12346'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SSSS', '1235'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SSS', '123'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'SS', '12'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'S', '1'),
-    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'A', 'PM'),
-    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'a', 'pm'),
+    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'a', 'PM'),
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'Z', '+0000'),
-    (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'ZZ', '+00:00'),
-    (Zulu(1970, 1, 1, 0, 17, 30), 'XX', '1050.0'),
-    (Zulu(1970, 1, 1, 0, 17, 30, 123456), 'X', '1050'),
     (Zulu(), ' ', ' '),
 ])
-def test_datetime_format_pattern(dt, pattern, expected):
-    assert dt.format(pattern) == expected
+def test_datetime_format_pattern(dt, opts, expected):
+    if not isinstance(opts, dict):
+        opts = {'format': opts}
+    assert dt.format(**opts) == expected
 
 
 @parametrize('string,pattern', [

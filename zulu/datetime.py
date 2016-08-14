@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 import time
 
+from babel.dates import LC_TIME
 from dateutil.relativedelta import relativedelta
 import pytz
 import tzlocal
@@ -391,20 +392,29 @@ class Zulu(datetime):
         """
         return calendar.monthrange(self.year, self.month)[1]
 
-    def format(self, format=None, tz=None):
+    def format(self, format=None, tz=None, locale=LC_TIME):
         """Return datetime as a string using the format string `format` while
         optionally converting to timezone `tz` first.
+
+        .. note::
+
+            A ``Locale`` object or string identifier can be provided to display
+            the object in that particular locale **but only when using date
+            pattern tokens.** Using a locale other than the current system
+            locale is not supported for strftime tokens.
 
         Args:
             format (str): Format to return string in. If ``None``, ISO 8601
                 format is used. Defaults to ``None``.
             tz (None|str|tzinfo, optional): Timezone to convert to before
                 formatting. Defaults to ``None``.
+            locale (str|Locale, optional): A ``Locale`` object or locale
+                identifer. Defaults to system default.
 
         Returns:
             :class:`str`
         """
-        return parser.format_datetime(self, format, tz=tz)
+        return parser.format_datetime(self, format, tz=tz, locale=locale)
 
     def time_from(self, dt, **options):
         """Return "time ago" difference between this datetime and another as a
