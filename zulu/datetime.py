@@ -924,8 +924,11 @@ class Zulu(datetime):
 
         if isinstance(result, datetime):
             return self.fromdatetime(result)
+        elif isinstance(result, timedelta):
+            return Delta.fromtimedelta(result)
         else:
             return result
+
 
 #: Minimum Zulu value.
 Zulu.min = Zulu(1, 1, 1)
