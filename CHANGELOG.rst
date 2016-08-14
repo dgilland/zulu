@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v0.6.0 (2016-08-14)
+-------------------
+
 - Replace internal implementation of Unicode date pattern formatting with Babel's ``format_datetime``. **breaking change**
 - Remove support for formatting to timestamp using ``X`` and ``XX``. **breaking change**
 - Rename parse-from-timestamp token from ``X`` to ``timestamp``. **breaking change**
