@@ -7,11 +7,17 @@ API Reference
 .. autofunction:: zulu.now
 
 
+.. autofunction:: zulu.create
+
+
 .. autofunction:: zulu.parse
+
 
 .. autofunction:: zulu.range
 
+
 .. autofunction:: zulu.span_range
+
 
 .. autofunction:: zulu.delta
 

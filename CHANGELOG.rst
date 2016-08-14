@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+- Add ``zulu.create`` as factory function to create a ``zulu.Zulu`` instance.
+
+
 v0.5.0 (2016-08-13)
 -------------------
 

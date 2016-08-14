@@ -9,7 +9,7 @@ import pytest
 import pytz
 from tzlocal import get_localzone
 
-from zulu import Zulu, ParseError
+from zulu import Zulu, ParseError, create
 from zulu.parser import DATE_PATTERN_TO_DIRECTIVE
 
 
@@ -21,6 +21,7 @@ eastern = pytz.timezone('US/Eastern')
 
 def test_datetime_defaults():
     assert Zulu() == Zulu.fromtimestamp(0)
+    assert create() == Zulu()
 
 
 @parametrize('factory', [
