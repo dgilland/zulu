@@ -18,7 +18,7 @@ import pytimeparse
 import pytz
 import tzlocal
 
-from ._compat import string_types
+from ._compat import number_types, string_types
 
 
 EPOCH = pytz.UTC.localize(datetime(1970, 1, 1), is_dst=None)
@@ -176,7 +176,7 @@ def parse_timedelta(obj):
     duration.
 
     Args:
-        obj (str|timedelta): Object to parse.
+        obj (str|number|timedelta): Object to parse.
 
     Returns:
         timedelta
@@ -188,13 +188,21 @@ def parse_timedelta(obj):
     if isinstance(obj, timedelta):
         return obj
 
-    if not isinstance(obj, string_types):
-        raise TypeError('Expected string object, not {0}'.format(type(obj)))
+    is_string = isinstance(obj, string_types)
+    is_number = isinstance(obj, number_types)
 
-    seconds = pytimeparse.parse(obj)
+    if not is_string and not is_number:
+        raise TypeError('Expected string or number type, not {0}'
+                        .format(type(obj).__name__))
 
-    if seconds is None:
-        raise ParseError('Value "{0}" is not a recognized duration format')
+    if is_string:
+        seconds = pytimeparse.parse(obj)
+
+        if seconds is None:
+            raise ParseError('Value "{0}" is not a recognized duration format'
+                             .format(obj))
+    else:
+        seconds = obj
 
     return timedelta(seconds=seconds)
 
@@ -219,12 +227,12 @@ def format_datetime(dt, format=None, tz=None, locale=LC_TIME):
     if not isinstance(dt, datetime):
         raise TypeError("zulu.parser.format()'s first argument must be a "
                         "datetime, not {0}"
-                        .format(type(dt)))  # pragma: no cover
+                        .format(type(dt).__name__))  # pragma: no cover
 
     if format is not None and not isinstance(format, string_types):
         raise TypeError("zulu.parser.format()'s second argument must be a "
                         "string or None, not {0}"
-                        .format(type(format)))  # pragma: no cover
+                        .format(type(format).__name__))  # pragma: no cover
 
     if not is_valid_timezone(tz):  # pragma: no cover
         raise ValueError('Unrecognized timezone: {0}'.format(tz))

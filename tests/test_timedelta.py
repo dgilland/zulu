@@ -11,6 +11,7 @@ from .fixtures import parametrize
 
 @parametrize('obj,expected', [
     (timedelta(seconds=60), Delta(seconds=60)),
+    (60, Delta(seconds=60)),
     ('32m', Delta(minutes=32)),
     ('2h32m', Delta(hours=2, minutes=32)),
     ('3d2h32m', Delta(days=3, hours=2, minutes=32)),

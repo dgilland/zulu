@@ -6,6 +6,7 @@ v0.7.0 (XXXX-XX-XX)
 -------------------
 
 - Make ``Zulu.__sub__`` and ``Zulu.subtract`` return a ``Delta`` object instead of ``datetime.timedelta``.
+- Make ``zulu.delta`` and ``Zulu.Delta.parse`` accept a number.
 
 
 v0.6.0 (2016-08-14)

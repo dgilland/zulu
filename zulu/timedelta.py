@@ -20,7 +20,7 @@ class Delta(timedelta):
         """Return :class:`.Delta` object parsed from `obj`.
 
         Args:
-            obj (str|timedelta): Object to parse into a :class:`.Delta`
+            obj (str|number|timedelta): Object to parse into a :class:`.Delta`
                 object.
 
         Returns:
