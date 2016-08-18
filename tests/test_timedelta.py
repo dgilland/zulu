@@ -100,3 +100,15 @@ def test_timedelta_format(delta, opts, expected):
 def test_timedelta_format_exception(opts, exception):
     with pytest.raises(exception):
         Delta(1).format(**opts)
+
+
+def test_timedelta_math_operations_return_type():
+    delta = Delta(days=1, hours=1, minutes=1, seconds=1, microseconds=1)
+
+    assert isinstance(delta + delta, Delta)
+    assert isinstance(delta - delta, Delta)
+    assert isinstance(delta * 1, Delta)
+    assert isinstance(delta / 1, Delta)
+    assert isinstance(delta // 1, Delta)
+    assert isinstance(delta % delta, Delta)
+    assert isinstance(divmod(delta, delta)[1], Delta)

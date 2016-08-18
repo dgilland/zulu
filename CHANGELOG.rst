@@ -8,6 +8,7 @@ v0.7.0 (XXXX-XX-XX)
 - Make ``Zulu.__sub__`` and ``Zulu.subtract`` return a ``Delta`` object instead of ``datetime.timedelta``.
 - Make ``zulu.delta`` and ``Zulu.Delta.parse`` accept a number.
 - Allow the first argument to ``Zulu.shift`` be a timedelta or relative delta object.
+- Ensure that mathematical magic methods for ``Delta`` return ``Delta`` objects and not ``datetime.timedelta``.
 
 
 v0.6.0 (2016-08-14)
