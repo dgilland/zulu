@@ -10,6 +10,7 @@ from datetime import timedelta
 from babel.dates import LC_TIME
 
 from . import parser
+from ._compat import PY2
 
 
 def _asdelta(func):
@@ -25,13 +26,16 @@ def _asdelta(func):
     the timedelta result, another when we create a new Delta) so there would be
     some performance gains from doing so though.
     """
-    @wraps(func)
+    # NOTE: We're setting assigned because in Python 2.7, @wraps fails for
+    # certain timedelta magic methods due to certain attributes missing from
+    # the timedelta class that @wraps looks for by default.
+    @wraps(func, assigned=('__name__', '__doc__'))
     def decorated(*args, **kargs):
         result = func(*args, **kargs)
 
         if isinstance(result, timedelta):
             return Delta.fromtimedelta(result)
-        elif isinstance(result, tuple):
+        elif isinstance(result, tuple):  # pragma: no cover
             # This handles __divmod__ return.
             return tuple(Delta.fromtimedelta(item)
                          if isinstance(item, timedelta)
@@ -110,9 +114,16 @@ Delta.__sub__ = _asdelta(Delta.__sub__)
 Delta.__mul__ = _asdelta(Delta.__mul__)
 Delta.__rmul__ = _asdelta(Delta.__rmul__)
 Delta.__floordiv__ = _asdelta(Delta.__floordiv__)
-Delta.__truediv__ = _asdelta(Delta.__truediv__)
-Delta.__mod__ = _asdelta(Delta.__mod__)
-Delta.__divmod__ = _asdelta(Delta.__divmod__)
+
+
+if PY2:  # pragma: no cover
+    # NOTE: Python 2 timedelta doesn't implement mod/divmod.
+    Delta.__div__ = _asdelta(Delta.__div__)
+else:  # pragma: no cover
+    Delta.__truediv__ = _asdelta(Delta.__truediv__)
+    Delta.__mod__ = _asdelta(Delta.__mod__)
+    Delta.__divmod__ = _asdelta(Delta.__divmod__)
+
 
 # Override timedelta.min/max/resolution with equivalent Delta objects.
 Delta.min = Delta(-999999999)
