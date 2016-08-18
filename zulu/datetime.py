@@ -496,6 +496,7 @@ class Zulu(datetime):
         return super(self.__class__, self).astimezone(tz)
 
     def shift(self,
+              other=None,
               years=0,
               months=0,
               weeks=0,
@@ -508,6 +509,8 @@ class Zulu(datetime):
         the supplied arguments and return a new :class:`.Zulu` instance.
 
         Args:
+            other (timedelta|relativedelta, optional): A ``timedelta`` or
+                ``dateutil.relativedelta`` object to add.
             years (int, optional): Years to shift.
             months (int, optional): Months to shift.
             weeks (int, optional): Weeks to shift.
@@ -520,6 +523,9 @@ class Zulu(datetime):
         Returns:
             :class:`.Zulu`
         """
+        if isinstance(other, (timedelta, relativedelta)):
+            return self + other
+
         dt = self + relativedelta(years=years,
                                   months=months,
                                   weeks=weeks,
