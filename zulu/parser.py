@@ -171,42 +171,6 @@ def _parse_datetime_format(obj, format):
         return datetime.strptime(obj, format)
 
 
-def parse_timedelta(obj):
-    """Attempt to parse `obj` as a ``timedelta`` from a string formatted
-    duration.
-
-    Args:
-        obj (str|number|timedelta): Object to parse.
-
-    Returns:
-        timedelta
-
-    Raises:
-        TypeError: When `obj` is not a string or timedelta.
-        ParseError: When `obj` can't be parsed as a timedelta.
-    """
-    if isinstance(obj, timedelta):
-        return obj
-
-    is_string = isinstance(obj, string_types)
-    is_number = isinstance(obj, number_types)
-
-    if not is_string and not is_number:
-        raise TypeError('Expected string or number type, not {0}'
-                        .format(type(obj).__name__))
-
-    if is_string:
-        seconds = pytimeparse.parse(obj)
-
-        if seconds is None:
-            raise ParseError('Value "{0}" is not a recognized duration format'
-                             .format(obj))
-    else:
-        seconds = obj
-
-    return timedelta(seconds=seconds)
-
-
 def format_datetime(dt, format=None, tz=None, locale=LC_TIME):
     """Return string formatted datetime, `dt`, using format directives or
     pattern in `format`. If timezone, `tz`, is supplied, the datetime will be
@@ -265,6 +229,42 @@ def _tokenize_date_pattern(format):
     ``['YY', '-', 'MM', '-', 'dd']``).
     """
     return [''.join(group) for key, group in groupby(format)]
+
+
+def parse_timedelta(obj):
+    """Attempt to parse `obj` as a ``timedelta`` from a string formatted
+    duration.
+
+    Args:
+        obj (str|number|timedelta): Object to parse.
+
+    Returns:
+        timedelta
+
+    Raises:
+        TypeError: When `obj` is not a string or timedelta.
+        ParseError: When `obj` can't be parsed as a timedelta.
+    """
+    if isinstance(obj, timedelta):
+        return obj
+
+    is_string = isinstance(obj, string_types)
+    is_number = isinstance(obj, number_types)
+
+    if not is_string and not is_number:
+        raise TypeError('Expected string or number type, not {0}'
+                        .format(type(obj).__name__))
+
+    if is_string:
+        seconds = pytimeparse.parse(obj)
+
+        if seconds is None:
+            raise ParseError('Value "{0}" is not a recognized duration format'
+                             .format(obj))
+    else:
+        seconds = obj
+
+    return timedelta(seconds=seconds)
 
 
 def format_timedelta(delta,
