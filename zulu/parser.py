@@ -268,14 +268,16 @@ def _tokenize_date_pattern(format):
 
 
 def format_timedelta(delta,
+                     format='long',
                      granularity='second',
                      threshold=0.85,
                      add_direction=False,
-                     format='long',
                      locale=LC_TIME):
     """Return timedelta as a formatted string.
 
     Args:
+        format (str, optional): Can be one of "long", "short", or "narrow".
+            Defaults to `'long`'.
         granularity (str, optional): The smallest unit that should be
             displayed. The value can be one of "year", "month", "week",
             "day", "hour", "minute" or "second". Defaults to `'second'`.
@@ -285,8 +287,6 @@ def format_timedelta(delta,
         add_direction (bool, optional): If ``True`` the return value will
             include directional information (e.g. `'1 hour ago'`,
             `'in 1 hour'`). Defaults to ``False``.
-        format (str, optional): Can be one of "long", "short", or "narrow".
-            Defaults to `'long`'.
         locale (str|Locale, optional): A ``Locale`` object or locale
             identifer. Defaults to system default.
     """
