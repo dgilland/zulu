@@ -905,7 +905,7 @@ class Zulu(datetime):
             other = timedelta(seconds=other)
 
         if isinstance(other, timedelta):
-            result = super(Zulu, self).__add__(other)
+            result = super(self.__class__, self).__add__(other)
         else:
             result = other.__add__(self)
 
