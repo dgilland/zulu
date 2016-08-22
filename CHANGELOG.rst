@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-v0.7.0 (XXXX-XX-XX)
+v0.7.0 (2016-08-22)
 -------------------
 
 - Make ``Zulu.__sub__`` and ``Zulu.subtract`` return a ``Delta`` object instead of ``datetime.timedelta``.
