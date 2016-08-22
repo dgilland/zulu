@@ -111,6 +111,9 @@ def test_timedelta_math_operations_return_type():
     assert isinstance(delta * 1, Delta)
     assert isinstance(delta / 1, Delta)
     assert isinstance(delta // 1, Delta)
+    assert isinstance(abs(delta), Delta)
+    assert isinstance(+delta, Delta)
+    assert isinstance(-delta, Delta)
 
     if not PY2:
         assert isinstance(delta % delta, Delta)

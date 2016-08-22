@@ -114,6 +114,9 @@ Delta.__sub__ = _asdelta(Delta.__sub__)
 Delta.__mul__ = _asdelta(Delta.__mul__)
 Delta.__rmul__ = _asdelta(Delta.__rmul__)
 Delta.__floordiv__ = _asdelta(Delta.__floordiv__)
+Delta.__pos__ = _asdelta(Delta.__pos__)
+Delta.__neg__ = _asdelta(Delta.__neg__)
+Delta.__abs__ = _asdelta(Delta.__abs__)
 
 
 if PY2:  # pragma: no cover

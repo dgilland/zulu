@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+- Add missing magic method overrides for ``Delta`` for ``+delta``, ``-delta``, and ``abs(delta)`` so that ``Delta`` is returned instead of ``datetime.timedelta``.
+
+  - ``__pos__``
+  - ``__neg__``
+  - ``__abs__``
+
+
 v0.7.0 (2016-08-22)
 -------------------
 
@@ -9,6 +16,17 @@ v0.7.0 (2016-08-22)
 - Make ``zulu.delta`` and ``Zulu.Delta.parse`` accept a number.
 - Allow the first argument to ``Zulu.shift`` be a timedelta or relative delta object.
 - Ensure that mathematical magic methods for ``Delta`` return ``Delta`` objects and not ``datetime.timedelta``.
+
+  - ``__add__``
+  - ``__radd__``
+  - ``__sub__``
+  - ``__mul__``
+  - ``__rmul__``
+  - ``__floordiv__``
+  - ``__truediv__`` (Python 3 only)
+  - ``__div__`` (Python 2 only)
+  - ``__mod__`` (Python 3 only)
+  - ``__divmod__`` (Python 3 only)
 
 
 v0.6.0 (2016-08-14)
