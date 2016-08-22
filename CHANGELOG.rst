@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v0.7.1 (2016-08-22)
+-------------------
+
 - Add missing magic method overrides for ``Delta`` for ``+delta``, ``-delta``, and ``abs(delta)`` so that ``Delta`` is returned instead of ``datetime.timedelta``.
 
   - ``__pos__``
