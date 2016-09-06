@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+- Fix ``Zulu`` not being pickle-able.
+
+
 v0.7.1 (2016-08-22)
 -------------------
 

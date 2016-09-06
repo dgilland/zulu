@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import date, datetime, time, timedelta
+import pickle
 from time import localtime, mktime, struct_time
 
 from dateutil.relativedelta import relativedelta
@@ -1188,3 +1189,8 @@ def test_datetime_range(frame, start, end, expected):
 def test_datetime_range_error(frame, start, end):
     with pytest.raises(ParseError):
         list(Zulu.range(frame, start, end))
+
+
+def test_datetime_pickle():
+    dt = Zulu()
+    assert pickle.loads(pickle.dumps(dt)) == dt

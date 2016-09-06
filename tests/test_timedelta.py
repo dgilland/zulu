@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
+import pickle
 
 import pytest
 
@@ -118,3 +119,8 @@ def test_timedelta_math_operations_return_type():
     if not PY2:
         assert isinstance(delta % delta, Delta)
         assert isinstance(divmod(delta, delta)[1], Delta)
+
+
+def test_timedelta_pickle():
+    delta = Delta(hours=1)
+    assert pickle.loads(pickle.dumps(delta)) == delta

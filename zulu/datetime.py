@@ -85,6 +85,21 @@ class Zulu(datetime):
                 second=0,
                 microsecond=0,
                 tzinfo=None):
+        try:
+            # Pickle support. Overly complicated because of Python2.7 support.
+            # May be a better way to do this.
+            pickled_year = year
+
+            if isinstance(pickled_year, string_types):  # pragma: no cover
+                pickled_year = bytearray(pickled_year)
+
+            if (isinstance(pickled_year, (bytes, bytearray)) and
+                    len(pickled_year) == 10 and
+                    1 <= pickled_year[2] <= 12):
+                return cls.fromdatetime(datetime(year, month))
+        except Exception:  # pragma: no cover
+            pass
+
         if tzinfo and isinstance(tzinfo, string_types):
             tzinfo = pytz.timezone(tzinfo)
 
