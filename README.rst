@@ -162,10 +162,10 @@ For the full documentation, please visit https://zulu.readthedocs.io.
 .. _Arrow: https://arrow.readthedocs.io
 .. _Babel: https://github.com/python-babel/babel
 .. _iso8601: https://bitbucket.org/micktwomey/pyiso8601
-.. _python-dateutil: https://github.com/dateutil/dateutil>
-.. _pytimeparse: https://github.com/wroberts/pytimeparse>
+.. _python-dateutil: https://github.com/dateutil/dateutil
+.. _pytimeparse: https://github.com/wroberts/pytimeparse
 .. _pytz: http://pythonhosted.org/pytz
-.. _tzlocal: <https://github.com/regebro/tzlocal>
+.. _tzlocal: https://github.com/regebro/tzlocal
 
 .. |version| image:: https://img.shields.io/pypi/v/zulu.svg?style=flat-square
     :target: https://pypi.python.org/pypi/zulu/
