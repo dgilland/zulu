@@ -46,3 +46,5 @@ else:
 
     def iteritems(d):
         return iter(d.items())
+
+byte_types = (bytes, bytearray)

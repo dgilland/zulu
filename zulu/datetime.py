@@ -16,7 +16,7 @@ import tzlocal
 
 from . import parser
 from .timedelta import Delta
-from ._compat import number_types, string_types
+from ._compat import byte_types, number_types, string_types
 
 
 LOCAL = 'local'
@@ -45,6 +45,30 @@ def validate_frame(frame):
     if frame not in TIME_FRAMES:
         raise ValueError("Time frame must be one of {0}, not '{1}'"
                          .format('|'.join(TIME_FRAMES), frame))
+
+
+def _unpickle(string, tzinfo):
+    """Return unpickled :class:`.Zulu` instance or None if `string` is not a
+    pickled object.
+    """
+    dt = None
+
+    try:
+        # Pickle support. Overly complicated because of Python2.7 support.
+        # May be a better way to do this.
+        _string = string
+
+        if isinstance(_string, string_types):  # pragma: no cover
+            _string = bytearray(_string)
+
+        if (isinstance(_string, byte_types) and
+                len(_string) == 10 and
+                1 <= _string[2] <= 12):
+            dt = Zulu.fromdatetime(datetime(string, tzinfo))
+    except Exception:  # pragma: no cover
+        pass
+
+    return dt
 
 
 class Zulu(datetime):
@@ -85,44 +109,57 @@ class Zulu(datetime):
                 second=0,
                 microsecond=0,
                 tzinfo=None):
-        try:
-            # Pickle support. Overly complicated because of Python2.7 support.
-            # May be a better way to do this.
-            pickled_year = year
+        if isinstance(year, string_types) or isinstance(year, byte_types):
+            dt = _unpickle(string=year, tzinfo=month)
+            if dt:
+                return dt
 
-            if isinstance(pickled_year, string_types):  # pragma: no cover
-                pickled_year = bytearray(pickled_year)
+        if tzinfo:
+            if isinstance(tzinfo, string_types):
+                tzinfo = pytz.timezone(tzinfo)
 
-            if (isinstance(pickled_year, (bytes, bytearray)) and
-                    len(pickled_year) == 10 and
-                    1 <= pickled_year[2] <= 12):
-                return cls.fromdatetime(datetime(year, month))
-        except Exception:  # pragma: no cover
-            pass
+            if hasattr(tzinfo, 'localize'):
+                dt = tzinfo.localize(datetime(year,
+                                              month,
+                                              day,
+                                              hour,
+                                              minute,
+                                              second,
+                                              microsecond),
+                                     is_dst=None)
+            else:
+                dt = datetime(year,
+                              month,
+                              day,
+                              hour,
+                              minute,
+                              second,
+                              microsecond,
+                              tzinfo)
 
-        if tzinfo and isinstance(tzinfo, string_types):
-            tzinfo = pytz.timezone(tzinfo)
+            if dt.tzinfo is not pytz.UTC:
+                dt = dt.astimezone(pytz.UTC)
 
-        naive = datetime(year, month, day, hour, minute, second, microsecond)
-
-        if hasattr(tzinfo, 'localize'):
-            dt = tzinfo.localize(naive, is_dst=None)
-        elif tzinfo:
-            dt = naive.replace(tzinfo=tzinfo)
+            year = dt.year
+            month = dt.month
+            day = dt.day
+            hour = dt.hour
+            minute = dt.minute
+            second = dt.second
+            microsecond = dt.microsecond
+            tzinfo = dt.tzinfo
         else:
-            dt = pytz.UTC.localize(naive, is_dst=None)
-
-        dt = dt.astimezone(pytz.UTC)
+            tzinfo = pytz.UTC
 
         return datetime.__new__(cls,
-                                dt.year,
-                                dt.month,
-                                dt.day,
-                                dt.hour,
-                                dt.minute,
-                                dt.second,
-                                dt.microsecond,
-                                dt.tzinfo)
+                                year,
+                                month,
+                                day,
+                                hour,
+                                minute,
+                                second,
+                                microsecond,
+                                tzinfo)
 
     @classmethod
     def now(cls):
