@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+- Optimize ``Zulu()`` constructor by eliminating multiple unnecessary calls to ``datetime`` constructor.
+
+
 v0.7.2 (2016-09-06)
 -------------------
 
