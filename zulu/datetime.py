@@ -428,14 +428,6 @@ class Zulu(datetime):
         """
         return self.__class__(*tuple(self))
 
-    def is_leap_year(self):
-        """Return whether this datetime's :attr:`year` is a leap year.
-
-        Returns:
-            bool
-        """
-        return calendar.isleap(self.year)
-
     def days_in_month(self):
         """Return the number of days in the month.
 
@@ -913,7 +905,7 @@ class Zulu(datetime):
         """Returns two new :class:`.Zulu` objects corresponding to the time
         span between this object and the given time frame.
 
-        Args
+        Args:
             frame (str): A time frame (e.g. year, month, day, minute, etc).
             count (int): Number of frames to span.
 
@@ -921,6 +913,71 @@ class Zulu(datetime):
             tuple: (`start_of_frame`, `end_of_frame`)
         """
         return (self.start_of(frame), self.end_of(frame, count))
+
+    def is_leap_year(self):
+        """Return whether this datetime's :attr:`year` is a leap year.
+
+        Returns:
+            bool
+        """
+        return calendar.isleap(self.year)
+
+    def is_before(self, other):
+        """Return whether this datetime is before `other`.
+
+        Args:
+            other (datetime): Other datetime to compare.
+
+        Returns:
+            bool
+        """
+        return self < other
+
+    def is_on_or_before(self, other):
+        """Return whether this datetime is before or on `other`.
+
+        Args:
+            other (datetime): Other datetime to compare.
+
+        Returns:
+            bool
+        """
+        return self <= other
+
+    def is_after(self, other):
+        """Return whether this datetime is after `other`.
+
+        Args:
+            other (datetime): Other datetime to compare.
+
+        Returns:
+            bool
+        """
+        return self > other
+
+    def is_on_or_after(self, other):
+        """Return whether this datetime is after or on `other`.
+
+        Args:
+            other (datetime): Other datetime to compare.
+
+        Returns:
+            bool
+        """
+        return self >= other
+
+    def is_between(self, start, end):
+        """Return whether this datetime is between `start` and `end`
+        inclusively.
+
+        Args:
+            start (datetime): Starting datetime to compare.
+            end (datetime): Ending datetime to compare.
+
+        Returns:
+            bool
+        """
+        return start <= self <= end
 
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.Zulu`."""

@@ -2,6 +2,15 @@ Changelog
 =========
 
 
+- Add comparison methods to ``Zulu``:
+
+  - ``is_before``
+  - ``is_on_or_before``
+  - ``is_after``
+  - ``is_on_or_after``
+  - ``is_between``
+
+
 v0.7.3 (2016-10-24)
 -------------------
 

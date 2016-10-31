@@ -352,19 +352,6 @@ def test_datetime_basic_property_methods(dt, methods):
         assert getattr(dt, meth)() == val
 
 
-@parametrize('year,expected', [
-    (100, False),
-    (104, True),
-    (1900, False),
-    (1904, True),
-    (2000, True),
-    (2001, False),
-    (2004, True),
-])
-def test_datetime_is_leap_year(year, expected):
-    assert Zulu(year).is_leap_year() == expected
-
-
 @parametrize('dt,expected', [
     (Zulu(2001, 1, 1), 31),
     (Zulu(2001, 2, 1), 28),
@@ -1189,6 +1176,73 @@ def test_datetime_range(frame, start, end, expected):
 def test_datetime_range_error(frame, start, end):
     with pytest.raises(ParseError):
         list(Zulu.range(frame, start, end))
+
+
+@parametrize('year,expected', [
+    (100, False),
+    (104, True),
+    (1900, False),
+    (1904, True),
+    (2000, True),
+    (2001, False),
+    (2004, True),
+])
+def test_datetime_is_leap_year(year, expected):
+    assert Zulu(year).is_leap_year() == expected
+
+
+@parametrize('dt,other,expected', [
+    (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 29), False),
+    (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 30), True),
+    (Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 29), False),
+])
+def test_datetime_is_before(dt, other, expected):
+    assert dt.is_before(other) is expected
+
+
+@parametrize('dt,other,expected', [
+    (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 29), True),
+    (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 30), True),
+    (Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 29), False),
+])
+def test_datetime_is_on_or_before(dt, other, expected):
+    assert dt.is_on_or_before(other) is expected
+
+
+@parametrize('dt,other,expected', [
+    (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 29), False),
+    (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 30), False),
+    (Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 29), True),
+])
+def test_datetime_is_after(dt, other, expected):
+    assert dt.is_after(other) is expected
+
+
+@parametrize('dt,other,expected', [
+    (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 29), True),
+    (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 30), False),
+    (Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 29), True),
+])
+def test_datetime_is_on_or_after(dt, other, expected):
+    assert dt.is_on_or_after(other) is expected
+
+
+@parametrize('dt,start,end,expected', [
+    (Zulu(2000, 1, 1, 12, 29),
+     Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 29),
+     True),
+    (Zulu(2000, 1, 1, 12, 29),
+     Zulu(2000, 1, 1, 12, 28), Zulu(2000, 1, 1, 12, 30),
+     True),
+    (Zulu(2000, 1, 1, 12, 29),
+     Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 28),
+     False),
+    (Zulu(2000, 1, 1, 12, 29),
+     Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 31),
+     False),
+])
+def test_datetime_is_between(dt, start, end, expected):
+    assert dt.is_between(start, end) is expected
 
 
 def test_datetime_pickle():
