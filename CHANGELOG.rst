@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v0.8.0 (2016-10-31)
+-------------------
+
 - Add comparison methods to ``Zulu``:
 
   - ``is_before``
