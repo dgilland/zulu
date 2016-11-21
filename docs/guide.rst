@@ -183,9 +183,9 @@ You can even use ``zulu.parser.format_datetime`` with native datetimes:
 
 .. code-block:: python
 
-    from zulu.parser import format_datetime
+    from zulu.parser import UTC, format_datetime
 
-    native = datetime(2016, 7, 25, 19, 33, 18, 137493, tzinfo=pytz.UTC)
+    native = datetime(2016, 7, 25, 19, 33, 18, 137493, tzinfo=UTC)
 
     format_datetime(native, '%Y-%m-%d %H:%M:%S%z')
     # '2016-07-25 19:33:18+0000'
@@ -338,7 +338,7 @@ You can humanize the difference between two ``Zulu`` objects with ``Zulu.time_fr
 Time Zone Handling
 ------------------
 
-Time zones other than UTC are not expressable within a ``Zulu`` instance. Other time zones are only ever applied when either converting a ``Zulu`` object to a native datetime (via ``Zulu.astimezone``) or during string formatting (via ``Zulu.format``). ``Zulu`` understands both ``tzinfo`` objects and ``pytz.timezone`` string names.
+Time zones other than UTC are not expressable within a ``Zulu`` instance. Other time zones are only ever applied when either converting a ``Zulu`` object to a native datetime (via ``Zulu.astimezone``) or during string formatting (via ``Zulu.format``). ``Zulu`` understands both ``tzinfo`` objects and `IANA Timezone Database <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>`_ string names (also known as the Olson database).
 
 
 .. code-block:: python
@@ -346,11 +346,11 @@ Time zones other than UTC are not expressable within a ``Zulu`` instance. Other 
     local = dt.astimezone()
     # same as doing dt.astimezone('local')
     # datetime.datetime(2016, 7, 25, 15, 33, 18, 137493,
-    #                   tzinfo=<DstTzInfo 'America/New_York' EDT-1 day, 20:00:00 DST>)
+    #                   tzinfo=tzlocal())
 
     pacific = dt.astimezone('US/Pacific')
     # datetime.datetime(2016, 7, 25, 12, 33, 18, 137493,
-    #                   tzinfo=<DstTzInfo 'US/Pacific' PDT-1 day, 17:00:00 DST>)
+    #                   tzinfo=tzfile('/usr/share/zoneinfo/US/Pacific'))
 
     import pytz
     mountain = dt.astimezone(pytz.timezone('US/Mountain'))

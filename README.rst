@@ -126,7 +126,7 @@ Why Zulu?
 
 Why zulu instead of `native datetimes <https://docs.python.org/3.5/library/datetime.html#datetime-objects>`_:
 
-- Zulu has extended datetime features such as ``parse()``, ``format()``, ``shift()``, and `pytz`_ timezone support.
+- Zulu has extended datetime features such as ``parse()``, ``format()``, ``shift()``, and `python-dateutil`_ timezone support.
 - Parses ISO8601 and timestamps by default without any extra arguments.
 - Easier to reason about ``Zulu`` objects since they are only ever UTC datetimes.
 - Clear delineation between UTC and other time zones where timezone representation is only applicable for display or conversion to native datetime.
@@ -151,7 +151,6 @@ Special thanks goes out to the authors/contributors of the following libraries t
 - `python-dateutil`_
 - `pytimeparse`_
 - `pytz`_
-- `tzlocal`_
 
 
 For the full documentation, please visit https://zulu.readthedocs.io.
@@ -165,7 +164,6 @@ For the full documentation, please visit https://zulu.readthedocs.io.
 .. _python-dateutil: https://github.com/dateutil/dateutil
 .. _pytimeparse: https://github.com/wroberts/pytimeparse
 .. _pytz: http://pythonhosted.org/pytz
-.. _tzlocal: https://github.com/regebro/tzlocal
 
 .. |version| image:: https://img.shields.io/pypi/v/zulu.svg?style=flat-square
     :target: https://pypi.python.org/pypi/zulu/
