@@ -94,6 +94,9 @@ class Delta(timedelta):
                 `'in 1 hour'`). Defaults to ``False``.
             locale (str|Locale, optional): A ``Locale`` object or locale
                 identifer. Defaults to system default.
+
+        Returns:
+            str
         """
         return parser.format_timedelta(self,
                                        format=format,
