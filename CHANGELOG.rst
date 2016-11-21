@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+- Require ``python-dateutil>=2.6.0``. (**breaking change**)
+- Replace usage of ``pytz`` timezone handling for strings with ``dateutil.tz.gettz``. Continue to support ``pytz`` timezones during ``Zulu()`` object creation. (**breaking change**).
+- Replace default UTC timezone with ``dateutil.tz.tzutc()``. Was previously ``pytz.UTC``. (**breaking change**)
+- Replace local timezone with ``dateutil.tz.tzlocal()``. Was previously set by the ``tzlocal`` library. (**breaking change**)
+
+
 v0.8.0 (2016-10-31)
 -------------------
 

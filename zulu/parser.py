@@ -13,15 +13,15 @@ from babel.dates import (
     format_timedelta as _format_timedelta,
     format_datetime as _format_datetime
 )
+from dateutil.tz import gettz, tzlocal, tzutc
 import iso8601
 import pytimeparse
-import pytz
-import tzlocal
 
 from ._compat import number_types, string_types
 
 
-EPOCH = pytz.UTC.localize(datetime(1970, 1, 1), is_dst=None)
+UTC = tzutc()
+EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
 
 ISO8601 = 'ISO8601'
 TIMESTAMP = 'timestamp'
@@ -111,7 +111,7 @@ def parse_datetime(obj, formats=None, default_tz=None):
         ParseError: When `obj` can't be parsed as a datetime.
     """
     if default_tz is None:
-        default_tz = iso8601.UTC
+        default_tz = UTC
 
     if not is_valid_timezone(default_tz):
         raise ValueError('Unrecognized timezone: {0}'.format(default_tz))
@@ -164,7 +164,7 @@ def _parse_datetime_format(obj, format):
     if format.upper() == ISO8601:
         return iso8601.parse_date(obj, default_timezone=None)
     elif format.lower() == TIMESTAMP:
-        return datetime.fromtimestamp(obj, pytz.UTC)
+        return datetime.fromtimestamp(obj, UTC)
     else:
         if '%' not in format:
             format = _date_pattern_to_directive(format)
@@ -289,6 +289,9 @@ def format_timedelta(delta,
             `'in 1 hour'`). Defaults to ``False``.
         locale (str|Locale, optional): A ``Locale`` object or locale
             identifer. Defaults to system default.
+
+    Returns:
+        str
     """
     if granularity not in TIMEDELTA_GRANULARITIES:
         grans = ', '.join('"{0}"'.format(gra)
@@ -314,13 +317,18 @@ def format_timedelta(delta,
 def get_timezone(tz):
     """Coerce `tz` into a `tzinfo` compatible object. If ``tz == 'local'``,
     then the system's local timezone will be used. If `tz` is a string other
-    than ``'local'``, it will be passed to ``pytz.timezone(tz)``. Otherwise,
-    `tz` will be returned as-is.
+    than ``'local'``, it will be passed to ``dateutil.tz.gettz(tz)``.
+    Otherwise, `tz` will be returned as-is.
     """
-    if tz == 'local':
-        tz = tzlocal.get_localzone()
+    if tz is None:
+        tz = UTC
+    elif tz == 'local':
+        tz = tzlocal()
     elif isinstance(tz, string_types):
-        tz = pytz.timezone(tz)
+        tz = gettz(tz)
+
+        if tz is None:
+            raise ValueError('Unrecognized timezone string: {0}'.format(tz))
 
     return tz
 
@@ -352,6 +360,11 @@ def is_valid_datetime(obj):
 
 
 def is_valid_timezone(tz):
+    """Return whether `tz` is a valid timezone.
+
+    Returns:
+        bool
+    """
     try:
         get_timezone(tz)
     except Exception:
@@ -368,7 +381,7 @@ def has_valid_timezone(dt):
         bool
     """
     try:
-        dt.astimezone(pytz.UTC)
+        dt.astimezone(UTC)
     except Exception:
         return False
     else:

@@ -11,10 +11,10 @@ import time
 
 from babel.dates import LC_TIME
 from dateutil.relativedelta import relativedelta
-import pytz
-import tzlocal
+from dateutil.tz import gettz, tzutc
 
 from . import parser
+from .parser import UTC
 from .timedelta import Delta
 from ._compat import byte_types, number_types, string_types
 
@@ -97,7 +97,7 @@ class Zulu(datetime):
             1000000``. Defaults to ``0``.
         tzinfo (None|str|tzinfo, optional): Timezone information as either a
             ``str`` or ``tzinfo`` subclass. If value is a ``str``, it will be
-            converted to a ``pytz.timezone``. If value is ``None``, the
+            converted to a ``dateutil.tz`` timezone. If value is ``None``, the
             datetime values given are assumed to in UTC. Defaults to ``None``.
     """
     def __new__(cls,
@@ -115,10 +115,16 @@ class Zulu(datetime):
                 return dt
 
         if tzinfo:
-            if isinstance(tzinfo, string_types):
-                tzinfo = pytz.timezone(tzinfo)
+            # If tzinfo is provided, we first need to create a stdlib datetime
+            # with that tzinfo. Then, we need to convert it to UTC and extract
+            # the datetime properites from it so we can then create a Zulu
+            # datetime object. We use the stdlib datetime to avoid potential
+            # infinite recursion issues if we instead created a Zulu datetime
+            # and tried to shift it to UTC.
+            tzinfo = parser.get_timezone(tzinfo)
 
             if hasattr(tzinfo, 'localize'):
+                # Support pytz timezones.
                 dt = tzinfo.localize(datetime(year,
                                               month,
                                               day,
@@ -137,8 +143,8 @@ class Zulu(datetime):
                               microsecond,
                               tzinfo)
 
-            if dt.tzinfo is not pytz.UTC:
-                dt = dt.astimezone(pytz.UTC)
+            if dt.utcoffset() != timedelta(0):
+                dt = dt.astimezone(UTC)
 
             year = dt.year
             month = dt.month
@@ -149,7 +155,7 @@ class Zulu(datetime):
             microsecond = dt.microsecond
             tzinfo = dt.tzinfo
         else:
-            tzinfo = pytz.UTC
+            tzinfo = UTC
 
         return datetime.__new__(cls,
                                 year,
@@ -205,7 +211,7 @@ class Zulu(datetime):
                    dt.tzinfo)
 
     @classmethod
-    def fromtimestamp(cls, timestamp, tz=pytz.UTC):
+    def fromtimestamp(cls, timestamp, tz=UTC):
         """Return :class:`.Zulu` object from a POSIX timestamp.
 
         Args:

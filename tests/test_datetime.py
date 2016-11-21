@@ -5,13 +5,13 @@ import pickle
 from time import localtime, mktime, struct_time
 
 from dateutil.relativedelta import relativedelta
+from dateutil.tz import gettz, tzlocal, tzutc
 from iso8601 import UTC
 import pytest
 import pytz
-from tzlocal import get_localzone
 
 from zulu import Zulu, Delta, ParseError, create
-from zulu.parser import DATE_PATTERN_TO_DIRECTIVE
+from zulu.parser import DATE_PATTERN_TO_DIRECTIVE, UTC
 
 
 from .fixtures import parametrize
@@ -260,17 +260,17 @@ def test_datetime_strptime(string, fmt, expected):
 
 @parametrize('dt,expected', [
     (eastern.localize(datetime(2000, 1, 1)),
-     datetime(2000, 1, 1, 5, tzinfo=pytz.UTC)),
+     datetime(2000, 1, 1, 5, tzinfo=UTC)),
     (Zulu(2000, 1, 1, tzinfo='UTC'),
-     datetime(2000, 1, 1, tzinfo=pytz.UTC))
+     datetime(2000, 1, 1, tzinfo=UTC))
 ])
 def test_datetime_fromdatetime(dt, expected):
     assert Zulu.fromdatetime(dt) == expected
 
 
 @parametrize('factory,timestamp,expected', [
-    (Zulu.fromtimestamp, 0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
-    (Zulu.utcfromtimestamp, 0, datetime(1970, 1, 1, tzinfo=pytz.UTC)),
+    (Zulu.fromtimestamp, 0, datetime(1970, 1, 1, tzinfo=UTC)),
+    (Zulu.utcfromtimestamp, 0, datetime(1970, 1, 1, tzinfo=UTC)),
 ])
 def test_datetime_fromtimestamp(factory, timestamp, expected):
     assert factory(timestamp) == expected
@@ -320,7 +320,7 @@ def test_datetime_combine(date, time, expected):
       'epoch': Zulu(1970, 1, 1),
       'resolution': timedelta(microseconds=1),
       'naive': datetime(2000, 1, 2, 3, 4, 5, 6),
-      'datetime': datetime(2000, 1, 2, 3, 4, 5, 6, pytz.UTC)}),
+      'datetime': datetime(2000, 1, 2, 3, 4, 5, 6, UTC)}),
 ])
 def test_datetime_basic_properties(dt, properties):
     for prop, val in properties.items():
@@ -406,7 +406,7 @@ def test_datetime_replace(dt, replace, expected):
 
 def test_datetime_as_iter():
     dt = Zulu(2000, 1, 1)
-    expected = (2000, 1, 1, 0, 0, 0, 0, pytz.UTC)
+    expected = (2000, 1, 1, 0, 0, 0, 0, UTC)
 
     assert tuple(dt) == expected
     assert list(dt) == list(expected)
@@ -436,16 +436,16 @@ def test_datetime_string_format():
 @parametrize('dt,tzinfo,expected', [
     (Zulu(2000, 1, 1, 10),
      None,
-     datetime(2000, 1, 1, 10, tzinfo=pytz.UTC).astimezone(get_localzone())),
+     datetime(2000, 1, 1, 10, tzinfo=UTC).astimezone(tzlocal())),
     (Zulu(2000, 1, 1, 10),
      'local',
-     datetime(2000, 1, 1, 10, tzinfo=pytz.UTC).astimezone(get_localzone())),
+     datetime(2000, 1, 1, 10, tzinfo=UTC).astimezone(tzlocal())),
     (Zulu(2000, 1, 1, 10),
      'US/Eastern',
-     eastern.localize(datetime(2000, 1, 1, 5, 0))),
+     datetime(2000, 1, 1, 5, 0, tzinfo=gettz('US/Eastern'))),
     (Zulu(2000, 1, 1, 10),
      pytz.timezone('US/Eastern'),
-     eastern.localize(datetime(2000, 1, 1, 5, 0)))
+     datetime(2000, 1, 1, 5, 0, tzinfo=gettz('US/Eastern')))
 ])
 def test_datetime_astimezone(dt, tzinfo, expected):
     ldt = dt.astimezone(tzinfo)
@@ -458,7 +458,8 @@ def test_datetime_astimezone(dt, tzinfo, expected):
     assert ldt.minute == expected.minute
     assert ldt.second == expected.second
     assert ldt.microsecond == expected.microsecond
-    assert ldt.tzinfo == expected.tzinfo
+    assert ldt.utcoffset() == expected.utcoffset()
+    # assert ldt.tzinfo == expected.tzinfo
 
 
 @parametrize('method,dt,delta,expected', [
