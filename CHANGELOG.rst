@@ -4,6 +4,7 @@ Changelog
 
 - Add ``zulu.parse_delta`` as alias for ``Delta.parse``.
 - Deprecate ``zulu.delta`` in favor of ``zulu.parse_delta``.
+- Allow first argument to ``Zulu()``, ``Zulu.parse()``, and ``zulu.parse()`` to be a ``dict`` containing keys corresponding to initialization parameters.
 - Fix error message for invalid timezone strings so that the supplied string is shown correctly.
 
 

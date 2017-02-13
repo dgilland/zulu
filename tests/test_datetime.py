@@ -43,26 +43,48 @@ def test_datetime_now_is_utcnow(factory):
     assert dt.second == expected.second
 
 
-@parametrize('string,expected', [
+@parametrize('obj,expected', [
     ('2000',
+     datetime(2000, 1, 1, tzinfo=UTC)),
+    ({'year': 2000},
      datetime(2000, 1, 1, tzinfo=UTC)),
     ('2000-01',
      datetime(2000, 1, 1, tzinfo=UTC)),
+    ({'year': 2000, 'month': 1},
+     datetime(2000, 1, 1, tzinfo=UTC)),
     ('2000-01-01',
+     datetime(2000, 1, 1, tzinfo=UTC)),
+    ({'year': 2000, 'month': 1, 'day': 1},
      datetime(2000, 1, 1, tzinfo=UTC)),
     ('2000-03-05',
      datetime(2000, 3, 5, tzinfo=UTC)),
+    ({'year': 2000, 'month': 3, 'day': 5},
+     datetime(2000, 3, 5, tzinfo=UTC)),
     ('2000-01-01T12:30',
+     datetime(2000, 1, 1, 12, 30, tzinfo=UTC)),
+    ({'year': 2000, 'month': 1, 'day': 1, 'hour': 12, 'minute': 30},
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC)),
     ('2000-01-01 12:30',
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC)),
     ('2000-01-01T12:30:30',
      datetime(2000, 1, 1, 12, 30, 30, tzinfo=UTC)),
+    ({'year': 2000, 'month': 1, 'day': 1, 'hour': 12, 'minute': 30,
+      'second': 30},
+     datetime(2000, 1, 1, 12, 30, 30, tzinfo=UTC)),
     ('2000-01-01T12:30:30-0400',
+     datetime(2000, 1, 1, 16, 30, 30, tzinfo=UTC)),
+    ({'year': 2000, 'month': 1, 'day': 1, 'hour': 12, 'minute': 30,
+      'second': 30, 'tzinfo': 'UTC-0400'},
      datetime(2000, 1, 1, 16, 30, 30, tzinfo=UTC)),
     ('2000-01-01T12:00:00-2359',
      datetime(2000, 1, 2, 11, 59, tzinfo=UTC)),
+    ({'year': 2000, 'month': 1, 'day': 1, 'hour': 12, 'minute': 0,
+      'second': 0, 'tzinfo': 'UTC-2359'},
+     datetime(2000, 1, 2, 11, 59, tzinfo=UTC)),
     ('2000-01-01T12:00:00+2359',
+     datetime(1999, 12, 31, 12, 1, tzinfo=UTC)),
+    ({'year': 2000, 'month': 1, 'day': 1, 'hour': 12, 'minute': 0,
+      'second': 0, 'tzinfo': 'UTC+2359'},
      datetime(1999, 12, 31, 12, 1, tzinfo=UTC)),
     (0,
      datetime(1970, 1, 1, tzinfo=UTC)),
@@ -71,8 +93,8 @@ def test_datetime_now_is_utcnow(factory):
     (Zulu(2000, 1, 1),
      datetime(2000, 1, 1, tzinfo=UTC)),
 ])
-def test_datetime_parse(string, expected):
-    assert Zulu.parse(string) == expected
+def test_datetime_parse(obj, expected):
+    assert Zulu.parse(obj) == expected
 
 
 @parametrize('string,kargs,exception', [

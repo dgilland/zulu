@@ -16,10 +16,19 @@ from dateutil.tz import gettz, tzutc
 from . import parser
 from .parser import UTC
 from .timedelta import Delta
-from ._compat import byte_types, number_types, string_types
+from ._compat import byte_types, iteritems, number_types, string_types
 
 
 LOCAL = 'local'
+
+DATETIME_ATTRS = ('year',
+                  'month',
+                  'day',
+                  'hour',
+                  'minute',
+                  'second',
+                  'microsecond',
+                  'tzinfo')
 
 TIME_FRAMES = ('century',
                'decade',
@@ -84,7 +93,8 @@ class Zulu(datetime):
     but does not represent itself in any time zone other than UTC.
 
     Args:
-        year (int): Date year ``1 <= year <= 9999``.
+        year (int|dict): Date year ``1 <= year <= 9999`` or ``dict`` containing
+            keys corresponding to initialization parameter names.
         month (int): Date month ``1 <= month <= 12``.
         day (int): Date day ``1 <= day <= number of days in the given month
             and year``
@@ -113,6 +123,10 @@ class Zulu(datetime):
             dt = _unpickle(string=year, tzinfo=month)
             if dt:
                 return cls.fromdatetime(dt)
+        elif isinstance(year, dict):
+            obj = {key: value for key, value in iteritems(year)
+                   if key in DATETIME_ATTRS}
+            return cls(**obj)
 
         if tzinfo:
             # If tzinfo is provided, we first need to create a stdlib datetime
@@ -191,8 +205,13 @@ class Zulu(datetime):
         Returns:
             :class:`.Zulu`
         """
-        dt = parser.parse_datetime(obj, formats, default_tz=default_tz)
-        return cls.fromdatetime(dt)
+        if isinstance(obj, dict):
+            dt = cls(obj)
+        else:
+            dt = parser.parse_datetime(obj, formats, default_tz=default_tz)
+            dt = cls.fromdatetime(dt)
+
+        return dt
 
     @classmethod
     def fromdatetime(cls, dt):
