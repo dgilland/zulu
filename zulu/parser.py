@@ -325,10 +325,12 @@ def get_timezone(tz):
     elif tz == 'local':
         tz = tzlocal()
     elif isinstance(tz, string_types):
+        tz_string = tz
         tz = gettz(tz)
 
         if tz is None:
-            raise ValueError('Unrecognized timezone string: {0}'.format(tz))
+            raise ValueError('Unrecognized timezone string: {0}'
+                             .format(tz_string))
 
     return tz
 

@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+- Fix error message for invalid timezone strings so that the supplied string is shown correctly.
+
+
 v0.9.0 (2016-11-21)
 -------------------
 
