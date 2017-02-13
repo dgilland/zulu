@@ -48,7 +48,7 @@ def validate_frame(frame):
 
 
 def _unpickle(string, tzinfo):
-    """Return unpickled :class:`.Zulu` instance or None if `string` is not a
+    """Return unpickled ``datetime`` instance or None if `string` is not a
     pickled object.
     """
     dt = None
@@ -64,7 +64,7 @@ def _unpickle(string, tzinfo):
         if (isinstance(_string, byte_types) and
                 len(_string) == 10 and
                 1 <= _string[2] <= 12):
-            dt = Zulu.fromdatetime(datetime(string, tzinfo))
+            dt = datetime(string, tzinfo)
     except Exception:  # pragma: no cover
         pass
 
@@ -112,7 +112,7 @@ class Zulu(datetime):
         if isinstance(year, string_types) or isinstance(year, byte_types):
             dt = _unpickle(string=year, tzinfo=month)
             if dt:
-                return dt
+                return cls.fromdatetime(dt)
 
         if tzinfo:
             # If tzinfo is provided, we first need to create a stdlib datetime

@@ -1248,4 +1248,7 @@ def test_datetime_is_between(dt, start, end, expected):
 
 def test_datetime_pickle():
     dt = Zulu()
-    assert pickle.loads(pickle.dumps(dt)) == dt
+    unpickled = pickle.loads(pickle.dumps(dt))
+
+    assert isinstance(unpickled, Zulu)
+    assert unpickled == dt
