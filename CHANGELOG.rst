@@ -2,6 +2,8 @@ Changelog
 =========
 
 
+- Add ``zulu.parse_delta`` as alias for ``Delta.parse``.
+- Deprecate ``zulu.delta`` in favor of ``zulu.parse_delta``.
 - Fix error message for invalid timezone strings so that the supplied string is shown correctly.
 
 

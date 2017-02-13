@@ -12,7 +12,9 @@
 """
 
 from decimal import Decimal
+from functools import wraps
 import sys
+import warnings
 
 
 PY2 = sys.version_info[0] == 2
@@ -48,3 +50,17 @@ else:
         return iter(d.items())
 
 byte_types = (bytes, bytearray)
+
+def deprecated(func):  # pragma: no cover
+    """This is a decorator which can be used to mark functions as deprecated.
+    It will result in a warning being emitted when the function is used.
+    """
+    @wraps(func)
+    def wrapper(*args, **kargs):
+        warnings.warn('Function {0}.{1} has been deprecated and will be '
+                      'removed in a future version.'.format(func.__module__,
+                                                            func.__name__),
+                      category=DeprecationWarning,
+                      stacklevel=2)
+        return func(*args, **kargs)
+    return wrapper

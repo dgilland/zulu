@@ -12,7 +12,15 @@ from .__pkg__ import (
 )
 
 
-from .api import now, create, parse, range, span_range, delta
+from .api import (
+    create,
+    delta,
+    now,
+    parse,
+    parse_delta,
+    range,
+    span_range
+)
 from .datetime import Zulu
 from .parser import ParseError, ISO8601, TIMESTAMP
 from .timedelta import Delta
