@@ -95,6 +95,13 @@ def test_timedelta_format(delta, opts, expected):
     assert delta.format(**opts) == expected
 
 
+def test_timedelta_format_default_locale(monkeypatch):
+    for var in ('LANGUAGE', 'LC_ALL', 'LC_CTYPE', 'LANG'):
+        monkeypatch.setenv(var, '')
+
+    assert Delta(seconds=5).format() == '5 seconds'
+
+
 @parametrize('opts,exception', [
     ({'granularity': 'invalid'}, ValueError),
     ({'format': 'invalid'}, ValueError),

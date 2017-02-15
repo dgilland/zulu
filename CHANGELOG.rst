@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+- Provide fallback for the default value of ``locale`` in ``Delta.format()`` when a locale is not known via environment variables.
+
+
 v0.10.0 (2017-02-13)
 --------------------
 

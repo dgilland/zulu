@@ -4,10 +4,11 @@
 
 from __future__ import absolute_import
 
-from functools import wraps
 from datetime import timedelta
+from functools import wraps
+import os
 
-from babel.dates import LC_TIME
+from babel.core import default_locale
 
 from . import parser
 from ._compat import PY2
@@ -46,6 +47,17 @@ def _asdelta(func):
     return decorated
 
 
+def get_locale(locale=None, default='en_US_POSIX'):
+    """Return default locale to use if one is not provided."""
+    if not locale:
+        locale = default_locale('LC_TIME')
+
+        if not locale:
+            locale = default
+
+    return locale
+
+
 class Delta(timedelta):
     """An extension of ``datetime.timedelta`` that provides additional
     functionality.
@@ -77,7 +89,7 @@ class Delta(timedelta):
                granularity='second',
                threshold=0.85,
                add_direction=False,
-               locale=LC_TIME):
+               locale=None):
         """Return timedelta as a formatted string.
 
         Args:
@@ -103,7 +115,7 @@ class Delta(timedelta):
                                        granularity=granularity,
                                        threshold=threshold,
                                        add_direction=add_direction,
-                                       locale=locale)
+                                       locale=get_locale(locale))
 
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.Delta`."""
