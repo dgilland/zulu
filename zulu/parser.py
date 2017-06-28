@@ -294,11 +294,10 @@ def format_timedelta(delta,
         str
     """
     if granularity not in TIMEDELTA_GRANULARITIES:
-        grans = ', '.join('"{0}"'.format(gra)
-                          for gra in TIMEDELTA_GRANULARITIES)
-        raise ValueError('Time delta format granularity must be one of {0}, '
-                         'not "{1}"'
-                         .format(grans, granularity))
+        units = ', '.join('"{0}"'.format(unit)
+                          for unit in TIMEDELTA_GRANULARITIES)
+        raise ValueError('Time delta granularity must be one of {0}, not "{1}"'
+                         .format(units, granularity))
 
     if format not in TIMEDELTA_FORMATS:
         formats = ', '.join('"{0}"'.format(format)
