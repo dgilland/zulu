@@ -188,7 +188,16 @@ class Zulu(datetime):
         Returns:
             :class:`.Zulu`
         """
-        return cls.utcnow()
+        return cls.fromtimestamp(time.time())
+
+    @classmethod
+    def utcnow(cls):
+        """Return the current UTC date and time as :class:`.Zulu` object.
+
+        Returns:
+            :class:`.Zulu`
+        """
+        return cls.now()
 
     @classmethod
     def parse(cls, obj, formats=None, default_tz=None):
