@@ -2,6 +2,19 @@ Changelog
 =========
 
 
+- Add Python 3.6 support.
+- Add ``Delta.__iter__`` method that yields 2-element tuples like ``Zulu.__iter__``. Delta values are normalized into integer values distributed from the higher units to the lower units.
+- Add ``Delta.__float__`` and ``Delta.__int__`` methods for converting to seconds.
+- Add ``Zulu.__float__`` and ``Zulu.__int__`` methods for converting to epoch seconds.
+- Fix issue in Python 3.6 where ``zulu.now()`` returned a naive datetime ``Zulu`` instance.
+- Make ``Zulu.__iter__`` yield 2-element tuples containing ``(unit, value)`` like ``(('year', 2000), ('month', 12), ...)`` so it can be converted to a ``dict`` with proper keys easier. (**breaking change**)
+- Remove previously deprecated ``zulu.delta()`` function. Use ``zulu.parse_delta()`` instead. (**breaking change**)
+- Rename modules: (**breaking change**)
+
+  - ``zulu.datetime -> zulu.zulu``
+  - ``zulu.timedelta -> zulu.delta``
+
+
 v0.10.1 (2017-02-15)
 --------------------
 
