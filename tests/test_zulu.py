@@ -20,7 +20,7 @@ from .fixtures import parametrize
 eastern = pytz.timezone('US/Eastern')
 
 
-def test_datetime_defaults():
+def test_zulu_defaults():
     assert Zulu() == Zulu.fromtimestamp(0)
     assert create() == Zulu()
 
@@ -29,7 +29,7 @@ def test_datetime_defaults():
     Zulu.utcnow,
     datetime.utcnow
 ])
-def test_datetime_now_is_utcnow(factory):
+def test_zulu_now_is_utcnow(factory):
     dt = Zulu.now()
     expected = factory()
 
@@ -93,7 +93,7 @@ def test_datetime_now_is_utcnow(factory):
     (Zulu(2000, 1, 1),
      datetime(2000, 1, 1, tzinfo=UTC)),
 ])
-def test_datetime_parse(obj, expected):
+def test_zulu_parse(obj, expected):
     assert Zulu.parse(obj) == expected
 
 
@@ -109,7 +109,7 @@ def test_datetime_parse(obj, expected):
     ('2000-01-01T00:00:00-2500', {}, ParseError),
     ('2000-01-01T00:00:00', {'default_tz': 'invalid'}, ValueError),
 ])
-def test_datetime_parse_invalid(string, kargs, exception):
+def test_zulu_parse_invalid(string, kargs, exception):
     with pytest.raises(exception):
         Zulu.parse(string, **kargs)
 
@@ -144,7 +144,7 @@ def test_datetime_parse_invalid(string, kargs, exception):
                   'HH hh mm ss SSSSSS a')},
      datetime(2016, 7, 27, 4, 34, 22, 479776, tzinfo=UTC)),
 ])
-def test_datetime_parse_format(string, kargs, expected):
+def test_zulu_parse_format(string, kargs, expected):
     assert Zulu.parse(string, **kargs) == expected
 
 
@@ -199,7 +199,7 @@ def test_datetime_parse_format(string, kargs, expected):
     (Zulu(2000, 1, 5, 13, 7, 8, 123456), 'Z', '+0000'),
     (Zulu(), ' ', ' '),
 ])
-def test_datetime_format_pattern(dt, opts, expected):
+def test_zulu_format_pattern(dt, opts, expected):
     if not isinstance(opts, dict):
         opts = {'format': opts}
     assert dt.format(**opts) == expected
@@ -237,7 +237,7 @@ def test_datetime_format_pattern(dt, opts, expected):
     ('000006', 'S'),
     ('AM', 'a'),
 ])
-def test_datetime_parse_pattern_mapping(string, pattern):
+def test_zulu_parse_pattern_mapping(string, pattern):
     pat_dt = Zulu.parse(string, DATE_PATTERN_TO_DIRECTIVE[pattern])
     dt = Zulu.parse(string, pattern)
 
@@ -255,7 +255,7 @@ def test_datetime_parse_pattern_mapping(string, pattern):
      {'format': '%a %b %d'},
      'Sat Jan 01')
 ])
-def test_datetime_format(dt, args, expected):
+def test_zulu_format(dt, args, expected):
     assert dt.format(**args) == expected
 
 
@@ -267,7 +267,7 @@ def test_datetime_format(dt, args, expected):
      '%a %b %d',
      'Sat Jan 01')
 ])
-def test_datetime_strftime(dt, fmt, expected):
+def test_zulu_strftime(dt, fmt, expected):
     assert dt.strftime(fmt) == expected
 
 
@@ -276,7 +276,7 @@ def test_datetime_strftime(dt, fmt, expected):
      '%Y-%m-%dT%H:%M:%S',
      Zulu(2000, 1, 1, 12, 30)),
 ])
-def test_datetime_strptime(string, fmt, expected):
+def test_zulu_strptime(string, fmt, expected):
     assert Zulu.strptime(string, fmt) == expected
 
 
@@ -286,7 +286,7 @@ def test_datetime_strptime(string, fmt, expected):
     (Zulu(2000, 1, 1, tzinfo='UTC'),
      datetime(2000, 1, 1, tzinfo=UTC))
 ])
-def test_datetime_fromdatetime(dt, expected):
+def test_zulu_fromdatetime(dt, expected):
     assert Zulu.fromdatetime(dt) == expected
 
 
@@ -294,7 +294,7 @@ def test_datetime_fromdatetime(dt, expected):
     (Zulu.fromtimestamp, 0, datetime(1970, 1, 1, tzinfo=UTC)),
     (Zulu.utcfromtimestamp, 0, datetime(1970, 1, 1, tzinfo=UTC)),
 ])
-def test_datetime_fromtimestamp(factory, timestamp, expected):
+def test_zulu_fromtimestamp(factory, timestamp, expected):
     assert factory(timestamp) == expected
 
 
@@ -302,15 +302,15 @@ def test_datetime_fromtimestamp(factory, timestamp, expected):
     (struct_time((2016, 7, 29, 21, 23, 50, 4, 211, 0)),
      Zulu(2016, 7, 29, 21, 23, 50))
 ])
-def test_datetime_fromgmtime(struct, expected):
+def test_zulu_fromgmtime(struct, expected):
     assert Zulu.fromgmtime(struct) == expected
 
 
-def test_datetime_fromordinal():
+def test_zulu_fromordinal():
     assert Zulu.fromordinal(730120) == Zulu(2000, 1, 1)
 
 
-def test_datetime_fromlocaltime():
+def test_zulu_fromlocaltime():
     now = localtime()
     assert Zulu.fromlocaltime(now).timestamp() == mktime(now)
 
@@ -323,7 +323,7 @@ def test_datetime_fromlocaltime():
     (Zulu(2000, 1, 1), Zulu(1990, 12, 3, 12, 30),
      Zulu(2000, 1, 1, 12, 30))
 ])
-def test_datetime_combine(date, time, expected):
+def test_zulu_combine(date, time, expected):
     dt = Zulu.combine(date, time)
     assert dt == expected
 
@@ -344,7 +344,7 @@ def test_datetime_combine(date, time, expected):
       'naive': datetime(2000, 1, 2, 3, 4, 5, 6),
       'datetime': datetime(2000, 1, 2, 3, 4, 5, 6, UTC)}),
 ])
-def test_datetime_basic_properties(dt, properties):
+def test_zulu_basic_properties(dt, properties):
     for prop, val in properties.items():
         assert getattr(dt, prop) == val
 
@@ -369,7 +369,7 @@ def test_datetime_basic_properties(dt, properties):
       'utctimetuple': struct_time((2000, 1, 2, 3, 4, 5, 6, 2, 0)),
       'timestamp': 946782245.000006}),
 ])
-def test_datetime_basic_property_methods(dt, methods):
+def test_zulu_basic_property_methods(dt, methods):
     for meth, val in methods.items():
         assert getattr(dt, meth)() == val
 
@@ -389,11 +389,11 @@ def test_datetime_basic_property_methods(dt, methods):
     (Zulu(2001, 12, 1), 31),
     (Zulu(2004, 2, 1), 29),
 ])
-def test_datetime_days_in_month(dt, expected):
+def test_zulu_days_in_month(dt, expected):
     assert dt.days_in_month() == expected
 
 
-def test_datetime_copy():
+def test_zulu_copy():
     dt = Zulu(2000, 1, 1)
     copy = dt.copy()
 
@@ -422,7 +422,7 @@ def test_datetime_copy():
       'tzinfo': 'US/Eastern'},
      Zulu(1999, 12, 31, 17, 30, 15, 10)),
 ])
-def test_datetime_replace(dt, replace, expected):
+def test_zulu_replace(dt, replace, expected):
     assert dt.replace(**replace) == expected
 
 
@@ -432,28 +432,28 @@ def test_datetime_replace(dt, replace, expected):
     (Zulu(2000, 1, 1, 12), '2000-01-01T12:00:00+00:00'),
     (Zulu(2000, 1, 1), '2000-01-01T00:00:00+00:00'),
 ])
-def test_datetime_isoformat(dt, expected):
+def test_zulu_isoformat(dt, expected):
     assert dt.isoformat() == expected
 
 
-def test_datetime_as_string():
+def test_zulu_as_string():
     dt = Zulu(2000, 1, 1)
     assert str(dt) == dt.isoformat()
 
 
-def test_datetime_as_float():
+def test_zulu_as_float():
     tm = 1498672470.4801
     dt = Zulu.fromtimestamp(tm)
     assert '{:.4f}'.format(float(dt)) == '{:.4f}'.format(tm)
 
 
-def test_datetime_as_int():
+def test_zulu_as_int():
     tm = 1498672470.4801
     dt = Zulu.fromtimestamp(tm)
     assert int(dt) == int(tm)
 
 
-def test_datetime_as_iter():
+def test_zulu_as_iter():
     dt = Zulu(2000, 1, 2, 3, 4, 5, 6, UTC)
     assert tuple(dt) == (('year', 2000),
                          ('month', 1),
@@ -465,7 +465,7 @@ def test_datetime_as_iter():
                          ('tzinfo', UTC))
 
 
-def test_datetime_string_format():
+def test_zulu_string_format():
     dt = Zulu(2000, 1, 1)
     assert '{0}'.format(dt) == dt.isoformat()
     assert '{0:%Y-%m-%dT%H:%M:%S}'.format(dt) == dt.format('%Y-%m-%dT%H:%M:%S')
@@ -485,7 +485,7 @@ def test_datetime_string_format():
      pytz.timezone('US/Eastern'),
      datetime(2000, 1, 1, 5, 0, tzinfo=gettz('US/Eastern')))
 ])
-def test_datetime_astimezone(dt, tzinfo, expected):
+def test_zulu_astimezone(dt, tzinfo, expected):
     ldt = dt.astimezone(tzinfo)
 
     assert type(ldt) is datetime
@@ -598,7 +598,7 @@ def test_datetime_astimezone(dt, tzinfo, expected):
      {'years': 2, 'months': 7, 'weeks': 13, 'days': 400},
      Zulu(2003, 12, 5)),
 ])
-def test_datetime_shift(method, dt, delta, expected):
+def test_zulu_shift(method, dt, delta, expected):
     meth = getattr(dt, method)
 
     if isinstance(delta, dict):
@@ -626,7 +626,7 @@ def test_datetime_shift(method, dt, delta, expected):
      60.123456,
      Zulu(2000, 1, 1, 12, 31, 45, 123456)),
 ])
-def test_datetime_addition(dt, delta, expected):
+def test_zulu_addition(dt, delta, expected):
     dt1 = (dt + delta)
     dt2 = (delta + dt)
 
@@ -634,7 +634,7 @@ def test_datetime_addition(dt, delta, expected):
     assert type(dt1) == type(dt2) == Zulu
 
 
-def test_datetime_addition_invalid_type():
+def test_zulu_addition_invalid_type():
     with pytest.raises(TypeError):
         Zulu() + 'string'
 
@@ -682,7 +682,7 @@ def test_datetime_addition_invalid_type():
      Zulu(2000, 1, 1, 12, 30, 45, 15),
      Delta(weeks=-1)),
 ])
-def test_datetime_subtraction(dt, offset, expected):
+def test_zulu_subtraction(dt, offset, expected):
     result = dt - offset
     assert result == expected
     assert type(result) == type(expected)
@@ -710,11 +710,11 @@ def test_datetime_subtraction(dt, offset, expected):
      Zulu(2000, 1, 1, 0, 0, 0, 0),
      '1 second ago'),
 ])
-def test_datetime_time_to(dt, other, expected):
+def test_zulu_time_to(dt, other, expected):
     assert dt.time_to(other) == expected
 
 
-def test_datetime_time_to_now():
+def test_zulu_time_to_now():
     assert Zulu.now().shift(minutes=1).time_to_now() == '1 minute ago'
     assert Zulu.now().shift(minutes=-1).time_to_now() == 'in 1 minute'
 
@@ -741,16 +741,16 @@ def test_datetime_time_to_now():
      Zulu(2000, 1, 1, 0, 0, 0, 0),
      'in 0 seconds'),
 ])
-def test_datetime_time_from(dt, other, expected):
+def test_zulu_time_from(dt, other, expected):
     assert dt.time_from(other) == expected
 
 
-def test_datetime_time_from_now():
+def test_zulu_time_from_now():
     assert Zulu.now().shift(minutes=1).time_from_now() == 'in 1 minute'
     assert Zulu.now().shift(minutes=-1).time_from_now() == '1 minute ago'
 
 
-def test_datetime_hash():
+def test_zulu_hash():
     dt = Zulu(2000, 1, 1)
     assert hash(dt) == hash(datetime(2000, 1, 1, tzinfo=UTC))
 
@@ -769,7 +769,7 @@ def test_datetime_hash():
      datetime(2000, 1, 1, tzinfo=UTC),
      False),
 ])
-def test_datetime_compare_equal(dt, other, expected):
+def test_zulu_compare_equal(dt, other, expected):
     assert (dt == other) is expected
 
 
@@ -787,7 +787,7 @@ def test_datetime_compare_equal(dt, other, expected):
      datetime(2000, 1, 1, tzinfo=UTC),
      True),
 ])
-def test_datetime_compare_not_equal(dt, other, expected):
+def test_zulu_compare_not_equal(dt, other, expected):
     assert (dt != other) is expected
 
 
@@ -805,7 +805,7 @@ def test_datetime_compare_not_equal(dt, other, expected):
      datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      True),
 ])
-def test_datetime_compare_less_than(dt, other, expected):
+def test_zulu_compare_less_than(dt, other, expected):
     assert (dt < other) is expected
 
 
@@ -829,7 +829,7 @@ def test_datetime_compare_less_than(dt, other, expected):
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
 ])
-def test_datetime_compare_less_than_equal(dt, other, expected):
+def test_zulu_compare_less_than_equal(dt, other, expected):
     assert (dt <= other) is expected
 
 
@@ -847,7 +847,7 @@ def test_datetime_compare_less_than_equal(dt, other, expected):
      datetime(2000, 1, 1, 12, 30, 45, 15, tzinfo=UTC),
      False),
 ])
-def test_datetime_compare_greater_than(dt, other, expected):
+def test_zulu_compare_greater_than(dt, other, expected):
     assert (dt > other) is expected
 
 
@@ -871,7 +871,7 @@ def test_datetime_compare_greater_than(dt, other, expected):
      datetime(2000, 1, 1, 12, 30, tzinfo=UTC),
      True),
 ])
-def test_datetime_compare_greater_than_equal(dt, other, expected):
+def test_zulu_compare_greater_than_equal(dt, other, expected):
     assert (dt >= other) is expected
 
 
@@ -901,7 +901,7 @@ def test_datetime_compare_greater_than_equal(dt, other, expected):
      'century',
      Zulu(2000, 1, 1)),
 ])
-def test_datetime_start_of_frame(dt, frame, expected):
+def test_zulu_start_of_frame(dt, frame, expected):
     assert dt.start_of(frame) == expected
 
 
@@ -931,7 +931,7 @@ def test_datetime_start_of_frame(dt, frame, expected):
      'century',
      Zulu(2099, 12, 31, 23, 59, 59, 999999)),
 ])
-def test_datetime_end_of_frame(dt, frame, expected):
+def test_zulu_end_of_frame(dt, frame, expected):
     assert dt.end_of(frame) == expected
 
 
@@ -987,12 +987,12 @@ def test_datetime_end_of_frame(dt, frame, expected):
      (Zulu(2015, 4, 4, 12, 30, 47, 0),
       Zulu(2015, 4, 4, 12, 31, 6, 999999)))
 ])
-def test_datetime_span(dt, span, count, expected):
+def test_zulu_span(dt, span, count, expected):
     time_span_tuple = dt.span(span, count)
     assert time_span_tuple == expected
 
 
-def test_datetime_span_frame_error():
+def test_zulu_span_frame_error():
     frame = 'temp'
     dt = Zulu(2015, 4, 4, 12, 30)
 
@@ -1107,7 +1107,7 @@ def test_datetime_span_frame_error():
         []
     ),
 ])
-def test_datetime_span_range(frame, start, end, expected):
+def test_zulu_span_range(frame, start, end, expected):
     span_range = []
     for time_span in Zulu.span_range(frame, start, end):
         span_range.append(time_span)
@@ -1119,7 +1119,7 @@ def test_datetime_span_range(frame, start, end, expected):
     ('century', '1', Zulu(2015, 4, 4, 12, 30, 0)),
     ('year', Zulu(2015, 4, 4, 12, 30, 0), '1')
 ])
-def test_datetime_span_range_error(frame, start, end):
+def test_zulu_span_range_error(frame, start, end):
     with pytest.raises(ParseError):
         list(Zulu.span_range(frame, start, end))
 
@@ -1202,7 +1202,7 @@ def test_datetime_span_range_error(frame, start, end):
         []
     ),
 ])
-def test_datetime_range(frame, start, end, expected):
+def test_zulu_range(frame, start, end, expected):
     time_range = list(Zulu.range(frame, start, end))
 
     assert time_range == expected
@@ -1212,7 +1212,7 @@ def test_datetime_range(frame, start, end, expected):
     ('century', '1', Zulu(2015, 4, 4, 12, 30, 0)),
     ('year', Zulu(2015, 4, 4, 12, 30, 0), '1')
 ])
-def test_datetime_range_error(frame, start, end):
+def test_zulu_range_error(frame, start, end):
     with pytest.raises(ParseError):
         list(Zulu.range(frame, start, end))
 
@@ -1226,7 +1226,7 @@ def test_datetime_range_error(frame, start, end):
     (2001, False),
     (2004, True),
 ])
-def test_datetime_is_leap_year(year, expected):
+def test_zulu_is_leap_year(year, expected):
     assert Zulu(year).is_leap_year() == expected
 
 
@@ -1235,7 +1235,7 @@ def test_datetime_is_leap_year(year, expected):
     (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 30), True),
     (Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 29), False),
 ])
-def test_datetime_is_before(dt, other, expected):
+def test_zulu_is_before(dt, other, expected):
     assert dt.is_before(other) is expected
 
 
@@ -1244,7 +1244,7 @@ def test_datetime_is_before(dt, other, expected):
     (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 30), True),
     (Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 29), False),
 ])
-def test_datetime_is_on_or_before(dt, other, expected):
+def test_zulu_is_on_or_before(dt, other, expected):
     assert dt.is_on_or_before(other) is expected
 
 
@@ -1253,7 +1253,7 @@ def test_datetime_is_on_or_before(dt, other, expected):
     (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 30), False),
     (Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 29), True),
 ])
-def test_datetime_is_after(dt, other, expected):
+def test_zulu_is_after(dt, other, expected):
     assert dt.is_after(other) is expected
 
 
@@ -1262,7 +1262,7 @@ def test_datetime_is_after(dt, other, expected):
     (Zulu(2000, 1, 1, 12, 29), Zulu(2000, 1, 1, 12, 30), False),
     (Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 29), True),
 ])
-def test_datetime_is_on_or_after(dt, other, expected):
+def test_zulu_is_on_or_after(dt, other, expected):
     assert dt.is_on_or_after(other) is expected
 
 
@@ -1280,11 +1280,11 @@ def test_datetime_is_on_or_after(dt, other, expected):
      Zulu(2000, 1, 1, 12, 30), Zulu(2000, 1, 1, 12, 31),
      False),
 ])
-def test_datetime_is_between(dt, start, end, expected):
+def test_zulu_is_between(dt, start, end, expected):
     assert dt.is_between(start, end) is expected
 
 
-def test_datetime_pickle():
+def test_zulu_pickle():
     dt = Zulu()
     unpickled = pickle.loads(pickle.dumps(dt))
 

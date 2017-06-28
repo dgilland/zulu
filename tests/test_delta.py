@@ -64,17 +64,17 @@ from .fixtures import parametrize
     ('5.6 week', Delta(days=39, seconds=17280)),
     ('5.6 weeks', Delta(days=39, seconds=17280)),
 ])
-def test_timedelta_parse(obj, expected):
+def test_delta_parse(obj, expected):
     assert Delta.parse(obj) == expected
 
 
-def test_timedelta_as_float():
+def test_delta_as_float():
     secs = 10.1234
     delta = Delta(seconds=secs)
     assert float(delta) == secs
 
 
-def test_timedelta_as_int():
+def test_delta_as_int():
     secs = 10.1234
     delta = Delta(seconds=secs)
     assert int(delta) == int(secs)
@@ -94,7 +94,7 @@ def test_timedelta_as_int():
                                    ('seconds', -50),
                                    ('microseconds', -151200))),
 ])
-def test_timedelta_as_iter(delta, expected):
+def test_delta_as_iter(delta, expected):
     assert tuple(delta) == expected
 
 
@@ -103,7 +103,7 @@ def test_timedelta_as_iter(delta, expected):
     ('', ParseError),
     ('a', ParseError),
 ])
-def test_timedelta_parse_invalid(obj, exception):
+def test_delta_parse_invalid(obj, exception):
     with pytest.raises(exception):
         Delta.parse(obj)
 
@@ -121,11 +121,11 @@ def test_timedelta_parse_invalid(obj, exception):
     (Delta(hours=23), {'threshold': 1.00}, '23 hours'),
     (Delta(hours=23), {'threshold': 1.00, 'locale': 'de'}, '23 Stunden'),
 ])
-def test_timedelta_format(delta, opts, expected):
+def test_delta_format(delta, opts, expected):
     assert delta.format(**opts) == expected
 
 
-def test_timedelta_format_default_locale(monkeypatch):
+def test_delta_format_default_locale(monkeypatch):
     for var in ('LANGUAGE', 'LC_ALL', 'LC_CTYPE', 'LANG'):
         monkeypatch.setenv(var, '')
 
@@ -136,12 +136,12 @@ def test_timedelta_format_default_locale(monkeypatch):
     ({'granularity': 'invalid'}, ValueError),
     ({'format': 'invalid'}, ValueError),
 ])
-def test_timedelta_format_exception(opts, exception):
+def test_delta_format_exception(opts, exception):
     with pytest.raises(exception):
         Delta(1).format(**opts)
 
 
-def test_timedelta_math_operations_return_type():
+def test_delta_math_operations_return_type():
     delta = Delta(days=1, hours=1, minutes=1, seconds=1, microseconds=1)
 
     assert isinstance(delta + delta, Delta)
@@ -158,6 +158,6 @@ def test_timedelta_math_operations_return_type():
         assert isinstance(divmod(delta, delta)[1], Delta)
 
 
-def test_timedelta_pickle():
+def test_delta_pickle():
     delta = Delta(hours=1)
     assert pickle.loads(pickle.dumps(delta)) == delta

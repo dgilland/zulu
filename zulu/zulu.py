@@ -15,7 +15,7 @@ from dateutil.tz import gettz, tzutc
 
 from . import parser
 from .parser import UTC
-from .timedelta import Delta
+from .delta import Delta
 from ._compat import byte_types, iteritems, number_types, string_types
 
 
