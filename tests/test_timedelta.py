@@ -68,6 +68,36 @@ def test_timedelta_parse(obj, expected):
     assert Delta.parse(obj) == expected
 
 
+def test_timedelta_as_float():
+    secs = 10.1234
+    delta = Delta(seconds=secs)
+    assert float(delta) == secs
+
+
+def test_timedelta_as_int():
+    secs = 10.1234
+    delta = Delta(seconds=secs)
+    assert int(delta) == int(secs)
+
+
+@parametrize('delta,expected', [
+    (Delta(seconds=742610.1512), (('weeks', 1),
+                                  ('days', 1),
+                                  ('hours', 14),
+                                  ('minutes', 16),
+                                  ('seconds', 50),
+                                  ('microseconds', 151200))),
+    (Delta(seconds=-742610.1512), (('weeks', -1),
+                                   ('days', -1),
+                                   ('hours', -14),
+                                   ('minutes', -16),
+                                   ('seconds', -50),
+                                   ('microseconds', -151200))),
+])
+def test_timedelta_as_iter(delta, expected):
+    assert tuple(delta) == expected
+
+
 @parametrize('obj,exception', [
     ({}, TypeError),
     ('', ParseError),
