@@ -441,6 +441,18 @@ def test_datetime_as_string():
     assert str(dt) == dt.isoformat()
 
 
+def test_datetime_as_float():
+    tm = 1498672470.4801
+    dt = Zulu.fromtimestamp(tm)
+    assert '{:.4f}'.format(float(dt)) == '{:.4f}'.format(tm)
+
+
+def test_datetime_as_int():
+    tm = 1498672470.4801
+    dt = Zulu.fromtimestamp(tm)
+    assert int(dt) == int(tm)
+
+
 def test_datetime_as_iter():
     dt = Zulu(2000, 1, 2, 3, 4, 5, 6, UTC)
     assert tuple(dt) == (('year', 2000),

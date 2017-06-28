@@ -1009,8 +1009,18 @@ class Zulu(datetime):
         return '<{0} [{1}]>'.format(self.__class__.__name__, self)
 
     def __str__(self):
-        """Return :class:`.Zulu` instance as an ISO 8601 string."""
+        """Return class as an ISO8601 string."""
         return self.isoformat()
+
+    def __float__(self):
+        """Return class as float time in seconds (including decimal
+        microsceonds) since the epoch.
+        """
+        return (self - self.epoch).total_seconds()
+
+    def __int__(self):
+        """Return class as integer time in seconds since the epoch."""
+        return int(float(self))
 
     def __iter__(self):
         """Return class as an iterator that yields a tuple corresponding to
