@@ -331,10 +331,10 @@ class Zulu(datetime):
         Returns:
             list: List of all time spans
         """
-        if not isinstance(start, cls):
+        if not isinstance(start, Zulu):
             start = cls.parse(start)
 
-        if not isinstance(end, cls):
+        if not isinstance(end, Zulu):
             end = cls.parse(end)
 
         if start > end:
@@ -373,10 +373,10 @@ class Zulu(datetime):
             list: A list of datetime values ranging from the given start and
                 end datetimes.
         """
-        if not isinstance(start, cls):
+        if not isinstance(start, Zulu):
             start = cls.parse(start)
 
-        if not isinstance(end, cls):
+        if not isinstance(end, Zulu):
             end = cls.parse(end)
 
         validate_frame(frame)
@@ -562,7 +562,7 @@ class Zulu(datetime):
         if tz is None:
             tz = LOCAL
         tz = parser.get_timezone(tz)
-        return super(self.__class__, self).astimezone(tz)
+        return super(Zulu, self).astimezone(tz)
 
     def shift(self,
               other=None,
@@ -1048,7 +1048,7 @@ class Zulu(datetime):
             other = timedelta(seconds=other)
 
         if isinstance(other, timedelta):
-            result = super(self.__class__, self).__add__(other)
+            result = super(Zulu, self).__add__(other)
         else:
             result = other.__add__(self)
 
@@ -1065,11 +1065,11 @@ class Zulu(datetime):
             :class:`timedelta`: if subtracting a :class:`datetime` or
                 :class:`.Zulu`
         """
-        if (not isinstance(other, self.__class__) and
+        if (not isinstance(other, Zulu) and
                 isinstance(other, datetime)):
             other = self.fromdatetime(other)
 
-        result = super(self.__class__, self).__sub__(other)
+        result = super(Zulu, self).__sub__(other)
 
         if isinstance(result, datetime):
             return self.fromdatetime(result)
