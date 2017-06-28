@@ -435,7 +435,7 @@ class Zulu(datetime):
         Returns:
             :class:`datetime`
         """
-        return datetime(*tuple(self))
+        return datetime(**dict(self))
 
     def timestamp(self):
         """Return the POSIX timestamp.
@@ -451,7 +451,7 @@ class Zulu(datetime):
         Returns:
             :class:`.Zulu`
         """
-        return self.__class__(*tuple(self))
+        return self.__class__(**dict(self))
 
     def days_in_month(self):
         """Return the number of days in the month.
@@ -687,33 +687,33 @@ class Zulu(datetime):
         Returns:
             :class:`.Zulu`
         """
-        args = list(self)
+        data = dict(self)
 
         if year is not None:
-            args[0] = year
+            data['year'] = year
 
         if month is not None:
-            args[1] = month
+            data['month'] = month
 
         if day is not None:
-            args[2] = day
+            data['day'] = day
 
         if hour is not None:
-            args[3] = hour
+            data['hour'] = hour
 
         if minute is not None:
-            args[4] = minute
+            data['minute'] = minute
 
         if second is not None:
-            args[5] = second
+            data['second'] = second
 
         if microsecond is not None:
-            args[6] = microsecond
+            data['microsecond'] = microsecond
 
         if tzinfo is not None:
-            args[7] = tzinfo
+            data['tzinfo'] = tzinfo
 
-        return self.__class__(*args)
+        return self.__class__(**data)
 
     def start_of_century(self):
         """Return a new :class:`.Zulu` set to the start of the century of this
@@ -1013,18 +1013,17 @@ class Zulu(datetime):
         return self.isoformat()
 
     def __iter__(self):
-        """Return :class:`.Zulu` instance as an iterator that yields a
-        tuple corresponding to
+        """Return class as an iterator that yields a tuple corresponding to
         ``(year, month, day, hour, minute, second, microsecond, tzinfo)``.
         """
-        return iter((self.year,
-                     self.month,
-                     self.day,
-                     self.hour,
-                     self.minute,
-                     self.second,
-                     self.microsecond,
-                     self.tzinfo))
+        return iter((('year', self.year),
+                     ('month', self.month),
+                     ('day', self.day),
+                     ('hour', self.hour),
+                     ('minute', self.minute),
+                     ('second', self.second),
+                     ('microsecond', self.microsecond),
+                     ('tzinfo', self.tzinfo)))
 
     def __add__(self, other):
         """Add a ``timedelta`` and return the result.

@@ -426,14 +426,6 @@ def test_datetime_replace(dt, replace, expected):
     assert dt.replace(**replace) == expected
 
 
-def test_datetime_as_iter():
-    dt = Zulu(2000, 1, 1)
-    expected = (2000, 1, 1, 0, 0, 0, 0, UTC)
-
-    assert tuple(dt) == expected
-    assert list(dt) == list(expected)
-
-
 @parametrize('dt,expected', [
     (Zulu(2000, 1, 1, 12, 30, 45, 15), '2000-01-01T12:30:45.000015+00:00'),
     (Zulu(2000, 1, 1, 12, 30, 45), '2000-01-01T12:30:45+00:00'),
@@ -447,6 +439,18 @@ def test_datetime_isoformat(dt, expected):
 def test_datetime_as_string():
     dt = Zulu(2000, 1, 1)
     assert str(dt) == dt.isoformat()
+
+
+def test_datetime_as_iter():
+    dt = Zulu(2000, 1, 2, 3, 4, 5, 6, UTC)
+    assert tuple(dt) == (('year', 2000),
+                         ('month', 1),
+                         ('day', 2),
+                         ('hour', 3),
+                         ('minute', 4),
+                         ('second', 5),
+                         ('microsecond', 6),
+                         ('tzinfo', UTC))
 
 
 def test_datetime_string_format():
