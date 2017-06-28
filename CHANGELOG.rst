@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v0.11.0 (2017-06-28)
+--------------------
+
 - Add Python 3.6 support.
 - Add ``Delta.__iter__`` method that yields 2-element tuples like ``Zulu.__iter__``. Delta values are normalized into integer values distributed from the higher units to the lower units.
 - Add ``Delta.__float__`` and ``Delta.__int__`` methods for converting to seconds.
