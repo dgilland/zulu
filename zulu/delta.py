@@ -6,7 +6,6 @@ from __future__ import absolute_import
 
 from datetime import timedelta
 from functools import wraps
-from math import modf
 import os
 
 from babel.core import default_locale
@@ -195,20 +194,3 @@ Delta.max = Delta(days=999999999,
                   seconds=59,
                   microseconds=999999)
 Delta.resolution = Delta(microseconds=1)
-
-
-# def split_delta(delta):
-#     """Split timedelta into smallest value for units weeks, days, hours,
-#     minutes, seconds, and microseconds.
-#     """
-#     seconds = modf(delta.total_seconds())[1]
-#     minutes, seconds = divmod(seconds, 60)
-#     hours, minutes = divmod(minutes, 60)
-#     days, hours = divmod(hours, 24)
-#     weeks, days = divmod(days, 7)
-#     return tuple(int(unit) for unit in (weeks,
-#                                         days,
-#                                         hours,
-#                                         minutes,
-#                                         seconds,
-#                                         delta.microseconds))
