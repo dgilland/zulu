@@ -453,16 +453,16 @@ def test_zulu_as_int():
     assert int(dt) == int(tm)
 
 
-def test_zulu_as_iter():
+def test_zulu_datetimetuple():
     dt = Zulu(2000, 1, 2, 3, 4, 5, 6, UTC)
-    assert tuple(dt) == (('year', 2000),
-                         ('month', 1),
-                         ('day', 2),
-                         ('hour', 3),
-                         ('minute', 4),
-                         ('second', 5),
-                         ('microsecond', 6),
-                         ('tzinfo', UTC))
+    dtt = dt.datetimetuple()
+    assert dtt == (2000, 1, 2, 3, 4, 5, 6, UTC)
+
+
+def test_zulu_datetuple():
+    dt = Zulu(2000, 1, 2, 3, 4, 5, 6, UTC)
+    dtt = dt.datetuple()
+    assert dtt == (2000, 1, 2)
 
 
 def test_zulu_string_format():

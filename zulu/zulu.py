@@ -5,6 +5,7 @@
 from __future__ import absolute_import
 
 import calendar
+from collections import namedtuple
 from datetime import datetime, timedelta
 from functools import wraps
 import time
@@ -47,6 +48,11 @@ SHIFT_UNITS = ('years',
                'minutes',
                'seconds',
                'microseconds')
+
+DateTime = namedtuple('DateTime', ['year', 'month', 'day',
+                                   'hour', 'second', 'minute', 'microsecond',
+                                   'tzinfo'])
+Date = namedtuple('Date', ['year', 'month', 'day'])
 
 
 def validate_frame(frame):
@@ -444,7 +450,7 @@ class Zulu(datetime):
         Returns:
             :class:`datetime`
         """
-        return datetime(**dict(self))
+        return datetime(*self.datetimetuple())
 
     def timestamp(self):
         """Return the POSIX timestamp.
@@ -454,13 +460,32 @@ class Zulu(datetime):
         """
         return parser.get_timestamp(self)
 
+    def datetimetuple(self):
+        """Return datetime ``tuple`` containing ``(year, month, day, hour,
+        minute, second, microsecond, tzinfo)``.
+
+        Returns:
+            tuple
+        """
+        return DateTime(self.year, self.month, self.day,
+                        self.hour, self.minute, self.second, self.microsecond,
+                        self.tzinfo)
+
+    def datetuple(self):
+        """Return date ``tuple`` containing ``(year, month, day)``.
+
+        Returns:
+            tuple
+        """
+        return Date(self.year, self.month, self.day)
+
     def copy(self):
         """Return a new :class`Zulu` instance with the same datetime value.
 
         Returns:
             :class:`.Zulu`
         """
-        return self.__class__(**dict(self))
+        return self.__class__(*self.datetimetuple())
 
     def days_in_month(self):
         """Return the number of days in the month.
@@ -696,33 +721,14 @@ class Zulu(datetime):
         Returns:
             :class:`.Zulu`
         """
-        data = dict(self)
+        dt = self.datetimetuple()
+        values = [year, month, day, hour, minute, second, microsecond, tzinfo]
 
-        if year is not None:
-            data['year'] = year
+        for idx, value in enumerate(values):
+            if value is None:
+                values[idx] = dt[idx]
 
-        if month is not None:
-            data['month'] = month
-
-        if day is not None:
-            data['day'] = day
-
-        if hour is not None:
-            data['hour'] = hour
-
-        if minute is not None:
-            data['minute'] = minute
-
-        if second is not None:
-            data['second'] = second
-
-        if microsecond is not None:
-            data['microsecond'] = microsecond
-
-        if tzinfo is not None:
-            data['tzinfo'] = tzinfo
-
-        return self.__class__(**data)
+        return self.__class__(*values)
 
     def start_of_century(self):
         """Return a new :class:`.Zulu` set to the start of the century of this
@@ -1030,19 +1036,6 @@ class Zulu(datetime):
     def __int__(self):
         """Return class as integer time in seconds since the epoch."""
         return int(float(self))
-
-    def __iter__(self):
-        """Return class as an iterator that yields a tuple corresponding to
-        ``(year, month, day, hour, minute, second, microsecond, tzinfo)``.
-        """
-        return iter((('year', self.year),
-                     ('month', self.month),
-                     ('day', self.day),
-                     ('hour', self.hour),
-                     ('minute', self.minute),
-                     ('second', self.second),
-                     ('microsecond', self.microsecond),
-                     ('tzinfo', self.tzinfo)))
 
     def __add__(self, other):
         """Add a ``timedelta`` and return the result.
