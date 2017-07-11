@@ -128,38 +128,6 @@ class Delta(timedelta):
         """
         return int(float(self))
 
-    def __iter__(self):
-        """Return an iterable that yields a tuple corresponding to:
-
-        ::
-
-            (('weeks', weeks),
-             ('days', days),
-             ('hours', hours),
-             ('minutes', minutes),
-             ('seconds', seconds),
-             ('microseconds', microseconds))``
-
-        where all values have been normalized so that each unit is populated
-        with the maximum integer value for that unit and distributed from
-        highest to lowest units (i.e. weeks -> microseconds).
-        """
-        total = self.total_seconds()
-
-        if total < 0:
-            delta = self.__class__(seconds=abs(total))
-            factor = -1
-        else:
-            delta = self
-            factor = 1
-
-        return iter((('weeks', int(delta.days / 7) * factor),
-                     ('days', int(delta.days % 7) * factor),
-                     ('hours', int(delta.seconds / 3600) * factor),
-                     ('minutes', (int(delta.seconds / 60) % 60) * factor),
-                     ('seconds', (delta.seconds % 60) * factor),
-                     ('microseconds', delta.microseconds * factor)))
-
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.Delta`."""
         return '<{0} [{1}]>'.format(self.__class__.__name__, self)

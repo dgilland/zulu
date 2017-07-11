@@ -5,6 +5,7 @@ Changelog
 - Add ``Zulu.datetimetuple()``.
 - Add ``Zulu.datetuple()``.
 - Remove ``Zulu.__iter__`` method. (**breaking change**)
+- Remove ``Delta.__iter__`` method. (**breaking change**)
 
 
 v0.11.0 (2017-06-28)
