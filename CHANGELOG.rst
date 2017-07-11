@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v0.12.0 (2017-07-11)
+--------------------
+
 - Add ``Zulu.datetimetuple()``.
 - Add ``Zulu.datetuple()``.
 - Remove ``Zulu.__iter__`` method. (**breaking change**)
