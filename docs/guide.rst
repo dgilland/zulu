@@ -512,7 +512,7 @@ In addition to having a drop-in replacement for ``datetime``, zulu also has a dr
 
 .. code-block:: python
 
-    delta = zulu.delta('1w 3d 2h 32m')
+    delta = zulu.parse_delta('1w 3d 2h 32m')
     # <Delta [10 days, 2:32:00]>
 
     assert isinstance(delta, zulu.Delta)
@@ -520,14 +520,14 @@ In addition to having a drop-in replacement for ``datetime``, zulu also has a dr
     from datetime import timedelta
     assert isinstance(delta, timedelta)
 
-    zulu.delta('2:04:13:02.266')
+    zulu.parse_delta('2:04:13:02.266')
     # <Delta [2 days, 4:13:02.266000]>
 
-    zulu.delta('2 days, 5 hours, 34 minutes, 56 seconds')
+    zulu.parse_delta('2 days, 5 hours, 34 minutes, 56 seconds')
     # <Delta [2 days, 5:34:56]>
 
 
-Other formats that ``zulu.delta`` can parse are:
+Other formats that ``zulu.parse_delta`` can parse are:
 
 - ``32m``
 - ``2h32m``
@@ -568,7 +568,7 @@ Similar to ``Zulu.time_to/from``, ``Delta`` objects can be humanized with the ``
 
 .. code-block:: python
 
-    delta = zulu.delta('2h 32m')
+    delta = zulu.parse_delta('2h 32m')
     # <Delta [2:32:00]>
 
     delta.format()
@@ -577,7 +577,7 @@ Similar to ``Zulu.time_to/from``, ``Delta`` objects can be humanized with the ``
     delta.format(add_direction=True)
     # 'in 3 hours'
 
-    zulu.delta('-2h 32m').format(add_direction=True)
+    zulu.parse_delta('-2h 32m').format(add_direction=True)
     # '3 hours ago'
 
     delta.format(granularity='day')

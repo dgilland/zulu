@@ -22,9 +22,6 @@ API Reference
 .. autofunction:: zulu.parse_delta
 
 
-.. autofunction:: zulu.delta
-
-
 .. autoclass:: zulu.Zulu
     :members:
     :inherited-members:
