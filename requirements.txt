@@ -1,4 +1,2 @@
-Babel>=2.3.4
-iso8601>=0.1.11
-python-dateutil>=2.6.0
-pytimeparse>=1.1.5
+-e .
+-e .[dev]

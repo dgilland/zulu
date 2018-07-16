@@ -2,15 +2,7 @@
 """The zulu module.
 """
 
-from .__pkg__ import (
-    __description__,
-    __url__,
-    __version__,
-    __author__,
-    __email__,
-    __license__
-)
-
+from .__version__ import __version__
 
 from .api import (
     create,
