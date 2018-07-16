@@ -129,7 +129,7 @@ def parse_datetime(obj, formats=None, default_tz=None):
     if dt.tzinfo is None and default_tz is not None:
         dt = dt.replace(tzinfo=get_timezone(default_tz))
 
-    if not has_valid_timezone(dt):
+    if not has_valid_timezone(dt):  # pragma: no cover
         raise ParseError('Timezone offset must be strictly between -24/+24 '
                          'hours')
 
@@ -383,7 +383,7 @@ def has_valid_timezone(dt):
     """
     try:
         dt.astimezone(UTC)
-    except Exception:
+    except Exception:  # pragma: no cover
         return False
     else:
         return True
