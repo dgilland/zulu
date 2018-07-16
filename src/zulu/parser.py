@@ -375,7 +375,7 @@ def is_valid_timezone(tz):
 
 
 def has_valid_timezone(dt):
-    """Return whether `tz` is a valid timezone with a UTC offset strictly
+    """Return whether `dt` has a valid timezone with a UTC offset strictly
     between -24/+24 hours.
 
     Returns:
