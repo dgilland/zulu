@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v1.0.0 (2018-08-20)
+-------------------
+
 - Drop support for Python 2.7.
 
 
