@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The timedelta module.
 """
 
@@ -11,7 +10,6 @@ import os
 from babel.core import default_locale
 
 from . import parser
-from ._compat import PY2
 
 
 def _asdelta(func):
@@ -143,17 +141,9 @@ Delta.__floordiv__ = _asdelta(Delta.__floordiv__)
 Delta.__pos__ = _asdelta(Delta.__pos__)
 Delta.__neg__ = _asdelta(Delta.__neg__)
 Delta.__abs__ = _asdelta(Delta.__abs__)
-
-
-if PY2:  # pragma: no cover
-    # NOTE: Python 2 timedelta doesn't implement mod/divmod.
-    Delta.__div__ = _asdelta(Delta.__div__)
-else:  # pragma: no cover
-    Delta.__truediv__ = _asdelta(Delta.__truediv__)
-    Delta.__mod__ = _asdelta(Delta.__mod__)
-    Delta.__divmod__ = _asdelta(Delta.__divmod__)
-
-
+Delta.__truediv__ = _asdelta(Delta.__truediv__)
+Delta.__mod__ = _asdelta(Delta.__mod__)
+Delta.__divmod__ = _asdelta(Delta.__divmod__)
 # Override timedelta.min/max/resolution with equivalent Delta objects.
 Delta.min = Delta(-999999999)
 Delta.max = Delta(days=999999999,

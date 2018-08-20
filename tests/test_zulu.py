@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from datetime import date, datetime, time, timedelta
 import pickle
@@ -14,8 +13,7 @@ from zulu import Zulu, Delta, ParseError, create
 from zulu.parser import DATE_PATTERN_TO_DIRECTIVE, UTC
 
 
-from .fixtures import parametrize
-
+parametrize = pytest.mark.parametrize
 
 eastern = pytz.timezone('US/Eastern')
 

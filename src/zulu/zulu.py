@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The datetime module.
 """
 
@@ -17,7 +16,7 @@ from dateutil.tz import gettz, tzutc
 from . import parser
 from .parser import UTC
 from .delta import Delta
-from ._compat import byte_types, iteritems, number_types, string_types
+from .helpers import byte_types, number_types
 
 
 LOCAL = 'local'
@@ -73,7 +72,7 @@ def _unpickle(string, tzinfo):
         # May be a better way to do this.
         _string = string
 
-        if isinstance(_string, string_types):  # pragma: no cover
+        if isinstance(_string, str):  # pragma: no cover
             _string = bytearray(_string)
 
         if (isinstance(_string, byte_types) and
@@ -125,12 +124,12 @@ class Zulu(datetime):
                 second=0,
                 microsecond=0,
                 tzinfo=None):
-        if isinstance(year, string_types) or isinstance(year, byte_types):
+        if isinstance(year, str) or isinstance(year, byte_types):
             dt = _unpickle(string=year, tzinfo=month)
             if dt:
                 return cls.fromdatetime(dt)
         elif isinstance(year, dict):
-            obj = {key: value for key, value in iteritems(year)
+            obj = {key: value for key, value in year.items()
                    if key in DATETIME_ATTRS}
             return cls(**obj)
 

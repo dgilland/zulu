@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The parser module.
 """
 
@@ -17,7 +16,7 @@ from dateutil.tz import gettz, tzlocal, tzutc
 import iso8601
 import pytimeparse
 
-from ._compat import number_types, string_types
+from .helpers import number_types
 
 
 UTC = tzutc()
@@ -29,7 +28,7 @@ DEFAULT_PARSE_DATETIME_FORMATS = (ISO8601, TIMESTAMP)
 
 
 # Subset of Unicode date field patterns from:
-# http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table
+# https://www.unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
 # that are supported as an alternative to Python's strptime/strftime
 # directives. This mapping is used to convert the Unicode pattern (the dict
 # keys) to the best matched strptime directive (the values). For values that
@@ -193,7 +192,7 @@ def format_datetime(dt, format=None, tz=None, locale=LC_TIME):
                         "datetime, not {0}"
                         .format(type(dt).__name__))  # pragma: no cover
 
-    if format is not None and not isinstance(format, string_types):
+    if format is not None and not isinstance(format, str):
         raise TypeError("zulu.parser.format()'s second argument must be a "
                         "string or None, not {0}"
                         .format(type(format).__name__))  # pragma: no cover
@@ -248,7 +247,7 @@ def parse_timedelta(obj):
     if isinstance(obj, timedelta):
         return obj
 
-    is_string = isinstance(obj, string_types)
+    is_string = isinstance(obj, str)
     is_number = isinstance(obj, number_types)
 
     if not is_string and not is_number:
@@ -323,7 +322,7 @@ def get_timezone(tz):
         tz = UTC
     elif tz == 'local':
         tz = tzlocal()
-    elif isinstance(tz, string_types):
+    elif isinstance(tz, str):
         tz_string = tz
         tz = gettz(tz)
 

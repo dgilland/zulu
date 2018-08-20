@@ -1,12 +1,13 @@
-# -*- coding: utf-8 -*-
 
-import mock
+from unittest import mock
+
 import pytest
 import warnings
 
 import zulu
 
-from .fixtures import parametrize
+
+parametrize = pytest.mark.parametrize
 
 
 @parametrize('api_func, target_func', [

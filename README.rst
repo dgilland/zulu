@@ -19,11 +19,11 @@ Links
 Features
 ========
 
-- Supported on Python 2.7 and Python 3.4+
 - All datetime objects converted and stored as UTC.
 - Parses ISO8601 formatted strings and POSIX timestamps by default.
 - Timezone representation applied only during string output formatting or when casting to native datetime object.
 - Drop-in replacement for native datetime objects.
+- Python 3.4+
 
 
 Quickstart
@@ -34,7 +34,7 @@ Install using pip:
 
 ::
 
-    pip install zulu
+    pip3 install zulu
 
 
 .. code-block:: python

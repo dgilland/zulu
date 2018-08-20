@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from datetime import timedelta
 import pickle
@@ -6,9 +5,9 @@ import pickle
 import pytest
 
 from zulu import ParseError, Delta
-from zulu._compat import PY2
 
-from .fixtures import parametrize
+
+parametrize = pytest.mark.parametrize
 
 
 @parametrize('obj,expected', [
@@ -134,10 +133,8 @@ def test_delta_math_operations_return_type():
     assert isinstance(abs(delta), Delta)
     assert isinstance(+delta, Delta)
     assert isinstance(-delta, Delta)
-
-    if not PY2:
-        assert isinstance(delta % delta, Delta)
-        assert isinstance(divmod(delta, delta)[1], Delta)
+    assert isinstance(delta % delta, Delta)
+    assert isinstance(divmod(delta, delta)[1], Delta)
 
 
 def test_delta_pickle():
