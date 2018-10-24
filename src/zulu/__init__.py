@@ -13,4 +13,4 @@ from .api import (
 )
 from .zulu import Zulu
 from .parser import ParseError, ISO8601, TIMESTAMP
-from .delta import Delta
+from .delta import Delta, to_seconds

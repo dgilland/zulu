@@ -150,3 +150,23 @@ Delta.max = Delta(days=999999999,
                   seconds=59,
                   microseconds=999999)
 Delta.resolution = Delta(microseconds=1)
+
+
+def to_seconds(*,
+               microseconds=0,
+               milliseconds=0,
+               seconds=0,
+               minutes=0,
+               hours=0,
+               days=0,
+               weeks=0):
+    """Return total number of seconds by combining values from each unit."""
+    return Delta(
+        microseconds=microseconds,
+        milliseconds=milliseconds,
+        seconds=seconds,
+        minutes=minutes,
+        hours=hours,
+        days=days,
+        weeks=weeks
+    ).total_seconds()

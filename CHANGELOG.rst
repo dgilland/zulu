@@ -3,6 +3,7 @@ Changelog
 
 
 - Add ``fold`` attribute to ``Zulu``.
+- Add ``zulu.to_seconds`` for converting units of time to total number of seconds.
 
 
 v1.0.0 (2018-08-20)

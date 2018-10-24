@@ -4,7 +4,7 @@ import pickle
 
 import pytest
 
-from zulu import ParseError, Delta
+from zulu import ParseError, Delta, to_seconds
 
 
 parametrize = pytest.mark.parametrize
@@ -140,3 +140,23 @@ def test_delta_math_operations_return_type():
 def test_delta_pickle():
     delta = Delta(hours=1)
     assert pickle.loads(pickle.dumps(delta)) == delta
+
+
+@parametrize('case,expected', [
+    ({'microseconds': 1000}, 0.001),
+    ({'milliseconds': 1000}, 1),
+    ({'seconds': 5}, 5),
+    ({'seconds': 65}, 65),
+    ({'minutes': 10}, 600),
+    ({'hours': 4}, 14400),
+    ({'days': 3}, 259200),
+    ({'weeks': 2}, 1209600),
+    ({'microseconds': 20000, 'seconds': 5, 'minutes': 2}, 125.02),
+    ({'milliseconds': 25300, 'seconds': 5, 'minutes': 2}, 150.3),
+    ({'seconds': 5, 'minutes': 2}, 125),
+    ({'seconds': 5, 'minutes': 2, 'hours': 3}, 10925),
+    ({'seconds': 5, 'minutes': 2, 'hours': 3, 'days': 2}, 183725),
+    ({'seconds': 5, 'minutes': 2, 'hours': 3, 'days': 2, 'weeks': 1}, 788525),
+])
+def test_to_seconds(case, expected):
+    assert to_seconds(**case) == expected
