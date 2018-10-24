@@ -11,6 +11,7 @@ import pytz
 
 from zulu import Zulu, Delta, ParseError, create
 from zulu.parser import DATE_PATTERN_TO_DIRECTIVE, UTC
+from zulu.helpers import FOLD_AVAILABLE
 
 
 parametrize = pytest.mark.parametrize
@@ -370,6 +371,17 @@ def test_zulu_basic_properties(dt, properties):
 def test_zulu_basic_property_methods(dt, methods):
     for meth, val in methods.items():
         assert getattr(dt, meth)() == val
+
+
+@pytest.mark.skipif(not FOLD_AVAILABLE, reason='fold attribute not supported')
+@parametrize('dt,timezone,expected_fold', [
+    (Zulu(2016, 11, 6, 4), 'US/Eastern', 0),
+    (Zulu(2016, 11, 6, 5), 'US/Eastern', 0),
+    (Zulu(2016, 11, 6, 6), 'US/Eastern', 1),
+    (Zulu(2016, 11, 6, 7), 'US/Eastern', 0),
+])
+def test_zulu_fold(dt, timezone, expected_fold):
+    assert dt.astimezone(timezone).fold == expected_fold
 
 
 @parametrize('dt,expected', [

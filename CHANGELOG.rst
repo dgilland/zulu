@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+- Add ``fold`` attribute to ``Zulu``.
+
+
 v1.0.0 (2018-08-20)
 -------------------
 

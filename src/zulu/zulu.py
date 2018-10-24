@@ -6,6 +6,7 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 from functools import wraps
 import time
+import sys
 
 from babel.dates import LC_TIME
 from dateutil.relativedelta import relativedelta
@@ -14,7 +15,7 @@ from dateutil.tz import gettz, tzutc
 from . import parser
 from .parser import UTC
 from .delta import Delta
-from .helpers import byte_types, number_types
+from .helpers import FOLD_AVAILABLE, number_types
 
 
 LOCAL = 'local'
@@ -59,30 +60,6 @@ def validate_frame(frame):
                          .format('|'.join(TIME_FRAMES), frame))
 
 
-def _unpickle(string, tzinfo):
-    """Return unpickled ``datetime`` instance or None if `string` is not a
-    pickled object.
-    """
-    dt = None
-
-    try:
-        # Pickle support. Overly complicated because of Python2.7 support.
-        # May be a better way to do this.
-        _string = string
-
-        if isinstance(_string, str):  # pragma: no cover
-            _string = bytearray(_string)
-
-        if (isinstance(_string, byte_types) and
-                len(_string) == 10 and
-                1 <= _string[2] <= 12):
-            dt = datetime(string, tzinfo)
-    except Exception:  # pragma: no cover
-        pass
-
-    return dt
-
-
 class Zulu(datetime):
     """The Zulu class represents an immutable UTC datetime object. Any
     timezone information given to it during instantiation results in the
@@ -121,15 +98,20 @@ class Zulu(datetime):
                 minute=0,
                 second=0,
                 microsecond=0,
-                tzinfo=None):
-        if isinstance(year, str) or isinstance(year, byte_types):
-            dt = _unpickle(string=year, tzinfo=month)
-            if dt:
-                return cls.fromdatetime(dt)
+                tzinfo=None,
+                *,
+                fold=0):
+        if (isinstance(year, bytes) and
+                len(year) == 10 and
+                1 <= year[2] & 0x7F <= 12):
+            # Pickle support.
+            return cls.fromdatetime(datetime(year, month))
         elif isinstance(year, dict):
             obj = {key: value for key, value in year.items()
                    if key in DATETIME_ATTRS}
             return cls(**obj)
+
+        extra = {'fold': fold} if FOLD_AVAILABLE else {}
 
         if tzinfo:
             # If tzinfo is provided, we first need to create a stdlib datetime
@@ -148,7 +130,8 @@ class Zulu(datetime):
                                               hour,
                                               minute,
                                               second,
-                                              microsecond),
+                                              microsecond,
+                                              **extra),
                                      is_dst=None)
             else:
                 dt = datetime(year,
@@ -158,7 +141,8 @@ class Zulu(datetime):
                               minute,
                               second,
                               microsecond,
-                              tzinfo)
+                              tzinfo,
+                              **extra)
 
             if dt.utcoffset() != timedelta(0):
                 dt = dt.astimezone(UTC)
@@ -171,6 +155,9 @@ class Zulu(datetime):
             second = dt.second
             microsecond = dt.microsecond
             tzinfo = dt.tzinfo
+
+            if FOLD_AVAILABLE:  # pragma: no cover
+                fold = extra['fold'] = dt.fold
         else:
             tzinfo = UTC
 
@@ -182,7 +169,8 @@ class Zulu(datetime):
                                 minute,
                                 second,
                                 microsecond,
-                                tzinfo)
+                                tzinfo,
+                                **extra)
 
     @classmethod
     def now(cls):
@@ -711,7 +699,9 @@ class Zulu(datetime):
                 minute=None,
                 second=None,
                 microsecond=None,
-                tzinfo=None):
+                tzinfo=None,
+                *,
+                fold=None):
         """Replace datetime attributes and return a new :class:`.Zulu`
         instance.
 
@@ -725,7 +715,10 @@ class Zulu(datetime):
             if value is None:
                 values[idx] = dt[idx]
 
-        return self.__class__(*values)
+        if fold is None:
+            fold = getattr(self, 'fold', 0)
+
+        return self.__class__(*values, fold=fold)
 
     def start_of_century(self):
         """Return a new :class:`.Zulu` set to the start of the century of this

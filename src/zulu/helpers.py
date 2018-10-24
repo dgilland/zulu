@@ -1,6 +1,8 @@
 
 from decimal import Decimal
+import sys
 
 
-byte_types = (bytes, bytearray)
+FOLD_AVAILABLE = sys.version_info >= (3, 6)
+
 number_types = (int, float, Decimal)
