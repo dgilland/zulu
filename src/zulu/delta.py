@@ -1,8 +1,6 @@
 """The timedelta module.
 """
 
-from __future__ import absolute_import
-
 from datetime import timedelta
 from functools import wraps
 import os
