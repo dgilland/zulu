@@ -617,4 +617,118 @@ Similar to ``Zulu.time_to/from``, ``Delta`` objects can be humanized with the ``
     # '3h'
 
 
+Utilities
+---------
+
+zulu.to_seconds
++++++++++++++++
+
+Easily convert time units from microseconds to weeks into seconds:
+
+.. code-block:: python
+
+    zulu.to_seconds(seconds=5, minutes=2, hours=3, days=2, weeks=1)
+    # 788525
+
+    zulu.to_seconds(milliseconds=25300, seconds=5, minutes=2)
+    # 150.3
+
+
+zulu.Timer
+++++++++++
+
+A timer object that can be used for keeping track of elapsed time or as a coutdown timer.
+
+As a timer:
+
+.. code-block:: python
+
+    timer = zulu.Timer()
+    timer.start()
+
+    # is the same as...
+    timer = zulu.Timer().start()
+
+    timer.started()
+    # True
+
+    timer.stopped()
+    # False
+
+    timer.elapsed()
+    # 0.0003867149353027344
+
+    timer.stop()
+
+    timer.elapsed()
+    # 0.0009307861328125
+
+
+Can be used as a context manager to track the duration of blocks of code:
+
+.. code-block:: python
+
+    timer = zulu.Timer()
+
+    with timer:
+        time.sleep(1)
+
+    # is the same as ...
+    # with zulu.Timer() as timer:
+    #     ...
+
+    timer.elapsed()
+    # 1.001131534576416
+
+    # can be used multiple times to accumulate durations
+    with timer:
+        time.sleep(2)
+
+    timer.elapsed()
+    # 3.0032811164855957
+
+    # reset the timer
+    timer.reset()
+
+    timer.started()
+    # False
+
+    timer.elapsed()
+    # 0
+
+
+And as a countdown timer:
+
+.. code-block:: python
+
+    # timer that runs out after 15 seconds
+    timer = zulu.Timer(timeout=15)
+    timer.start()
+
+    timer.done()
+    # False
+
+    timer.remaining()
+    # 14.999720811843872
+
+    time.sleep(5)
+
+    timer.remaining()
+    # 9.99406123161316
+
+    time.sleep(10)
+
+    timer.done()
+    # True
+
+    timer.remaining()
+    # -0.01725912094116211
+
+    # restart the timer by calling start() again
+    timer.start()
+
+    timer.done()
+    # False
+
+
 .. _Unicode date patterns: http://www.unicode.org/reports/tr35/tr35-19.html#Date_Field_Symbol_Table
