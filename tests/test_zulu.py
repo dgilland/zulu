@@ -381,7 +381,9 @@ def test_zulu_basic_property_methods(dt, methods):
     (Zulu(2016, 11, 6, 7), 'US/Eastern', 0),
 ])
 def test_zulu_fold(dt, timezone, expected_fold):
-    assert dt.astimezone(timezone).fold == expected_fold
+    zoned = dt.astimezone(timezone)
+    assert zoned.fold == expected_fold
+    assert dt == Zulu.fromdatetime(zoned)
 
 
 @parametrize('dt,expected', [

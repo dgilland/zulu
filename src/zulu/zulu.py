@@ -27,7 +27,8 @@ DATETIME_ATTRS = ('year',
                   'minute',
                   'second',
                   'microsecond',
-                  'tzinfo')
+                  'tzinfo',
+                  'fold')
 
 TIME_FRAMES = ('century',
                'decade',
@@ -227,7 +228,8 @@ class Zulu(datetime):
                    dt.minute,
                    dt.second,
                    dt.microsecond,
-                   dt.tzinfo)
+                   dt.tzinfo,
+                   fold=getattr(dt, 'fold', 0))
 
     @classmethod
     def fromtimestamp(cls, timestamp, tz=UTC):
