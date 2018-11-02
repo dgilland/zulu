@@ -114,7 +114,8 @@ class Delta(timedelta):
                                        locale=get_locale(locale))
 
     def __float__(self):
-        """Return class as float which returns the same as :meth:`total_seconds`.
+        """Return class as float which returns the same as
+        :meth:`total_seconds`.
         """
         return self.total_seconds()
 
