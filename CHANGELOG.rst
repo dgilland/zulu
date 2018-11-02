@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v1.1.0 (2018-11-01)
+-------------------
+
 - Add ``fold`` attribute support to ``Zulu``.
 - Add ``zulu.to_seconds`` for converting units of time to total number of seconds.
 - Add ``zulu.Timer`` class that can be used to track elapsed time (like a stopwatch) or as a countdown timer.
