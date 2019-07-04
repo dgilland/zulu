@@ -1,4 +1,3 @@
-
 from contextlib import contextmanager
 import time
 from unittest import mock
@@ -13,7 +12,7 @@ parametrize = pytest.mark.parametrize
 
 @contextmanager
 def mock_time(epoch):
-    with mock.patch('time.time', return_value=epoch):
+    with mock.patch("time.time", return_value=epoch):
         yield
 
 

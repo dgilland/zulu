@@ -1,4 +1,5 @@
-"""The api module.
+"""
+The api module.
 """
 
 from .zulu import Zulu
@@ -6,8 +7,9 @@ from .delta import Delta
 
 
 def create(*args, **kargs):
-    """Factory function to create a new :class:`.Zulu` datetime using the same
-    arguments as the class.
+    """
+    Factory function to create a new :class:`.Zulu` datetime using the same arguments as
+    the class.
 
     .. seealso:: See :class:`.Zulu` for class signature details.
     """
@@ -20,7 +22,8 @@ def now():
 
 
 def parse(*args, **kargs):
-    """Alias to :meth:`.Zulu.parse`.
+    """
+    Alias to :meth:`.Zulu.parse`.
 
     .. seealso:: See :meth:`.Zulu.parse` for function signature details.
     """
@@ -28,7 +31,8 @@ def parse(*args, **kargs):
 
 
 def range(*args, **kargs):
-    """Alias to :meth:`.Zulu.range`.
+    """
+    Alias to :meth:`.Zulu.range`.
 
     .. seealso:: See :meth:`.Zulu.range` for function signature details.
     """
@@ -36,7 +40,8 @@ def range(*args, **kargs):
 
 
 def span_range(*args, **kargs):
-    """Alias to :meth:`.Zulu.span_range`.
+    """
+    Alias to :meth:`.Zulu.span_range`.
 
     .. seealso:: See :meth:`.Zulu.span_range` for function signature details.
     """
@@ -44,7 +49,8 @@ def span_range(*args, **kargs):
 
 
 def parse_delta(*args, **kargs):
-    """Alias to :meth:`.Delta.parse`.
+    """
+    Alias to :meth:`.Delta.parse`.
 
     .. seealso:: See :meth:`.Delta.parse` for function signature details.
     """
