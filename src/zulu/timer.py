@@ -30,7 +30,7 @@ class Timer(object):
 
     __slots__ = ("timeout", "started_at", "stopped_at")
 
-    def __init__(self, timeout=0, autostart=False):
+    def __init__(self, timeout=0):
         self.timeout = timeout
         self.reset()
 
