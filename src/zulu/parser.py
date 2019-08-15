@@ -191,9 +191,7 @@ def format_datetime(dt, format=None, tz=None, locale=LC_TIME):
     if format is not None and not isinstance(format, str):
         raise TypeError(
             "zulu.parser.format()'s second argument must be a string or None, "
-            "not {0}".format(
-                type(format).__name__
-            )
+            "not {0}".format(type(format).__name__)
         )  # pragma: no cover
 
     if not is_valid_timezone(tz):  # pragma: no cover
