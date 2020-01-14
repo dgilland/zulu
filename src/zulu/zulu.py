@@ -30,7 +30,17 @@ DATETIME_ATTRS = (
     "fold",
 )
 
-TIME_FRAMES = ("century", "decade", "year", "month", "day", "hour", "minute", "second")
+TIME_FRAMES = (
+    "century",
+    "decade",
+    "year",
+    "month",
+    "week",
+    "day",
+    "hour",
+    "minute",
+    "second",
+)
 
 SHIFT_UNITS = (
     "years",
@@ -790,6 +800,18 @@ class Zulu(datetime):
         """
         return self.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
+    def start_of_week(self):
+        """
+        Return a new :class:`.Zulu` set to the start of the week of this datetime.
+        uses ISO8601 definition of week: week start is monday
+
+        Returns:
+            :class:`.Zulu`
+        """
+        return self.replace(hour=0, minute=0, second=0, microsecond=0).shift(
+            days=-self.isoweekday() + 1
+        )
+
     def start_of_day(self):
         """
         Return a new :class:`.Zulu` set to the start of the day of this datetime.
@@ -873,6 +895,19 @@ class Zulu(datetime):
             :class:`.Zulu`
         """
         return self.start_of_month().shift(months=count, microseconds=-1)
+
+    def end_of_week(self, count=1):
+        """
+        Return a new :class:`.Zulu` set to the end of the week of this datetime.
+        uses ISO8601 definition of week: week start is monday
+
+        Args:
+            count (int): Number of frames to span.
+
+        Returns:
+            :class:`.Zulu`
+        """
+        return self.start_of_week().shift(weeks=count, microseconds=-1)
 
     def end_of_day(self, count=1):
         """
