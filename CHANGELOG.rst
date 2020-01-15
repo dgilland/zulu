@@ -2,6 +2,11 @@ Changelog
 =========
 
 
+- Add Python 3.8 support.
+- Add ``'week'`` option to ``Zulu.start_of``, ``Zulu.end_of``, ``Zulu.span``, and ``Zulu.span_range``. Thanks ThomasChiroux_!
+- Fix bug in ``Zulu.astimezone`` in Python 3.8 due to change in return type from ``super().asdatetime``. In Python<=3.7, ``super().asdatetime`` returned as instance of ``datetime``, but in Python 3.8 another instance of ``Zulu`` was returned instead. ``Zulu.astimezone`` will now return a ``datetime`` instance in Python 3.8.
+
+
 v1.1.1 (2019-08-14)
 -------------------
 
@@ -221,3 +226,6 @@ v0.1.0 (2016-07-26)
 -------------------
 
 - First release.
+
+
+.. _ThomasChiroux: https://github.com/ThomasChiroux
