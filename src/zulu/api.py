@@ -1,6 +1,4 @@
-"""
-The api module.
-"""
+"""The api module."""
 
 from .zulu import Zulu
 from .delta import Delta

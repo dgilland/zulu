@@ -1,6 +1,4 @@
-"""
-The parser module.
-"""
+"""The parser module."""
 
 from itertools import groupby
 from datetime import datetime, timedelta
@@ -321,10 +319,11 @@ def format_timedelta(
 
 def get_timezone(tz):
     """
-    Coerce `tz` into a `tzinfo` compatible object. If ``tz == 'local'``, then the
-    system's local timezone will be used. If `tz` is a string other than ``'local'``,
-    it will be passed to ``dateutil.tz.gettz(tz)``. Otherwise, `tz` will be returned
-    as-is.
+    Coerce `tz` into a `tzinfo` compatible object.
+
+    If ``tz == 'local'``, then the system's local timezone will be used. If `tz` is a
+    string other than ``'local'``, it will be passed to ``dateutil.tz.gettz(tz)``.
+    Otherwise, `tz` will be returned as-is.
     """
     if tz is None:
         tz = UTC

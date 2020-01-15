@@ -1,6 +1,4 @@
-"""
-The timedelta module.
-"""
+"""The timedelta module."""
 
 from datetime import timedelta
 from functools import wraps
@@ -124,9 +122,8 @@ class Delta(timedelta):
         return self.total_seconds()
 
     def __int__(self):
-        """
-        Return class as integer which returns the integer part of :meth:`total_seconds`.
-        """
+        """Return class as integer which returns the integer part of
+        :meth:`total_seconds`."""
         return int(float(self))
 
     def __repr__(self):  # pragma: no cover

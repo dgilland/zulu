@@ -1,6 +1,4 @@
-"""
-The datetime module.
-"""
+"""The datetime module."""
 
 import calendar
 from collections import namedtuple
@@ -539,8 +537,8 @@ class Zulu(datetime):
 
     def time_to(self, dt, **options):
         """
-        Return "time to" difference between another datetime and this one as a
-        humanized string.
+        Return "time to" difference between another datetime and this one as a humanized
+        string.
 
         Args:
             dt (datetime): A datetime object.
@@ -579,8 +577,7 @@ class Zulu(datetime):
         return self.time_to(self.now())
 
     def _format_delta(self, delta, **options):
-        """
-        Return a humanized "time ago"/"time to" string from a timedelta."""
+        """Return a humanized "time ago"/"time to" string from a timedelta."""
         options.setdefault("add_direction", True)
         delta = Delta(
             days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds
@@ -802,8 +799,8 @@ class Zulu(datetime):
 
     def start_of_week(self):
         """
-        Return a new :class:`.Zulu` set to the start of the week of this datetime.
-        uses ISO8601 definition of week: week start is monday
+        Return a new :class:`.Zulu` set to the start of the week of this datetime. uses
+        ISO8601 definition of week: week start is monday.
 
         Returns:
             :class:`.Zulu`
@@ -898,8 +895,8 @@ class Zulu(datetime):
 
     def end_of_week(self, count=1):
         """
-        Return a new :class:`.Zulu` set to the end of the week of this datetime.
-        uses ISO8601 definition of week: week start is monday
+        Return a new :class:`.Zulu` set to the end of the week of this datetime. uses
+        ISO8601 definition of week: week start is monday.
 
         Args:
             count (int): Number of frames to span.
@@ -1077,10 +1074,8 @@ class Zulu(datetime):
         return self.isoformat()
 
     def __float__(self):
-        """
-        Return class as float time in seconds (including decimal microsceonds) since the
-        epoch.
-        """
+        """Return class as float time in seconds (including decimal microsceonds) since
+        the epoch."""
         return (self - self.epoch).total_seconds()
 
     def __int__(self):

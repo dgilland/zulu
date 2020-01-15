@@ -1,6 +1,4 @@
-"""
-The timer module.
-"""
+"""The timer module."""
 import time
 
 
