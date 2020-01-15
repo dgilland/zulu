@@ -599,12 +599,12 @@ class Zulu(datetime):
                 which uses the local timezone.
 
         Returns:
-            :class:`.Zulu`
+            :class:`datetime`
         """
         if tz is None:
             tz = LOCAL
         tz = parser.get_timezone(tz)
-        return super(Zulu, self).astimezone(tz)
+        return self.datetime.astimezone(tz)
 
     def shift(
         self,
