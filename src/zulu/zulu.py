@@ -1101,7 +1101,7 @@ class Zulu(datetime):
             other = timedelta(seconds=other)
 
         if isinstance(other, timedelta):
-            result = super(Zulu, self).__add__(other)
+            result = super().__add__(other)
         else:
             result = other.__add__(self)
 
@@ -1121,7 +1121,7 @@ class Zulu(datetime):
         if not isinstance(other, Zulu) and isinstance(other, datetime):
             other = self.fromdatetime(other)
 
-        result = super(Zulu, self).__sub__(other)
+        result = super().__sub__(other)
 
         if isinstance(result, datetime):
             return self.fromdatetime(result)
