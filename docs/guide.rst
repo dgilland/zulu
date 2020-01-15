@@ -436,6 +436,9 @@ You can get the span across a time frame:
     dt.span('month')
     # (<Zulu [2015-04-01T00:00:00+00:00]>, <Zulu [2015-04-30T23:59:59.999999+00:00]>)
 
+    dt.span('week')
+    # (<Zulu [2015-03-30T00:00:00+00:00]>, <Zulu [2015-04-05T23:59:59.999999+00:00]>)
+
     dt.span('day')
     # (<Zulu [2015-04-04T00:00:00+00:00]>, <Zulu [2015-04-04T23:59:59.999999+00:00]>)
 
@@ -469,7 +472,7 @@ Or you can get just the start or end of a time frame:
     # <Zulu [2017-12-31T23:59:59.999999+00:00]>
 
 
-.. note:: Supported time frames are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second`` and are accessible both from ``start_of(frame)``/``end_of(frame)`` and ``start_of_<frame>()``/``end_of_<frame>``.
+.. note:: Supported time frames are ``century``, ``decade``, ``year``, ``month``, ``week``, ``day``, ``hour``, ``minute``, ``second`` and are accessible both from ``start_of(frame)``/``end_of(frame)`` and ``start_of_<frame>()``/``end_of_<frame>``.
 
 
 You can get a range of time spans:
@@ -501,7 +504,7 @@ Or you can iterate over a range of datetimes:
     # <Zulu [2015-04-04T14:30:00+00:00]>
 
 
-.. note:: Supported range/span time frames are ``century``, ``decade``, ``year``, ``month``, ``day``, ``hour``, ``minute``, ``second``.
+.. note:: Supported range/span time frames are ``century``, ``decade``, ``year``, ``month``, ``week``, ``day``, ``hour``, ``minute``, ``second``.
 
 
 
