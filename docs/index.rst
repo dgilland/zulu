@@ -11,6 +11,7 @@ Guide
     installation
     guide
     api
+    devguide
 
 
 Project Info
