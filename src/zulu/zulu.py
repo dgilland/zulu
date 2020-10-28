@@ -1,4 +1,4 @@
-"""The zulu module."""
+"""The datetime module."""
 
 import calendar
 from collections import namedtuple
