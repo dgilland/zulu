@@ -1,4 +1,4 @@
-"""The datetime module."""
+"""The zulu module."""
 
 import calendar
 from collections import namedtuple
@@ -9,9 +9,9 @@ from babel.dates import LC_TIME
 from dateutil.relativedelta import relativedelta
 
 from . import parser
-from .parser import UTC
 from .delta import Delta
 from .helpers import FOLD_AVAILABLE, number_types
+from .parser import UTC
 
 
 LOCAL = "local"
@@ -62,38 +62,36 @@ def validate_frame(frame):
     """Method that validates the given time frame."""
     if frame not in TIME_FRAMES:
         raise ValueError(
-            "Time frame must be one of {0}, not '{1}'".format(
-                "|".join(TIME_FRAMES), frame
-            )
+            "Time frame must be one of {0}, not '{1}'".format("|".join(TIME_FRAMES), frame)
         )
 
 
 class Zulu(datetime):
     """
-    The Zulu class represents an immutable UTC datetime object. Any timezone information
-    given to it during instantiation results in the datetime object being converted from
-    that timezone to UTC. If timezone information is not given, then it's assumed the
-    datetime is a UTC value. All arthimetic is perform on the underlying UTC datetime
-    object. Zulu has no concept of timezone shifting in this regard. Instead,
-    localization occurs only when formatting a Zulu object as a string.
+    The Zulu class represents an immutable UTC datetime object. Any timezone information given to it
+    during instantiation results in the datetime object being converted from that timezone to UTC.
+    If timezone information is not given, then it's assumed the datetime is a UTC value. All
+    arithmetic is perform on the underlying UTC datetime object. Zulu has no concept of timezone
+    shifting in this regard. Instead, localization occurs only when formatting a Zulu object as a
+    string.
 
-    The Zulu class is a drop-in replacement for a native datetime object, but does not
-    represent itself in any time zone other than UTC.
+    The Zulu class is a drop-in replacement for a native datetime object, but does not represent
+    itself in any time zone other than UTC.
 
     Args:
-        year (int|dict): Date year ``1 <= year <= 9999`` or ``dict`` containing keys
-            corresponding to initialization parameter names.
+        year (int|dict): Date year ``1 <= year <= 9999`` or ``dict`` containing keys corresponding
+            to initialization parameter names.
         month (int): Date month ``1 <= month <= 12``.
         day (int): Date day ``1 <= day <= number of days in the given month and year``
         hour (int, optional): Time hour ``0 <= hour < 24``. Defaults to ``0``.
         minute (int, optional): Time minute ``0 <= minute < 60``. Defaults to ``0``.
         second (int, optional): Time second ``0 <= second < 60``. Defaults to ``0``.
-        microsecond (int, optional): Time microsecond ``0 <= microsecond < 1000000``.
-            Defaults to ``0``.
-        tzinfo (None|str|tzinfo, optional): Timezone information as either a ``str`` or
-            ``tzinfo`` subclass. If value is a ``str``, it will be converted to a
-            ``dateutil.tz`` timezone. If value is ``None``, the datetime values given
-            are assumed to in UTC. Defaults to ``None``.
+        microsecond (int, optional): Time microsecond ``0 <= microsecond < 1000000``. Defaults to
+            ``0``.
+        tzinfo (None|str|tzinfo, optional): Timezone information as either a ``str`` or ``tzinfo``
+            subclass. If value is a ``str``, it will be converted to a ``dateutil.tz`` timezone. If
+            value is ``None``, the datetime values given are assumed to in UTC. Defaults to
+            ``None``.
     """
 
     def __new__(
@@ -129,15 +127,11 @@ class Zulu(datetime):
             if hasattr(tzinfo, "localize"):
                 # Support pytz timezones.
                 dt = tzinfo.localize(
-                    datetime(
-                        year, month, day, hour, minute, second, microsecond, **extra
-                    ),
+                    datetime(year, month, day, hour, minute, second, microsecond, **extra),
                     is_dst=None,
                 )
             else:
-                dt = datetime(
-                    year, month, day, hour, minute, second, microsecond, tzinfo, **extra
-                )
+                dt = datetime(year, month, day, hour, minute, second, microsecond, tzinfo, **extra)
 
             if dt.utcoffset() != timedelta(0):
                 dt = dt.astimezone(UTC)
@@ -152,7 +146,7 @@ class Zulu(datetime):
             tzinfo = dt.tzinfo
 
             if FOLD_AVAILABLE:  # pragma: no cover
-                fold = extra["fold"] = dt.fold
+                extra["fold"] = dt.fold
         else:
             tzinfo = UTC
 
@@ -187,10 +181,10 @@ class Zulu(datetime):
 
         Args:
             obj (mixed): Object to parse into a :class:`.Zulu` object.
-            formats (list, optional): List of string formats to use when parsing.
-                Defaults to ``['ISO8601', 'timestamp']``.
-            default_tz (None|str|tzinfo, optional): Default timezone to use when parsed
-                datetime object does not contain a timezone. Defaults to ``UTC``.
+            formats (list, optional): List of string formats to use when parsing. Defaults to
+                ``["ISO8601", "timestamp"]``.
+            default_tz (None|str|tzinfo, optional): Default timezone to use when parsed datetime
+                object does not contain a timezone. Defaults to ``UTC``.
 
         Returns:
             :class:`.Zulu`
@@ -230,8 +224,8 @@ class Zulu(datetime):
 
         Args:
             timestamp (int): POSIX timestamp such as is returned by ``time.time()``.
-            tz (UTC): This argument is ignored and always set to UTC. It is present only
-                for datetime class compatibility.
+            tz (UTC): This argument is ignored and always set to UTC. It is present only for
+                datetime class compatibility.
 
         Returns:
             :class:`.Zulu`
@@ -254,8 +248,8 @@ class Zulu(datetime):
     @classmethod
     def fromordinal(cls, ordinal):
         """
-        Return :class:`.Zulu` object from a proleptic Gregorian ordinal, where January 1
-        of year 1 has ordinal 1.
+        Return :class:`.Zulu` object from a proleptic Gregorian ordinal, where January 1 of year 1
+        has ordinal 1.
 
         Args:
             ordinal (int): A proleptic Gregorian ordinal.
@@ -268,8 +262,8 @@ class Zulu(datetime):
     @classmethod
     def fromgmtime(cls, struct):
         """
-        Return :class:`.Zulu` object from a ``tuple`` like that returned by
-        ``time.gmtime`` that represents a UTC datetime.
+        Return :class:`.Zulu` object from a ``tuple`` like that returned by ``time.gmtime`` that
+        represents a UTC datetime.
 
         Args:
             struct (tuple): Tuple like that returned by ``time.gmtime``.
@@ -282,8 +276,8 @@ class Zulu(datetime):
     @classmethod
     def fromlocaltime(cls, struct):
         """
-        Return :class:`.Zulu` object from a ``tuple`` like that returned by
-        ``time.localtime`` that represents a local datetime.
+        Return :class:`.Zulu` object from a ``tuple`` like that returned by ``time.localtime`` that
+        represents a local datetime.
 
         Args:
             struct (tuple): Tuple like that returned by ``time.localtime``.
@@ -296,14 +290,14 @@ class Zulu(datetime):
     @classmethod
     def combine(cls, date, time):
         """
-        Return :class:`.Zulu` object by combining the date part from `date` and the time
-        part from `time`.
+        Return :class:`.Zulu` object by combining the date part from `date` and the time part from
+        `time`.
 
         Args:
-            date (mixed): Either a :class:`.Zulu`, ``datetime.date``, or
-                ``datetime.datetime`` object to use as the date part.
-            date (mixed): Either a :class:`.Zulu` or ``datetime.time`` object to use as
-                the time part.
+            date (mixed): Either a :class:`.Zulu`, ``datetime.date``, or ``datetime.datetime``
+                object to use as the date part.
+            date (mixed): Either a :class:`.Zulu` or ``datetime.time`` object to use as the time
+                part.
 
         Returns:
             :class:`.Zulu`
@@ -319,16 +313,15 @@ class Zulu(datetime):
     @classmethod
     def span_range(cls, frame, start, end):
         """
-        Return a range of time spans from `start` to `end` in steps of time frame,
-        `frame`.
+        Return a range of time spans from `start` to `end` in steps of time frame, `frame`.
 
         Args:
             frame (str): A time frame (e.g. year, month, day, minute, etc).
             start (datetime): The starting datetime.
             end (datetime): The ending datetime.
 
-        Returns:
-            list: List of all time spans
+        Yields:
+            tuple: 2-element tuple of Zulu time spans
         """
         if not isinstance(start, Zulu):
             start = cls.parse(start)
@@ -344,33 +337,31 @@ class Zulu(datetime):
         next_start = start
 
         while True:
-            # We use the span() method to bring the actual tuple with the given time
-            # frame.
+            # We use the span() method to bring the actual tuple with the given time frame.
             span = next_start.span(frame)
 
             if span[1] <= end:
                 yield span
 
-                # All span-ends have 999999 microseconds set. Shift to the next
-                # microsecond to "turn-over" to the next start value of the frame.
+                # All span-ends have 999999 microseconds set. Shift to the next microsecond to
+                # "turn-over" to the next start value of the frame.
                 next_start = span[1].shift(microseconds=1)
             else:
-                break
+                break  # pragma: no cover
 
     @classmethod
     def range(cls, frame, start, end):
         """
-        Return a range of :class:`.Zulu` instances from `start` to `end` in steps of
-        time frame, `frame`.
+        Yield ranges of :class:`.Zulu` instances from `start` to `end` in steps of time frame,
+        `frame`.
 
         Args:
             frame (str): A time frame (e.g. year, month, day, minute, etc).
             start (datetime): The starting datetime.
             end (datetime): The ending datetime.
 
-        Returns:
-            list: A list of datetime values ranging from the given start and end
-                datetimes.
+        Yields:
+            :class:`.Zulu`: Datetime values ranging from the given start and end datetimes.
         """
         if not isinstance(start, Zulu):
             start = cls.parse(start)
@@ -412,7 +403,7 @@ class Zulu(datetime):
                 yield next_start
                 next_start = next_end
             else:
-                break
+                break  # pragma: no cover
 
     @property
     def naive(self):
@@ -451,8 +442,8 @@ class Zulu(datetime):
 
     def datetimetuple(self):
         """
-        Return datetime ``tuple`` containing ``(year, month, day, hour, minute, second,
-        microsecond, tzinfo)``.
+        Return datetime ``tuple`` containing ``(year, month, day, hour, minute, second, microsecond,
+        tzinfo)``.
 
         Returns:
             tuple
@@ -497,8 +488,8 @@ class Zulu(datetime):
 
     def format(self, format=None, tz=None, locale=LC_TIME):
         """
-        Return datetime as a string using the format string `format` while optionally
-        converting to timezone `tz` first.
+        Return datetime as a string using the format string `format` while optionally converting to
+        timezone `tz` first.
 
         Note:
             A ``Locale`` object or string identifier can be provided to display the
@@ -507,22 +498,21 @@ class Zulu(datetime):
             supported for strftime tokens.
 
         Args:
-            format (str): Format to return string in. If ``None``, ISO 8601 format is
-                used. Defaults to ``None``.
-            tz (None|str|tzinfo, optional): Timezone to convert to before formatting.
-                Defaults to ``None``.
-            locale (str|Locale, optional): A ``Locale`` object or locale identifier.
-                Defaults to system default.
+            format (str): Format to return string in. If ``None``, ISO 8601 format is used. Defaults
+                to ``None``.
+            tz (None|str|tzinfo, optional): Timezone to convert to before formatting. Defaults to
+                ``None``.
+            locale (str|Locale, optional): A ``Locale`` object or locale identifier. Defaults to
+                system default.
 
         Returns:
-            :class:`str`
+            str
         """
         return parser.format_datetime(self, format, tz=tz, locale=locale)
 
     def time_from(self, dt, **options):
         """
-        Return "time ago" difference between this datetime and another as a humanized
-        string.
+        Return "time ago" difference between this datetime and another as a humanized string.
 
         Args:
             dt (datetime): A datetime object.
@@ -537,8 +527,7 @@ class Zulu(datetime):
 
     def time_to(self, dt, **options):
         """
-        Return "time to" difference between another datetime and this one as a humanized
-        string.
+        Return "time to" difference between another datetime and this one as a humanized string.
 
         Args:
             dt (datetime): A datetime object.
@@ -553,8 +542,7 @@ class Zulu(datetime):
 
     def time_from_now(self, **options):
         """
-        Return "time ago" difference between this datetime and now as a humanized
-        string.
+        Return "time ago" difference between this datetime and now as a humanized string.
 
         Keyword Args:
             See :meth:`.Delta.format` for listing.
@@ -579,9 +567,7 @@ class Zulu(datetime):
     def _format_delta(self, delta, **options):
         """Return a humanized "time ago"/"time to" string from a timedelta."""
         options.setdefault("add_direction", True)
-        delta = Delta(
-            days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds
-        )
+        delta = Delta(days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds)
         return delta.format(**options)
 
     def astimezone(self, tz=LOCAL):
@@ -592,8 +578,8 @@ class Zulu(datetime):
             This returns a native datetime object.
 
         Args:
-            tz (None|str|tzinfo, optional): Timezone to shift to. Defaults to `'local'`
-                which uses the local timezone.
+            tz (None|str|tzinfo, optional): Timezone to shift to. Defaults to `"local"` which uses
+                the local timezone.
 
         Returns:
             :class:`datetime`
@@ -616,12 +602,12 @@ class Zulu(datetime):
         microseconds=0,
     ):
         """
-        Shift datetime forward or backward using a timedelta created from the supplied
-        arguments and return a new :class:`.Zulu` instance.
+        Shift datetime forward or backward using a timedelta created from the supplied arguments and
+        return a new :class:`.Zulu` instance.
 
         Args:
-            other (timedelta|relativedelta, optional): A ``timedelta`` or
-                ``dateutil.relativedelta`` object to add.
+            other (timedelta|relativedelta, optional): A ``timedelta`` or ``dateutil.relativedelta``
+                object to add.
             years (int, optional): Years to shift.
             months (int, optional): Months to shift.
             weeks (int, optional): Weeks to shift.
@@ -658,8 +644,8 @@ class Zulu(datetime):
         ignored and the object is added to this datetime.
 
         Args:
-            other (timedelta|relativedelta, optional): A ``timedelta`` or
-                ``dateutil.relativedelta`` object to add.
+            other (timedelta|relativedelta, optional): A ``timedelta`` or ``dateutil.relativedelta``
+                object to add.
 
         Keyword Args:
             years (int, optional): Years to add.
@@ -683,15 +669,14 @@ class Zulu(datetime):
 
     def subtract(self, other=None, **units):
         """
-        Subtract time using a timedelta created from the supplied arguments and return a
-        new :class:`.Zulu` instance. The first argument can be a :class:`.Zulu`,
-        :class:`datetime`, :class:`timedelta`, or :class:`dateutil.relativedelta` object
-        in which case all other arguments are ignored and the object is subtracted from
-        this datetime.
+        Subtract time using a timedelta created from the supplied arguments and return a new
+        :class:`.Zulu` instance. The first argument can be a :class:`.Zulu`, :class:`datetime`,
+        :class:`timedelta`, or :class:`dateutil.relativedelta` object in which case all other
+        arguments are ignored and the object is subtracted from this datetime.
 
         Args:
-            other (datetime|timedelta|relativedelta, optional): A ``datetime``,
-                ``timedelta``, or ``dateutil.relativedelta`` object to subtract.
+            other (datetime|timedelta|relativedelta, optional): A ``datetime``, ``timedelta``, or
+                ``dateutil.relativedelta`` object to subtract.
 
         Keyword Args:
             years (int, optional): Years to subtract.
@@ -799,8 +784,8 @@ class Zulu(datetime):
 
     def start_of_week(self):
         """
-        Return a new :class:`.Zulu` set to the start of the week of this datetime. uses
-        ISO8601 definition of week: week start is monday.
+        Return a new :class:`.Zulu` set to the start of the week of this datetime. uses ISO8601
+        definition of week: week start is monday.
 
         Returns:
             :class:`.Zulu`
@@ -895,8 +880,8 @@ class Zulu(datetime):
 
     def end_of_week(self, count=1):
         """
-        Return a new :class:`.Zulu` set to the end of the week of this datetime. uses
-        ISO8601 definition of week: week start is monday.
+        Return a new :class:`.Zulu` set to the end of the week of this datetime. uses ISO8601
+        definition of week: week start is monday.
 
         Args:
             count (int): Number of frames to span.
@@ -983,8 +968,8 @@ class Zulu(datetime):
 
     def span(self, frame, count=1):
         """
-        Returns two new :class:`.Zulu` objects corresponding to the time span between
-        this object and the given time frame.
+        Returns two new :class:`.Zulu` objects corresponding to the time span between this object
+        and the given time frame.
 
         Args:
             frame (str): A time frame (e.g. year, month, day, minute, etc).
@@ -993,7 +978,7 @@ class Zulu(datetime):
         Returns:
             tuple: (`start_of_frame`, `end_of_frame`)
         """
-        return (self.start_of(frame), self.end_of(frame, count))
+        return self.start_of(frame), self.end_of(frame, count)
 
     def is_leap_year(self):
         """
@@ -1074,8 +1059,8 @@ class Zulu(datetime):
         return self.isoformat()
 
     def __float__(self):
-        """Return class as float time in seconds (including decimal microsceonds) since
-        the epoch."""
+        """Return class as float time in seconds (including decimal microsceonds) since the
+        epoch."""
         return (self - self.epoch).total_seconds()
 
     def __int__(self):
@@ -1106,8 +1091,8 @@ class Zulu(datetime):
 
     def __sub__(self, other):
         """
-        Subtract a ``timedelta``, ``dateutil.relativedelta``, ``datetime``, or
-        :class:`.Zulu` and return the result.
+        Subtract a ``timedelta``, ``dateutil.relativedelta``, ``datetime``, or :class:`.Zulu` and
+        return the result.
 
         Returns:
             :class:`.Zulu`: if subtracting a :class:`timedelta`

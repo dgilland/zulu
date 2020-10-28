@@ -10,21 +10,19 @@ from . import parser
 
 def _asdelta(func):
     """
-    Simple decorator to convert return from timedelta.__<math>__ methods to Delta
-    object. This is primarily needed because one cannot simply override the existing
-    timedelta method due to the way the class is implemented. Doing so results in
-    slotted attributes not being available to the subclassed methods. Therefore, we need
-    to convert the returned timedelta to Delta instead.
+    Simple decorator to convert return from timedelta.__<math>__ methods to Delta object. This is
+    primarily needed because one cannot simply override the existing timedelta method due to the way
+    the class is implemented. Doing so results in slotted attributes not being available to the
+    subclassed methods. Therefore, we need to convert the returned timedelta to Delta instead.
 
     Note:
-        We could reimplement all of the arithmetic magic methods but prefer not to.
-        However, we do end up creating timedelta objects twice (one from the timedelta
-        result, another when we create a new Delta) so there would be some performance
-        gains from doing so though.
+        We could reimplement all of the arithmetic magic methods but prefer not to. However, we do
+        end up creating timedelta objects twice (one from the timedelta result, another when we
+        create a new Delta) so there would be some performance gains from doing so though.
     """
-    # NOTE: We're setting assigned because in Python 2.7, @wraps fails for certain
-    # timedelta magic methods due to certain attributes missing from the timedelta class
-    # that @wraps looks for by default.
+    # NOTE: We're setting assigned because in Python 2.7, @wraps fails for certain timedelta magic
+    # methods due to certain attributes missing from the timedelta class that @wraps looks for by
+    # default.
     @wraps(func, assigned=("__name__", "__doc__"))
     def decorated(*args, **kargs):
         result = func(*args, **kargs)
@@ -92,18 +90,17 @@ class Delta(timedelta):
         Return timedelta as a formatted string.
 
         Args:
-            format (str, optional): Can be one of "long", "short", or "narrow". Defaults
-                to `'long`'.
-            granularity (str, optional): The smallest unit that should be displayed. The
-                value can be one of "year", "month", "week", "day", "hour", "minute" or
-                "second". Defaults to `'second'`.
-            threshold (float, optional): Factor that determines at which point the
-                presentation switches to the next higher unit. Defaults to `0.85`.
-            add_direction (bool, optional): If ``True`` the return value will include
-                directional information (e.g. `'1 hour ago'`, `'in 1 hour'`). Defaults
-                to ``False``.
-            locale (str|Locale, optional): A ``Locale`` object or locale identifer.
-                Defaults to system default.
+            format (str, optional): Can be one of "long", "short", or "narrow". Defaults to
+                `"long"`.
+            granularity (str, optional): The smallest unit that should be displayed. The value can
+                be one of "year", "month", "week", "day", "hour", "minute" or "second". Defaults to
+                `"second"`.
+            threshold (float, optional): Factor that determines at which point the presentation
+                switches to the next higher unit. Defaults to `0.85`.
+            add_direction (bool, optional): If ``True`` the return value will include directional
+                information (e.g. `'1 hour ago'`, `'in 1 hour'`). Defaults to ``False``.
+            locale (str|Locale, optional): A ``Locale`` object or locale identifier. Defaults to
+                system default.
 
         Returns:
             str
@@ -150,9 +147,7 @@ Delta.max = Delta(days=999999999, hours=23, minutes=59, seconds=59, microseconds
 Delta.resolution = Delta(microseconds=1)
 
 
-def to_seconds(
-    *, microseconds=0, milliseconds=0, seconds=0, minutes=0, hours=0, days=0, weeks=0
-):
+def to_seconds(*, microseconds=0, milliseconds=0, seconds=0, minutes=0, hours=0, days=0, weeks=0):
     """Return total number of seconds by combining values from each unit."""
     return Delta(
         microseconds=microseconds,

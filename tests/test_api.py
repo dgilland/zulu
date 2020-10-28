@@ -1,7 +1,7 @@
 from unittest import mock
+import warnings
 
 import pytest
-import warnings
 
 import zulu
 

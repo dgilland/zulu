@@ -4,26 +4,23 @@ import time
 
 class Timer(object):
     """
-    Timer that can be used to keep track of elapsed time or to check when a timeout has
-    expired.
+    Timer that can be used to keep track of elapsed time or to check when a timeout has expired.
 
-    Once the timer has been initialized, start the timer with :meth:`start`. Repeated
-    calls to :meth:`start` will restart the timer at the current time..
+    Once the timer has been initialized, start the timer with :meth:`start`. Repeated calls to
+    :meth:`start` will restart the timer at the current time.
 
-    Stop the timer with :meth:`stop`. The timer can then be restarted with :meth:`start`
-    with the previously elapsed time carrying over to the next timing session (similar
-    to how a stopwatch works).
+    Stop the timer with :meth:`stop`. The timer can then be restarted with :meth:`start` with the
+    previously elapsed time carrying over to the next timing session (similar to how a stopwatch
+    works).
 
-    Get how much time has elapsed with :meth:`elapsed`. Get whether the timer is stopped
-    or started with :meth:`stopped` and :meth:`started` respectively.
+    Get how much time has elapsed with :meth:`elapsed`. Get whether the timer is stopped or started
+    with :meth:`stopped` and :meth:`started` respectively.
 
-    When using a timeout (i.e. countdown mode), get the remaining time with
-    :meth:`remaining`. Call :meth:`done` to check whether the timeout has expired or
-    not.
+    When using a timeout (i.e. countdown mode), get the remaining time with :meth:`remaining`. Call
+    :meth:`done` to check whether the timeout has expired or not.
 
     Args:
-        timeout (int|float, optional): How long, in seconds, the countdown timer should
-            last.
+        timeout (int|float, optional): How long, in seconds, the countdown timer should last.
     """
 
     __slots__ = ("timeout", "started_at", "stopped_at")

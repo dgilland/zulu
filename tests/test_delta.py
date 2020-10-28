@@ -3,7 +3,7 @@ import pickle
 
 import pytest
 
-from zulu import ParseError, Delta, to_seconds
+from zulu import Delta, ParseError, to_seconds
 
 
 parametrize = pytest.mark.parametrize

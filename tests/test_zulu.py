@@ -8,9 +8,9 @@ from iso8601 import UTC
 import pytest
 import pytz
 
-from zulu import Zulu, Delta, ParseError, create
-from zulu.parser import DATE_PATTERN_TO_DIRECTIVE, UTC
+from zulu import Delta, ParseError, Zulu, create
 from zulu.helpers import FOLD_AVAILABLE
+from zulu.parser import DATE_PATTERN_TO_DIRECTIVE, UTC
 
 
 parametrize = pytest.mark.parametrize
@@ -167,11 +167,7 @@ def test_zulu_parse_invalid(string, kargs, exception):
         ),
         (
             ("2016 16 July Jul 07 209 27 Wednesday Wed 3 " "04 4 34 22 479776 AM"),
-            {
-                "formats": (
-                    "YYYY YY MMMM MMM MM DDD dd EEEE EEE e " "HH hh mm ss SSSSSS a"
-                )
-            },
+            {"formats": ("YYYY YY MMMM MMM MM DDD dd EEEE EEE e " "HH hh mm ss SSSSSS a")},
             datetime(2016, 7, 27, 4, 34, 22, 479776, tzinfo=UTC),
         ),
     ],
@@ -657,9 +653,7 @@ def test_zulu_shift(method, dt, delta, expected):
     [
         (
             Zulu(2000, 1, 1, 12, 30, 45, 15),
-            timedelta(
-                days=1, hours=1, minutes=1, seconds=1, milliseconds=1, microseconds=1
-            ),
+            timedelta(days=1, hours=1, minutes=1, seconds=1, milliseconds=1, microseconds=1),
             Zulu(2000, 1, 2, 13, 31, 46, 1016),
         ),
         (
@@ -692,24 +686,18 @@ def test_zulu_addition_invalid_type():
     [
         (
             Zulu(2000, 1, 1, 12, 30, 45, 15),
-            timedelta(
-                days=1, hours=1, minutes=1, seconds=1, milliseconds=1, microseconds=1
-            ),
+            timedelta(days=1, hours=1, minutes=1, seconds=1, milliseconds=1, microseconds=1),
             Zulu(1999, 12, 31, 11, 29, 43, 999014),
         ),
         (
             Zulu(2000, 1, 1, 12, 30, 45, 15),
             Zulu(1999, 12, 31, 11, 29, 43, 999014),
-            Delta(
-                days=1, hours=1, minutes=1, seconds=1, milliseconds=1, microseconds=1
-            ),
+            Delta(days=1, hours=1, minutes=1, seconds=1, milliseconds=1, microseconds=1),
         ),
         (
             Zulu(2000, 1, 1, 12, 30, 45, 15),
             datetime(1999, 12, 31, 11, 29, 43, 999014),
-            Delta(
-                days=1, hours=1, minutes=1, seconds=1, milliseconds=1, microseconds=1
-            ),
+            Delta(days=1, hours=1, minutes=1, seconds=1, milliseconds=1, microseconds=1),
         ),
         (
             Zulu(1999, 12, 31, 11, 29, 43, 999014),

@@ -1,12 +1,12 @@
 """The parser module."""
 
-from itertools import groupby
 from datetime import datetime, timedelta
+from itertools import groupby
 
 from babel.dates import (
     LC_TIME,
-    format_timedelta as _format_timedelta,
     format_datetime as _format_datetime,
+    format_timedelta as _format_timedelta,
 )
 from dateutil.tz import gettz, tzlocal, tzutc
 import iso8601
@@ -82,14 +82,14 @@ class ParseError(Exception):
 
 def parse_datetime(obj, formats=None, default_tz=None):
     """
-    Attempt to parse `obj` as a ``datetime`` using  a list of `formats`. If no timezone
-    information is found in `obj` and `default_tz` is set, then the naive datetime
-    object will be shifted to the default timezone.
+    Attempt to parse `obj` as a ``datetime`` using  a list of `formats`. If no timezone information
+    is found in `obj` and `default_tz` is set, then the naive datetime object will be shifted to the
+    default timezone.
 
     Args:
         obj (str|datetime): Object to parse.
         formats (list, optional): List of string formats to use when parsing. Defaults
-            to ``['ISO8601', 'X']``.
+            to ``["ISO8601", "X"]``.
         default_tz (None|str|tzinfo, optional): Default timezone to use when parsed
             datetime object does not contain a timezone. Defaults to ``UTC``.
 
@@ -140,12 +140,8 @@ def _parse_datetime_formats(obj, formats):
             break
 
     if dt is None:
-        err = ", ".join(
-            '"{0}" ({1})'.format(format, errors[format]) for format in formats
-        )
-        raise ParseError(
-            'Value "{0}" does not match any format in [{1}]'.format(obj, err)
-        )
+        err = ", ".join('"{0}" ({1})'.format(format, errors[format]) for format in formats)
+        raise ParseError('Value "{0}" does not match any format in [{1}]'.format(obj, err))
 
     return dt
 
@@ -164,9 +160,9 @@ def _parse_datetime_format(obj, format):
 
 def format_datetime(dt, format=None, tz=None, locale=LC_TIME):
     """
-    Return string formatted datetime, `dt`, using format directives or pattern in
-    `format`. If timezone, `tz`, is supplied, the datetime will be shifted to that
-    timezone before being formatted.
+    Return string formatted datetime, `dt`, using format directives or pattern in `format`. If
+    timezone, `tz`, is supplied, the datetime will be shifted to that timezone before being
+    formatted.
 
     Args:
         dt (datetime): A datetime instance.
@@ -212,8 +208,7 @@ def format_datetime(dt, format=None, tz=None, locale=LC_TIME):
 def _date_pattern_to_directive(format):
     """Convert date pattern format to strptime/strftime directives."""
     return "".join(
-        DATE_PATTERN_TO_DIRECTIVE.get(token, token)
-        for token in _tokenize_date_pattern(format)
+        DATE_PATTERN_TO_DIRECTIVE.get(token, token) for token in _tokenize_date_pattern(format)
     )
 
 
@@ -221,8 +216,8 @@ def _tokenize_date_pattern(format):
     """
     Return list of date pattern tokens.
 
-    This groups tokens by repeating characters so that each set of repeating characters
-    is a list item (e.g. ``'YY-MM-dd'`` becomes ``['YY', '-', 'MM', '-', 'dd']``).
+    This groups tokens by repeating characters so that each set of repeating characters is a list
+    item (e.g. ``'YY-MM-dd'`` becomes ``['YY', '-', 'MM', '-', 'dd']``).
     """
     return ["".join(group) for key, group in groupby(format)]
 
@@ -248,17 +243,13 @@ def parse_timedelta(obj):
     is_number = isinstance(obj, number_types)
 
     if not is_string and not is_number:
-        raise TypeError(
-            "Expected string or number type, not {0}".format(type(obj).__name__)
-        )
+        raise TypeError("Expected string or number type, not {0}".format(type(obj).__name__))
 
     if is_string:
         seconds = pytimeparse.parse(obj)
 
         if seconds is None:
-            raise ParseError(
-                'Value "{0}" is not a recognized duration format'.format(obj)
-            )
+            raise ParseError('Value "{0}" is not a recognized duration format'.format(obj))
     else:
         seconds = obj
 
@@ -277,18 +268,16 @@ def format_timedelta(
     Return timedelta as a formatted string.
 
     Args:
-        format (str, optional): Can be one of "long", "short", or "narrow". Defaults to
-            `'long`'.
-        granularity (str, optional): The smallest unit that should be displayed. The
-            value can be one of "year", "month", "week", "day", "hour", "minute" or
-            "second". Defaults to `'second'`.
-        threshold (float, optional): Factor that determines at which point the
-            presentation switches to the next higher unit. Defaults to `0.85`.
-        add_direction (bool, optional): If ``True`` the return value will include
-            directional information (e.g. `'1 hour ago'`, `'in 1 hour'`). Defaults to
-            ``False``.
-        locale (str|Locale, optional): A ``Locale`` object or locale identifier.
-            Defaults to system default.
+        format (str, optional): Can be one of "long", "short", or "narrow". Defaults to `"long"`.
+        granularity (str, optional): The smallest unit that should be displayed. The value can be
+            one of "year", "month", "week", "day", "hour", "minute" or "second". Defaults to
+            `"second"`.
+        threshold (float, optional): Factor that determines at which point the presentation switches
+            to the next higher unit. Defaults to `0.85`.
+        add_direction (bool, optional): If ``True`` the return value will include directional
+            information (e.g. `'1 hour ago'`, `'in 1 hour'`). Defaults to ``False``.
+        locale (str|Locale, optional): A ``Locale`` object or locale identifier. Defaults to system
+            default.
 
     Returns:
         str
@@ -296,16 +285,12 @@ def format_timedelta(
     if granularity not in TIMEDELTA_GRANULARITIES:
         units = ", ".join('"{0}"'.format(unit) for unit in TIMEDELTA_GRANULARITIES)
         raise ValueError(
-            'Time delta granularity must be one of {0}, not "{1}"'.format(
-                units, granularity
-            )
+            'Time delta granularity must be one of {0}, not "{1}"'.format(units, granularity)
         )
 
     if format not in TIMEDELTA_FORMATS:
         formats = ", ".join('"{0}"'.format(format) for format in TIMEDELTA_FORMATS)
-        raise ValueError(
-            'Time delta format must be one of {0}, not "{1}"'.format(formats, format)
-        )
+        raise ValueError('Time delta format must be one of {0}, not "{1}"'.format(formats, format))
 
     return _format_timedelta(
         delta,
@@ -321,9 +306,9 @@ def get_timezone(tz):
     """
     Coerce `tz` into a `tzinfo` compatible object.
 
-    If ``tz == 'local'``, then the system's local timezone will be used. If `tz` is a
-    string other than ``'local'``, it will be passed to ``dateutil.tz.gettz(tz)``.
-    Otherwise, `tz` will be returned as-is.
+    If ``tz == 'local'``, then the system's local timezone will be used. If `tz` is a string other
+    than ``'local'``, it will be passed to ``dateutil.tz.gettz(tz)``. Otherwise, `tz` will be
+    returned as-is.
     """
     if tz is None:
         tz = UTC
@@ -346,8 +331,7 @@ def get_timestamp(dt):
 
 def is_valid_datetime(obj):
     """
-    Return whether `obj` is an instance of ``datetime`` or contains date and time
-    attributes.
+    Return whether `obj` is an instance of ``datetime`` or contains date and time attributes.
 
     Returns:
         bool
@@ -385,8 +369,7 @@ def is_valid_timezone(tz):
 
 def has_valid_timezone(dt):
     """
-    Return whether `dt` has a valid timezone with a UTC offset strictly between -24/+24
-    hours.
+    Return whether `dt` has a valid timezone with a UTC offset strictly between -24/+24 hours.
 
     Returns:
         bool

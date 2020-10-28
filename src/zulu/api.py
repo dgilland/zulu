@@ -1,13 +1,12 @@
 """The api module."""
 
-from .zulu import Zulu
 from .delta import Delta
+from .zulu import Zulu
 
 
 def create(*args, **kargs):
     """
-    Factory function to create a new :class:`.Zulu` datetime using the same arguments as
-    the class.
+    Factory function to create a new :class:`.Zulu` datetime using the same arguments as the class.
 
     .. seealso:: See :class:`.Zulu` for class signature details.
     """
