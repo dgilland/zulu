@@ -13,7 +13,7 @@ Links
 - Project: https://github.com/dgilland/zulu
 - Documentation: https://zulu.readthedocs.io
 - PyPI: https://pypi.python.org/pypi/zulu/
-- TravisCI: https://travis-ci.org/dgilland/zulu
+- Github Actions: https://github.com/dgilland/zulu/actions
 
 
 Features
