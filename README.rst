@@ -1,7 +1,7 @@
 zulu
 ****
 
-|version| |travis| |coveralls| |license|
+|version| |build| |coveralls| |license|
 
 
 A drop-in replacement for native datetimes that embraces UTC
@@ -167,8 +167,8 @@ For the full documentation, please visit https://zulu.readthedocs.io.
 .. |version| image:: https://img.shields.io/pypi/v/zulu.svg?style=flat-square
     :target: https://pypi.python.org/pypi/zulu/
 
-.. |travis| image:: https://img.shields.io/travis/dgilland/zulu/master.svg?style=flat-square
-    :target: https://travis-ci.org/dgilland/zulu
+.. |build| image:: https://img.shields.io/github/workflow/status/dgilland/zulu/Main/master?style=flat-square
+    :target: https://github.com/dgilland/zulu/actions
 
 .. |coveralls| image:: https://img.shields.io/coveralls/dgilland/zulu/master.svg?style=flat-square
     :target: https://coveralls.io/r/dgilland/zulu
