@@ -24,8 +24,8 @@ def _asdelta(func):
     # methods due to certain attributes missing from the timedelta class that @wraps looks for by
     # default.
     @wraps(func, assigned=("__name__", "__doc__"))
-    def decorated(*args, **kargs):
-        result = func(*args, **kargs)
+    def decorated(*args, **kwargs):
+        result = func(*args, **kwargs)
 
         if isinstance(result, timedelta):
             return Delta.fromtimedelta(result)

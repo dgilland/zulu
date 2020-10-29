@@ -116,7 +116,7 @@ def test_zulu_parse(obj, expected):
 
 
 @parametrize(
-    "string,kargs,exception",
+    "string,kwargs,exception",
     [
         ("2000/01/01", {}, ParseError),
         ("01/01/2000", {}, ParseError),
@@ -130,13 +130,13 @@ def test_zulu_parse(obj, expected):
         ("2000-01-01T00:00:00", {"default_tz": "invalid"}, ValueError),
     ],
 )
-def test_zulu_parse_invalid(string, kargs, exception):
+def test_zulu_parse_invalid(string, kwargs, exception):
     with pytest.raises(exception):
-        Zulu.parse(string, **kargs)
+        Zulu.parse(string, **kwargs)
 
 
 @parametrize(
-    "string,kargs,expected",
+    "string,kwargs,expected",
     [
         ("2000", {"formats": "%Y"}, datetime(2000, 1, 1, tzinfo=UTC)),
         ("2000", {"formats": "YYYY"}, datetime(2000, 1, 1, tzinfo=UTC)),
@@ -172,8 +172,8 @@ def test_zulu_parse_invalid(string, kargs, exception):
         ),
     ],
 )
-def test_zulu_parse_format(string, kargs, expected):
-    assert Zulu.parse(string, **kargs) == expected
+def test_zulu_parse_format(string, kwargs, expected):
+    assert Zulu.parse(string, **kwargs) == expected
 
 
 @parametrize(
