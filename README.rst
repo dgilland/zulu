@@ -23,7 +23,7 @@ Features
 - Parses ISO8601 formatted strings and POSIX timestamps by default.
 - Timezone representation applied only during string output formatting or when casting to native datetime object.
 - Drop-in replacement for native datetime objects.
-- Python 3.4+
+- Python 3.6+
 
 
 Quickstart
