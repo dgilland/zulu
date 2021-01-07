@@ -523,7 +523,7 @@ class Zulu(datetime):
         Returns:
             str
         """
-        return self._format_delta(self - dt)
+        return self._format_delta(self - dt, **options)
 
     def time_to(self, dt, **options):
         """
@@ -538,7 +538,7 @@ class Zulu(datetime):
         Returns:
             str
         """
-        return self._format_delta(dt - self)
+        return self._format_delta(dt - self, **options)
 
     def time_from_now(self, **options):
         """
@@ -550,7 +550,7 @@ class Zulu(datetime):
         Returns:
             str
         """
-        return self.time_from(self.now())
+        return self.time_from(self.now(), **options)
 
     def time_to_now(self, **options):
         """
@@ -562,7 +562,7 @@ class Zulu(datetime):
         Returns:
             str
         """
-        return self.time_to(self.now())
+        return self.time_to(self.now(), **options)
 
     def _format_delta(self, delta, **options):
         """Return a humanized "time ago"/"time to" string from a timedelta."""

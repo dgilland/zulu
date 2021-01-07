@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+- Fix bug in ``Zulu.time_from``, ``Zulu.time_to``, ``Zulu.time_from_now``, and ``Zulu.time_to_now`` where keyword arguments weren't passed to underlying ``Delta.format`` call.
+
+
 v1.2.0 (2020-01-14)
 -------------------
 
