@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v1.3.0 (2021-01-07)
+-------------------
+
 - Add Python 3.9 support.
 - Fix bug in ``Zulu.time_from``, ``Zulu.time_to``, ``Zulu.time_from_now``, and ``Zulu.time_to_now`` where keyword arguments weren't passed to underlying ``Delta.format`` call.
 - Fix bug in ``Zulu.format`` where "YY" and "YYYY" format patterns would return the year in "Week of Year" based calendars instead of the regular calendar year.
