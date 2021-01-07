@@ -233,7 +233,7 @@ def test_zulu_parse_format(string, kwargs, expected):
         (Zulu(2000, 1, 5, 13, 7, 8, 123456), "Z", "+0000"),
         (Zulu(), " ", " "),
         (Zulu(2019, 12, 29, 0, 0), "YYYY", "2019"),
-        (Zulu(2019, 12, 30, 0, 0), "YYYY", "2020"),
+        (Zulu(2019, 12, 30, 0, 0), "YYYY", "2019"),
     ],
 )
 def test_zulu_format_pattern(dt, opts, expected):

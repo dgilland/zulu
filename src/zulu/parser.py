@@ -25,13 +25,14 @@ DEFAULT_PARSE_DATETIME_FORMATS = (ISO8601, TIMESTAMP)
 
 # Subset of Unicode date field patterns from:
 # https://www.unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
-# that are supported as an alternative to Python's strptime/strftime directives. This
-# mapping is used to convert the Unicode pattern (the dict keys) to the best matched
-# strptime directive (the values). For values that are tuples, the first item is the
-# directive used for string parsing while the second item is the directive used for
-# string formatting. The second items are platform dependent and may not work on all
-# systems.
+# that are supported as an alternative to Python's strptime/strftime directives. This mapping is
+# used to convert the Unicode pattern (the dict keys) to the best matched strptime directive (the
+# values). For values that are tuples, the first item is the directive used for string parsing while
+# the second item is the directive used for string formatting. The second items are platform
+# dependent and may not work on all systems.
 DATE_PATTERN_TO_DIRECTIVE = {
+    "yyyy": "%Y",  # Year with century
+    "yy": "%y",  # Year without century
     "YYYY": "%Y",  # Year with century
     "YY": "%y",  # Year without century
     "MMMM": "%B",  # Month's full name
@@ -202,6 +203,12 @@ def format_datetime(dt, format=None, tz=None, locale=LC_TIME):
     elif "%" in format:
         return dt.strftime(format)
     else:
+        # Deviate from TR35 and treat "Y" as "y" when formatting. TR35 defines "Y" as 'Year in
+        # "Week of Year" based calendars in which the year transition occurs on a week boundary'.
+        # This has caused lots of confusion to users and is honestly not worth sticking with the
+        # standard to accommodate.
+        # Users should instead use %G, %V and a weekday directive (%A, %a, %w, or %u).
+        format = format.replace("Y", "y")
         return _format_datetime(dt, format, locale=locale)
 
 
