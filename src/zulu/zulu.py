@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 
 from . import parser
 from .delta import Delta
-from .helpers import FOLD_AVAILABLE, number_types
+from .helpers import FOLD_AVAILABLE, NUMBER_TYPES
 from .parser import UTC
 
 
@@ -181,7 +181,7 @@ class Zulu(datetime):
 
         Args:
             obj (mixed): Object to parse into a :class:`.Zulu` object.
-            formats (list, optional): List of string formats to use when parsing. Defaults to
+            formats (str|list, optional): List of string formats to use when parsing. Defaults to
                 ``["ISO8601", "timestamp"]``.
             default_tz (None|str|tzinfo, optional): Default timezone to use when parsed datetime
                 object does not contain a timezone. Defaults to ``UTC``.
@@ -492,10 +492,9 @@ class Zulu(datetime):
         timezone `tz` first.
 
         Note:
-            A ``Locale`` object or string identifier can be provided to display the
-            object in that particular locale **but only when using date pattern
-            tokens.** Using a locale other than the current system locale is not
-            supported for strftime tokens.
+            A ``Locale`` object or string identifier can be provided to display the object in that
+            particular locale **but only when using date pattern tokens.** Using a locale other than
+            the current system locale is not supported for strftime tokens.
 
         Args:
             format (str): Format to return string in. If ``None``, ISO 8601 format is used. Defaults
@@ -1074,10 +1073,10 @@ class Zulu(datetime):
         Returns:
             :class:`.Zulu`
         """
-        if not isinstance(other, (timedelta, relativedelta, number_types)):
+        if not isinstance(other, (timedelta, relativedelta, NUMBER_TYPES)):
             return NotImplemented
 
-        if isinstance(other, number_types):
+        if isinstance(other, NUMBER_TYPES):
             other = timedelta(seconds=other)
 
         if isinstance(other, timedelta):

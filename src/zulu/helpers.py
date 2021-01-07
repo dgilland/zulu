@@ -4,4 +4,4 @@ import sys
 
 FOLD_AVAILABLE = sys.version_info >= (3, 6)
 
-number_types = (int, float, Decimal)
+NUMBER_TYPES = (int, float, Decimal)

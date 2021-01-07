@@ -12,7 +12,7 @@ from dateutil.tz import gettz, tzlocal, tzutc
 import iso8601
 import pytimeparse
 
-from .helpers import number_types
+from .helpers import NUMBER_TYPES
 
 
 UTC = tzutc()
@@ -89,7 +89,7 @@ def parse_datetime(obj, formats=None, default_tz=None):
 
     Args:
         obj (str|datetime): Object to parse.
-        formats (list, optional): List of string formats to use when parsing. Defaults
+        formats (str|list, optional): List of string formats to use when parsing. Defaults
             to ``["ISO8601", "X"]``.
         default_tz (None|str|tzinfo, optional): Default timezone to use when parsed
             datetime object does not contain a timezone. Defaults to ``UTC``.
@@ -247,7 +247,7 @@ def parse_timedelta(obj):
         return obj
 
     is_string = isinstance(obj, str)
-    is_number = isinstance(obj, number_types)
+    is_number = isinstance(obj, NUMBER_TYPES)
 
     if not is_string and not is_number:
         raise TypeError("Expected string or number type, not {0}".format(type(obj).__name__))
