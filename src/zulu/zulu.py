@@ -40,17 +40,6 @@ TIME_FRAMES = (
     "second",
 )
 
-SHIFT_UNITS = (
-    "years",
-    "months",
-    "weeks",
-    "days",
-    "hours",
-    "minutes",
-    "seconds",
-    "microseconds",
-)
-
 DateTime = namedtuple(
     "DateTime",
     ["year", "month", "day", "hour", "second", "minute", "microsecond", "tzinfo"],
@@ -509,59 +498,148 @@ class Zulu(datetime):
         """
         return parser.format_datetime(self, format, tz=tz, locale=locale)
 
-    def time_from(self, dt, **options):
+    def time_from(
+        self,
+        dt,
+        format="long",
+        granularity="second",
+        threshold=0.85,
+        add_direction=True,
+        locale=None,
+    ):
         """
         Return "time ago" difference between this datetime and another as a humanized string.
 
         Args:
             dt (datetime): A datetime object.
-
-        Keyword Args:
-            See :meth:`.Delta.format` for listing.
+            format (str, optional): Can be one of "long", "short", or "narrow". Defaults to
+                `"long"`.
+            granularity (str, optional): The smallest unit that should be displayed. The value can
+                be one of "year", "month", "week", "day", "hour", "minute" or "second". Defaults to
+                `"second"`.
+            threshold (float, optional): Factor that determines at which point the presentation
+                switches to the next higher unit. Defaults to `0.85`.
+            add_direction (bool, optional): If ``True`` the return value will include directional
+                information (e.g. `'1 hour ago'`, `'in 1 hour'`). Defaults to ``False``.
+            locale (str|Locale, optional): A ``Locale`` object or locale identifier. Defaults to
+                system default.
 
         Returns:
             str
         """
-        return self._format_delta(self - dt, **options)
+        return self._format_delta(
+            self - dt,
+            format=format,
+            granularity=granularity,
+            threshold=threshold,
+            add_direction=add_direction,
+            locale=locale,
+        )
 
-    def time_to(self, dt, **options):
+    def time_to(
+        self,
+        dt,
+        format="long",
+        granularity="second",
+        threshold=0.85,
+        add_direction=True,
+        locale=None,
+    ):
         """
         Return "time to" difference between another datetime and this one as a humanized string.
 
         Args:
             dt (datetime): A datetime object.
-
-        Keyword Args:
-            See :meth:`.Delta.format` for listing.
+            format (str, optional): Can be one of "long", "short", or "narrow". Defaults to
+                `"long"`.
+            granularity (str, optional): The smallest unit that should be displayed. The value can
+                be one of "year", "month", "week", "day", "hour", "minute" or "second". Defaults to
+                `"second"`.
+            threshold (float, optional): Factor that determines at which point the presentation
+                switches to the next higher unit. Defaults to `0.85`.
+            add_direction (bool, optional): If ``True`` the return value will include directional
+                information (e.g. `'1 hour ago'`, `'in 1 hour'`). Defaults to ``False``.
+            locale (str|Locale, optional): A ``Locale`` object or locale identifier. Defaults to
+                system default.
 
         Returns:
             str
         """
-        return self._format_delta(dt - self, **options)
+        return self._format_delta(
+            dt - self,
+            format=format,
+            granularity=granularity,
+            threshold=threshold,
+            add_direction=add_direction,
+            locale=locale,
+        )
 
-    def time_from_now(self, **options):
+    def time_from_now(
+        self,
+        format="long",
+        granularity="second",
+        threshold=0.85,
+        add_direction=True,
+        locale=None,
+    ):
         """
         Return "time ago" difference between this datetime and now as a humanized string.
 
-        Keyword Args:
-            See :meth:`.Delta.format` for listing.
+        Args:
+            format (str, optional): Can be one of "long", "short", or "narrow". Defaults to
+                `"long"`.
+            granularity (str, optional): The smallest unit that should be displayed. The value can
+                be one of "year", "month", "week", "day", "hour", "minute" or "second". Defaults to
+                `"second"`.
+            threshold (float, optional): Factor that determines at which point the presentation
+                switches to the next higher unit. Defaults to `0.85`.
+            add_direction (bool, optional): If ``True`` the return value will include directional
+                information (e.g. `'1 hour ago'`, `'in 1 hour'`). Defaults to ``False``.
+            locale (str|Locale, optional): A ``Locale`` object or locale identifier. Defaults to
+                system default.
 
         Returns:
             str
         """
-        return self.time_from(self.now(), **options)
+        return self.time_from(
+            self.now(),
+            format=format,
+            granularity=granularity,
+            threshold=threshold,
+            add_direction=add_direction,
+            locale=locale,
+        )
 
-    def time_to_now(self, **options):
+    def time_to_now(
+        self, format="long", granularity="second", threshold=0.85, add_direction=True, locale=None
+    ):
         """
         Return "time to" difference between now and this datetime as a humanized string.
 
-        Keyword Args:
-            See :meth:`.Delta.format` for listing.
+        Args:
+            format (str, optional): Can be one of "long", "short", or "narrow". Defaults to
+                `"long"`.
+            granularity (str, optional): The smallest unit that should be displayed. The value can
+                be one of "year", "month", "week", "day", "hour", "minute" or "second". Defaults to
+                `"second"`.
+            threshold (float, optional): Factor that determines at which point the presentation
+                switches to the next higher unit. Defaults to `0.85`.
+            add_direction (bool, optional): If ``True`` the return value will include directional
+                information (e.g. `'1 hour ago'`, `'in 1 hour'`). Defaults to ``False``.
+            locale (str|Locale, optional): A ``Locale`` object or locale identifier. Defaults to
+                system default.
 
         Returns:
             str
         """
-        return self.time_to(self.now(), **options)
+        return self.time_to(
+            self.now(),
+            format=format,
+            granularity=granularity,
+            threshold=threshold,
+            add_direction=add_direction,
+            locale=locale,
+        )
 
     def _format_delta(self, delta, **options):
         """Return a humanized "time ago"/"time to" string from a timedelta."""
@@ -607,14 +685,14 @@ class Zulu(datetime):
         Args:
             other (timedelta|relativedelta, optional): A ``timedelta`` or ``dateutil.relativedelta``
                 object to add.
-            years (int, optional): Years to shift.
-            months (int, optional): Months to shift.
-            weeks (int, optional): Weeks to shift.
-            days (int, optional): Days to shift.
-            hours (int, optional): Hours to shift.
-            minutes (int, optional): Minutes to shift.
-            seconds (int, optional): Seconds to shift.
-            microseconds (int, optional): Microseconds to shift.
+            years (int): Years to shift.
+            months (int): Months to shift.
+            weeks (int): Weeks to shift.
+            days (int): Days to shift.
+            hours (int): Hours to shift.
+            minutes (int): Minutes to shift.
+            seconds (int): Seconds to shift.
+            microseconds (int): Microseconds to shift.
 
         Returns:
             :class:`.Zulu`
@@ -635,7 +713,18 @@ class Zulu(datetime):
 
         return self.fromdatetime(dt)
 
-    def add(self, other=None, **units):
+    def add(
+        self,
+        other=None,
+        years=0,
+        months=0,
+        weeks=0,
+        days=0,
+        hours=0,
+        minutes=0,
+        seconds=0,
+        microseconds=0,
+    ):
         """
         Add time using a timedelta created from the supplied arguments and return a new
         :class:`.Zulu` instance. The first argument can be a `:class:`timedelta` or
@@ -645,16 +734,14 @@ class Zulu(datetime):
         Args:
             other (timedelta|relativedelta, optional): A ``timedelta`` or ``dateutil.relativedelta``
                 object to add.
-
-        Keyword Args:
-            years (int, optional): Years to add.
-            months (int, optional): Months to add.
-            weeks (int, optional): Weeks to add.
-            days (int, optional): Days to add.
-            hours (int, optional): Hours to add.
-            minutes (int, optional): Minutes to add.
-            seconds (int, optional): Seconds to add.
-            microseconds (int, optional): Microseconds to add.
+            years (int): Years to add.
+            months (int): Months to add.
+            weeks (int): Weeks to add.
+            days (int): Days to add.
+            hours (int): Hours to add.
+            minutes (int): Minutes to add.
+            seconds (int): Seconds to add.
+            microseconds (int): Microseconds to add.
 
         Returns:
             :class:`.Zulu`
@@ -662,11 +749,29 @@ class Zulu(datetime):
         if isinstance(other, (timedelta, relativedelta)):
             return self + other
 
-        units = {unit: units.get(unit, 0) for unit in SHIFT_UNITS}
+        return self.shift(
+            years=years,
+            months=months,
+            weeks=weeks,
+            days=days,
+            hours=hours,
+            minutes=minutes,
+            seconds=seconds,
+            microseconds=microseconds,
+        )
 
-        return self.shift(**units)
-
-    def subtract(self, other=None, **units):
+    def subtract(
+        self,
+        other=None,
+        years=0,
+        months=0,
+        weeks=0,
+        days=0,
+        hours=0,
+        minutes=0,
+        seconds=0,
+        microseconds=0,
+    ):
         """
         Subtract time using a timedelta created from the supplied arguments and return a new
         :class:`.Zulu` instance. The first argument can be a :class:`.Zulu`, :class:`datetime`,
@@ -676,16 +781,14 @@ class Zulu(datetime):
         Args:
             other (datetime|timedelta|relativedelta, optional): A ``datetime``, ``timedelta``, or
                 ``dateutil.relativedelta`` object to subtract.
-
-        Keyword Args:
-            years (int, optional): Years to subtract.
-            months (int, optional): Months to subtract.
-            weeks (int, optional): Weeks to subtract.
-            days (int, optional): Days to subtract.
-            hours (int, optional): Hours to subtract.
-            minutes (int, optional): Minutes to subtract.
-            seconds (int, optional): Seconds to subtract.
-            microseconds (int, optional): Microseconds to subtract.
+            years (int): Years to subtract.
+            months (int): Months to subtract.
+            weeks (int): Weeks to subtract.
+            days (int): Days to subtract.
+            hours (int): Hours to subtract.
+            minutes (int): Minutes to subtract.
+            seconds (int): Seconds to subtract.
+            microseconds (int): Microseconds to subtract.
 
         Returns:
             :class:`.Zulu`: if subtracting :class:`timedelta` or :class:`timedelta`.
@@ -694,9 +797,16 @@ class Zulu(datetime):
         if isinstance(other, (datetime, timedelta, relativedelta)):
             return self - other
 
-        units = {unit: -units.get(unit, 0) for unit in SHIFT_UNITS}
-
-        return self.shift(**units)
+        return self.shift(
+            years=-years,
+            months=-months,
+            weeks=-weeks,
+            days=-days,
+            hours=-hours,
+            minutes=-minutes,
+            seconds=-seconds,
+            microseconds=-microseconds,
+        )
 
     def replace(
         self,
@@ -713,6 +823,18 @@ class Zulu(datetime):
     ):
         """
         Replace datetime attributes and return a new :class:`.Zulu` instance.
+
+        Args:
+            year (None|int, optional): Year to replace.
+            month (None|int, optional): Month to replace.
+            week (None|int, optional): Week to replace.
+            day (None|int, optional): Day to replace.
+            hour (None|int, optional): Hour to replace.
+            minute (None|int, optional): Minute to replace.
+            second (None|int, optional): Second to replace.
+            microsecond (None|int, optional): Microsecond to replace.
+            tzinfo (None|str|tzinfo, optional): Timezone to replace.
+            fold (None|int, optional): Fold to replace.
 
         Returns:
             :class:`.Zulu`
