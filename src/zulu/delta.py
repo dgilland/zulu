@@ -1,4 +1,4 @@
-"""The timedelta module."""
+"""The delta module."""
 
 from datetime import timedelta
 from functools import wraps

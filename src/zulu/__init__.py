@@ -1,4 +1,4 @@
-"""The zulu module."""
+"""The zulu library."""
 
 from .__version__ import __version__
 from .api import create, now, parse, parse_delta, range, span_range
