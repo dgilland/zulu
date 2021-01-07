@@ -125,7 +125,7 @@ class Delta(timedelta):
 
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.Delta`."""
-        return "<{0} [{1}]>".format(self.__class__.__name__, self)
+        return f"<{self.__class__.__name__} [{self}]>"
 
 
 # See _asdelta() docstring for details on why we are doing this.
