@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v2.0.0 (2021-06-26)
+-------------------
+
 - Drop support for Python 3.4 and 3.5.
 
 
