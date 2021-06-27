@@ -105,7 +105,7 @@ def parse_datetime(obj, formats=None, default_tz=None):
         default_tz = UTC
 
     if not is_valid_timezone(default_tz):
-        raise ValueError("Unrecognized timezone: {}".format(default_tz))
+        raise ValueError(f"Unrecognized timezone: {default_tz}")
 
     if is_valid_datetime(obj):
         return obj
@@ -141,8 +141,8 @@ def _parse_datetime_formats(obj, formats):
             break
 
     if dt is None:
-        err = ", ".join('"{}" ({})'.format(format, errors[format]) for format in formats)
-        raise ParseError('Value "{}" does not match any format in [{}]'.format(obj, err))
+        err = ", ".join(f'"{format}" ({errors[format]})' for format in formats)
+        raise ParseError(f'Value "{obj}" does not match any format in [{err}]')
 
     return dt
 
@@ -178,19 +178,17 @@ def format_datetime(dt, format=None, tz=None, locale=LC_TIME):
     """
     if not isinstance(dt, datetime):
         raise TypeError(
-            "zulu.parser.format()'s first argument must be a datetime, not {}".format(
-                type(dt).__name__
-            )
+            f"zulu.parser.format()'s first argument must be a datetime, not {type(dt).__name__}"
         )  # pragma: no cover
 
     if format is not None and not isinstance(format, str):
         raise TypeError(
-            "zulu.parser.format()'s second argument must be a string or None,"
-            " not {}".format(type(format).__name__)
+            f"zulu.parser.format()'s second argument must be a string or None,"
+            f" not {type(format).__name__}"
         )  # pragma: no cover
 
     if not is_valid_timezone(tz):  # pragma: no cover
-        raise ValueError("Unrecognized timezone: {}".format(tz))
+        raise ValueError(f"Unrecognized timezone: {tz}")
 
     if format is None:
         format = ISO8601
@@ -250,13 +248,13 @@ def parse_timedelta(obj):
     is_number = isinstance(obj, NUMBER_TYPES)
 
     if not is_string and not is_number:
-        raise TypeError("Expected string or number type, not {}".format(type(obj).__name__))
+        raise TypeError(f"Expected string or number type, not {type(obj).__name__}")
 
     if is_string:
         seconds = pytimeparse.parse(obj)
 
         if seconds is None:
-            raise ParseError('Value "{}" is not a recognized duration format'.format(obj))
+            raise ParseError(f'Value "{obj}" is not a recognized duration format')
     else:
         seconds = obj
 
@@ -290,14 +288,12 @@ def format_timedelta(
         str
     """
     if granularity not in TIMEDELTA_GRANULARITIES:
-        units = ", ".join('"{}"'.format(unit) for unit in TIMEDELTA_GRANULARITIES)
-        raise ValueError(
-            'Time delta granularity must be one of {}, not "{}"'.format(units, granularity)
-        )
+        units = ", ".join(f'"{unit}"' for unit in TIMEDELTA_GRANULARITIES)
+        raise ValueError(f'Time delta granularity must be one of {units}, not "{granularity}"')
 
     if format not in TIMEDELTA_FORMATS:
-        formats = ", ".join('"{}"'.format(format) for format in TIMEDELTA_FORMATS)
-        raise ValueError('Time delta format must be one of {}, not "{}"'.format(formats, format))
+        formats = ", ".join(f'"{format}"' for format in TIMEDELTA_FORMATS)
+        raise ValueError(f'Time delta format must be one of {formats}, not "{format}"')
 
     return _format_timedelta(
         delta,
@@ -326,7 +322,7 @@ def get_timezone(tz):
         tz = gettz(tz)
 
         if tz is None:
-            raise ValueError("Unrecognized timezone string: {}".format(tz_string))
+            raise ValueError(f"Unrecognized timezone string: {tz_string}")
 
     return tz
 

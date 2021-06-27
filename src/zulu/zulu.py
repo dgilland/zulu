@@ -50,9 +50,7 @@ Date = namedtuple("Date", ["year", "month", "day"])
 def validate_frame(frame):
     """Method that validates the given time frame."""
     if frame not in TIME_FRAMES:
-        raise ValueError(
-            "Time frame must be one of {}, not '{}'".format('|'.join(TIME_FRAMES), frame)
-        )
+        raise ValueError(f"Time frame must be one of {'|'.join(TIME_FRAMES)}, not '{frame}'")
 
 
 class Zulu(datetime):
@@ -94,7 +92,7 @@ class Zulu(datetime):
         microsecond=0,
         tzinfo=None,
         *,
-        fold=0
+        fold=0,
     ):
         if isinstance(year, bytes) and len(year) == 10 and 1 <= year[2] & 0x7F <= 12:
             # Pickle support.
@@ -377,7 +375,7 @@ class Zulu(datetime):
             step_value = 1
 
         # Use the plural frame name since the shift() method expects that.
-        step = {"{}s".format(frame): step_value}
+        step = {f"{frame}s": step_value}
 
         # The next starting value to shift from.
         next_start = start
@@ -816,7 +814,7 @@ class Zulu(datetime):
         microsecond=None,
         tzinfo=None,
         *,
-        fold=None
+        fold=None,
     ):
         """
         Replace datetime attributes and return a new :class:`.Zulu` instance.
@@ -1068,7 +1066,7 @@ class Zulu(datetime):
             :class:`.Zulu`
         """
         validate_frame(frame)
-        return getattr(self, "start_of_{}".format(frame))()
+        return getattr(self, f"start_of_{frame}")()
 
     def end_of(self, frame, count=1):
         """
@@ -1082,7 +1080,7 @@ class Zulu(datetime):
             :class:`.Zulu`
         """
         validate_frame(frame)
-        return getattr(self, "end_of_{}".format(frame))(count)
+        return getattr(self, f"end_of_{frame}")(count)
 
     def span(self, frame, count=1):
         """
@@ -1170,7 +1168,7 @@ class Zulu(datetime):
 
     def __repr__(self):  # pragma: no cover
         """Return representation of :class:`.Zulu`."""
-        return "<{} [{}]>".format(self.__class__.__name__, self)
+        return f"<{self.__class__.__name__} [{self}]>"
 
     def __str__(self):
         """Return class as an ISO8601 string."""
