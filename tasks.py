@@ -15,9 +15,9 @@ from invoke import Exit, UnexpectedExit, run as _run, task
 
 
 PACKAGE_NAME = "zulu"
-PACKAGE_SOURCE = f"src/{PACKAGE_NAME}"
-TEST_TARGETS = f"{PACKAGE_SOURCE} tests"
-LINT_TARGETS = f"{TEST_TARGETS} tasks.py"
+PACKAGE_SOURCE = "src/{}".format(PACKAGE_NAME)
+TEST_TARGETS = "{} tests".format(PACKAGE_SOURCE)
+LINT_TARGETS = "{} tasks.py".format(TEST_TARGETS)
 EXIT_EXCEPTIONS = (Exit, UnexpectedExit, SystemExit)
 
 
@@ -28,21 +28,23 @@ run = partial(_run, pty=True)
 @task
 def black(ctx, quiet=False):
     """Autoformat code using black."""
-    run(f"black {LINT_TARGETS}", hide=quiet)
+    run("black {}".format(LINT_TARGETS), hide=quiet)
 
 
 @task
 def isort(ctx, quiet=False):
     """Autoformat Python imports."""
-    run(f"isort {LINT_TARGETS}", hide=quiet)
+    run("isort {}".format(LINT_TARGETS), hide=quiet)
 
 
 @task
 def docformatter(ctx):
     """Autoformat docstrings using docformatter."""
     run(
-        f"docformatter -r {LINT_TARGETS} "
-        f"--in-place --pre-summary-newline --wrap-descriptions 100 --wrap-summaries 100"
+        "docformatter -r {} "
+        "--in-place --pre-summary-newline --wrap-descriptions 100 --wrap-summaries 100".format(
+            LINT_TARGETS
+        )
     )
 
 
@@ -62,13 +64,13 @@ def fmt(ctx):
 @task
 def flake8(ctx):
     """Check code for PEP8 violations using flake8."""
-    run(f"flake8 --format=pylint {LINT_TARGETS}")
+    run("flake8 --format=pylint {}".format(LINT_TARGETS))
 
 
 @task
 def pylint(ctx):
     """Check code for static errors using pylint."""
-    run(f"pylint {LINT_TARGETS}")
+    run("pylint {}".format(LINT_TARGETS))
 
 
 @task
@@ -78,7 +80,7 @@ def lint(ctx):
     failures = []
 
     for name, linter in linters.items():
-        print(f"Running {name}")
+        print("Running {}".format(name))
         try:
             linter(ctx)
         except EXIT_EXCEPTIONS:
@@ -86,15 +88,15 @@ def lint(ctx):
             result = "FAILED"
         else:
             result = "PASSED"
-        print(f"{result}\n")
+        print("{}\n".format(result))
 
     if failures:
         failed = ", ".join(failures)
-        raise Exit(f"ERROR: Linters that failed: {failed}")
+        raise Exit("ERROR: Linters that failed: {}".format(failed))
 
 
 @task(help={"args": "Override default pytest arguments"})
-def unit(ctx, args=f"{TEST_TARGETS} --cov={PACKAGE_NAME} --flake8 --pylint"):
+def unit(ctx, args="{} --cov={} --flake8 --pylint".format(TEST_TARGETS, PACKAGE_NAME)):  # noqa
     """Run unit tests using pytest."""
     tox_env_site_packages_dir = os.getenv("TOX_ENV_SITE_PACKAGES_DIR")
     if tox_env_site_packages_dir:
@@ -102,7 +104,7 @@ def unit(ctx, args=f"{TEST_TARGETS} --cov={PACKAGE_NAME} --flake8 --pylint"):
         tox_env_pkg_src = os.path.join(tox_env_site_packages_dir, os.path.basename(PACKAGE_SOURCE))
         args = args.replace(PACKAGE_SOURCE, tox_env_pkg_src)
 
-    run(f"pytest {args}")
+    run("pytest {}".format(args))
 
 
 @task
@@ -118,7 +120,7 @@ def test(ctx):
     lint(ctx)
 
     print("Running unit tests")
-    unit(ctx, args=f"{TEST_TARGETS} --cov={PACKAGE_NAME}")
+    unit(ctx, args="{} --cov={}".format(TEST_TARGETS, PACKAGE_NAME))
 
 
 @task
@@ -128,8 +130,11 @@ def docs(ctx, serve=False, bind="127.0.0.1", port=8000):
     run("sphinx-build -q -W -b html docs docs/_build/html")
 
     if serve:
-        print(f"Serving docs on {bind} port {port} (http://{bind}:{port}/) ...")
-        run(f"python -m http.server -b {bind} --directory docs/_build/html {port}", hide=True)
+        print("Serving docs on {0} port {1} (http://{0}:{1}/) ...".format(bind, port))
+        run(
+            "python -m http.server -b {} --directory docs/_build/html {}".format(bind, port),
+            hide=True
+        )
 
 
 @task

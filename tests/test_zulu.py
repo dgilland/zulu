@@ -535,7 +535,7 @@ def test_zulu_as_string():
 def test_zulu_as_float():
     tm = 1498672470.4801
     dt = Zulu.fromtimestamp(tm)
-    assert f"{float(dt):.4f}" == f"{tm:.4f}"
+    assert "{:.4f}".format(float(dt)) == "{:.4f}".format(tm)
 
 
 def test_zulu_as_int():
@@ -558,8 +558,8 @@ def test_zulu_datetuple():
 
 def test_zulu_string_format():
     dt = Zulu(2000, 1, 1)
-    assert f"{dt}" == dt.isoformat()
-    assert f"{dt:%Y-%m-%dT%H:%M:%S}" == dt.format("%Y-%m-%dT%H:%M:%S")
+    assert "{}".format(dt) == dt.isoformat()
+    assert "{:%Y-%m-%dT%H:%M:%S}".format(dt) == dt.format("%Y-%m-%dT%H:%M:%S")
 
 
 @parametrize(
@@ -1061,7 +1061,7 @@ def test_zulu_span_frame_error():
         dt.span(frame)
 
     assert "Time frame must be one of" in str(exc.value)
-    assert f"not '{frame}'"
+    assert "not '{}'".format(frame) in str(exc.value)
 
 
 @parametrize(
