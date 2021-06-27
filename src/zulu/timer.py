@@ -1,4 +1,5 @@
 """The timer module."""
+
 import time
 
 

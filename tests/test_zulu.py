@@ -3,7 +3,7 @@ import pickle
 from time import localtime, mktime, struct_time
 
 from dateutil.relativedelta import relativedelta
-from dateutil.tz import gettz, tzlocal, tzutc
+from dateutil.tz import gettz, tzlocal
 from iso8601 import UTC
 import pytest
 import pytz

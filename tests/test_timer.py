@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-import time
 from unittest import mock
 
 import pytest
