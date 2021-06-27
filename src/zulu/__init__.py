@@ -1,6 +1,6 @@
 """The zulu library."""
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 from .api import create, now, parse, parse_delta, range, span_range
 from .delta import Delta, to_seconds

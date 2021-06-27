@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v1.3.1 (2021-06-26)
+-------------------
+
 - Fix compatibility issue with Python 3.4 and 3.5 by replacing f-string usage with string-format.
 
 
