@@ -167,7 +167,7 @@ For the full documentation, please visit https://zulu.readthedocs.io.
 .. |version| image:: https://img.shields.io/pypi/v/zulu.svg?style=flat-square
     :target: https://pypi.python.org/pypi/zulu/
 
-.. |build| image:: https://img.shields.io/github/workflow/status/dgilland/zulu/Main/master?style=flat-square
+.. |build| image:: https://img.shields.io/github/actions/workflow/status/dgilland/zulu/main.yml?branch=master&style=flat-square
     :target: https://github.com/dgilland/zulu/actions
 
 .. |coveralls| image:: https://img.shields.io/coveralls/dgilland/zulu/master.svg?style=flat-square
