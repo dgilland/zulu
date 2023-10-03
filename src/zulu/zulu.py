@@ -723,8 +723,8 @@ class Zulu(datetime):
         """
         Add time using a timedelta created from the supplied arguments and return a new
         :class:`.Zulu` instance. The first argument can be a `:class:`timedelta` or
-        :class:`dateutil.relativedelta` object in which case all other arguments are
-        ignored and the object is added to this datetime.
+        :class:`dateutil.relativedelta` object in which case all other arguments are ignored and the
+        object is added to this datetime.
 
         Args:
             other (timedelta|relativedelta, optional): A ``timedelta`` or ``dateutil.relativedelta``

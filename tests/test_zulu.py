@@ -645,7 +645,7 @@ def test_zulu_shift(method, dt, delta, expected):
         result = meth(delta)
 
     assert result == expected
-    assert type(result) == type(expected)
+    assert type(result) is type(expected)
 
 
 @parametrize(
@@ -673,7 +673,7 @@ def test_zulu_addition(dt, delta, expected):
     dt2 = delta + dt
 
     assert dt1 == dt2 == expected
-    assert type(dt1) == type(dt2) == Zulu
+    assert type(dt1) is type(dt2) is Zulu
 
 
 def test_zulu_addition_invalid_type():
@@ -731,7 +731,7 @@ def test_zulu_addition_invalid_type():
 def test_zulu_subtraction(dt, offset, expected):
     result = dt - offset
     assert result == expected
-    assert type(result) == type(expected)
+    assert type(result) is type(expected)
 
 
 @parametrize(

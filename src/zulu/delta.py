@@ -20,6 +20,7 @@ def _asdelta(func):
         end up creating timedelta objects twice (one from the timedelta result, another when we
         create a new Delta) so there would be some performance gains from doing so though.
     """
+
     # NOTE: We're setting assigned because in Python 2.7, @wraps fails for certain timedelta magic
     # methods due to certain attributes missing from the timedelta class that @wraps looks for by
     # default.
@@ -119,8 +120,7 @@ class Delta(timedelta):
         return self.total_seconds()
 
     def __int__(self):
-        """Return class as integer which returns the integer part of
-        :meth:`total_seconds`."""
+        """Return class as integer which returns the integer part of :meth:`total_seconds`."""
         return int(float(self))
 
     def __repr__(self):  # pragma: no cover
