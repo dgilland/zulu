@@ -210,7 +210,7 @@ class Zulu(datetime):
         Return :class:`.Zulu` object from a POSIX timestamp.
 
         Args:
-            timestamp (int): POSIX timestamp such as is returned by ``time.time()``.
+            timestamp (int|float): POSIX timestamp such as is returned by ``time.time()``.
             tz (UTC): This argument is ignored and always set to UTC. It is present only for
                 datetime class compatibility.
 
@@ -225,7 +225,7 @@ class Zulu(datetime):
         Return :class:`.Zulu` object from a POSIX timestamp.
 
         Args:
-            timestamp (int): POSIX timestamp such as is returned by ``time.time()``.
+            timestamp (int|float): POSIX timestamp such as is returned by ``time.time()``.
 
         Returns:
             :class:`.Zulu`
