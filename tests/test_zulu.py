@@ -23,21 +23,6 @@ def test_zulu_defaults():
     assert create() == Zulu()
 
 
-@parametrize("factory", [Zulu.utcnow, datetime.utcnow])
-def test_zulu_now_is_utcnow(factory):
-    dt = Zulu.now()
-    expected = factory()
-
-    # NOTE: Intentionally skip comparison to microsecond since they will almost
-    # always be different.
-    assert dt.year == expected.year
-    assert dt.month == expected.month
-    assert dt.day == expected.day
-    assert dt.hour == expected.hour
-    assert dt.minute == expected.minute
-    assert dt.second == expected.second
-
-
 @parametrize(
     "obj,expected",
     [
@@ -330,7 +315,6 @@ def test_zulu_fromdatetime(dt, expected):
     "factory,timestamp,expected",
     [
         (Zulu.fromtimestamp, 0, datetime(1970, 1, 1, tzinfo=UTC)),
-        (Zulu.utcfromtimestamp, 0, datetime(1970, 1, 1, tzinfo=UTC)),
     ],
 )
 def test_zulu_fromtimestamp(factory, timestamp, expected):

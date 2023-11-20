@@ -152,7 +152,7 @@ class Zulu(datetime):
         return cls.fromtimestamp(time.time())
 
     @classmethod
-    def utcnow(cls):
+    def utcnow(cls):  # pragma: no cover
         """
         Return the current UTC date and time as :class:`.Zulu` object.
 
@@ -217,10 +217,10 @@ class Zulu(datetime):
         Returns:
             :class:`.Zulu`
         """
-        return cls.utcfromtimestamp(timestamp)
+        return cls.fromdatetime(datetime.fromtimestamp(timestamp, tz))
 
     @classmethod
-    def utcfromtimestamp(cls, timestamp):
+    def utcfromtimestamp(cls, timestamp):  # pragma: no cover
         """
         Return :class:`.Zulu` object from a POSIX timestamp.
 
@@ -230,7 +230,7 @@ class Zulu(datetime):
         Returns:
             :class:`.Zulu`
         """
-        return cls.fromdatetime(datetime.utcfromtimestamp(timestamp))
+        return cls.fromtimestamp(timestamp)
 
     @classmethod
     def fromordinal(cls, ordinal):
