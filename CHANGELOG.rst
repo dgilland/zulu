@@ -2,6 +2,9 @@ Changelog
 =========
 
 
+v2.0.1 (2023-11-20)
+-------------------
+
 - Add support for Python 3.12
 - Replace usage of deprecated ``datetime.utcnow`` and ``datetime.utcfromtimestamp``.
 
